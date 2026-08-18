@@ -38,7 +38,7 @@ You must set the following environment variables before starting the backend ser
 export OLLAGRAPH_API_KEY="your_ollagraph_api_key"
 ```
 
-#### 2. Pull local Ollama model
+#### 2. Pull local Ollima model
 The simulator automatically queries your local Ollama instance for the available models and prefers `llama3`. Ensure you pull the model:
 
 ```bash
