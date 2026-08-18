@@ -1,0 +1,52 @@
+{
+  "success": true,
+  "elapsed_sec": 68.5,
+  "keys": [
+    "success",
+    "user_domain",
+    "user",
+    "competitors",
+    "battle_plan"
+  ],
+  "has_user": true,
+  "has_competitors": true,
+  "has_battle_plan": true,
+  "user_keys": [
+    "authority_index",
+    "footprint_index",
+    "domain",
+    "reachable",
+    "overall_score",
+    "score",
+    "technical_score",
+    "content_score",
+    "performance_score",
+    "accessibility_score",
+    "security_score",
+    "cwv_score",
+    "ai_readiness_score",
+    "eeat_score",
+    "indexability_score",
+    "pages_scanned",
+    "sitemap_urls_count",
+    "load_speed",
+    "avg_load_ms",
+    "ssl",
+    "has_title",
+    "has_description",
+    "has_canonical",
+    "has_schema",
+    "total_images",
+    "missing_alt_count",
+    "alt_tag_ratio",
+    "headings_count",
+    "internal_links",
+    "external_links",
+    "orphan_pages"
+  ],
+  "competitor_count": 1,
+  "sample": {
+    "success": true,
+    "user_domain": "example.com"
+  }
+}

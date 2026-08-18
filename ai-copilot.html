@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI SEO Copilot — crawlX Intelligence Platform</title>
+  <meta name="description" content="AI-powered SEO assistant. Ask any SEO question, get instant analysis, recommendations and insights powered by local AI.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-base: #09090b; --bg: #1A1A1A; --bg-2: #0e1022; --bg-3: #131629;
+      --border: rgba(255, 255, 255, 0.08);
+      --accent: #10b981; --accent-light: #34d399; --accent-glow: rgba(16, 185, 129, 0.25);
+      --cyan: #00e5ff; --green: #00e676; --red: #ff1744; --yellow: #ffd600;
+      --text-1: #f4f4f5; --text-2: rgba(244, 244, 245, 0.7); --text-3: rgba(244, 244, 245, 0.4);
+      --font: 'Inter', system-ui, sans-serif; --mono: 'Fira Code', monospace;
+      --ease: cubic-bezier(.4,0,.2,1);
+      
+      --radius: 14px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { background-color: var(--bg-base); color: var(--text-2); font-family: var(--font); overflow-x: hidden; min-height: 100vh; display: flex; }
+
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--bg-card); border-radius: 3px; }
+
+    /* ── SIDEBAR ─────────────────────────────────────────────── */
+    /* Sidebar styles are injected dynamically by /sidebar.js */
+
+    /* ── MAIN ────────────────────────────────────────────────── */
+    .main {  flex: 1; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+
+    /* ── HEADER ──────────────────────────────────────────────── */
+    .copilot-header {
+      padding: 22px 28px 18px;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 14px;
+      background: var(--bg-card); backdrop-filter: blur(12px);
+      flex-shrink: 0;
+    }
+    .copilot-header-icon {
+      width: 42px; height: 42px; border-radius: 12px;
+      background: linear-gradient(135deg, rgba(124,77,255,0.25), rgba(0,229,255,0.12));
+      border: 1px solid rgba(124,77,255,0.3);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .copilot-header h1 { font-size: 20px; font-weight: 800; color: var(--text-1); }
+    .copilot-header p { font-size: 13px; color: var(--text-3); margin-top: 2px; }
+    .status-dot {
+      width: 8px; height: 8px; border-radius: 50%; background: var(--green);
+      box-shadow: 0 0 8px var(--green); animation: pulse 2s ease-in-out infinite; flex-shrink: 0;
+    }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+    .header-status { margin-left: auto; display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-3); }
+
+    /* ── CONTEXT BAR ─────────────────────────────────────────── */
+    .context-bar {
+      padding: 12px 28px;
+      background: var(--bg-card);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+      flex-shrink: 0;
+    }
+    .context-label { font-size: 11px; color: var(--text-3); font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; }
+    .context-chip {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 4px 10px; border-radius: 20px;
+      background: var(--bg-card); border: 1px solid var(--border);
+      font-size: 12px; color: var(--text-2); cursor: pointer;
+      transition: all 0.15s;
+    }
+    .context-chip:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-glow); }
+    .context-chip.active { background: var(--accent-glow); border-color: rgba(124,77,255,0.4); color: var(--accent); }
+    .context-chip svg { opacity: 0.7; }
+    .context-url-input {
+      flex: 1; min-width: 200px; max-width: 380px;
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 8px; padding: 5px 12px; font-size: 12.5px; color: var(--text-1);
+      font-family: var(--mono); outline: none; transition: border-color 0.2s;
+    }
+    .context-url-input:focus { border-color: rgba(124,77,255,0.5); }
+    .context-url-input::placeholder { color: var(--text-3); }
+
+    /* ── MESSAGES ────────────────────────────────────────────── */
+    .messages {
+      flex: 1; overflow-y: auto; padding: 24px 28px;
+      display: flex; flex-direction: column; gap: 20px;
+    }
+
+    .msg { display: flex; gap: 12px; align-items: flex-start; animation: fadeUp 0.3s var(--ease) both; }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:none} }
+
+    .msg--user { flex-direction: row-reverse; }
+    .msg-avatar {
+      width: 34px; height: 34px; border-radius: 10px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .msg-avatar--ai {
+      background: linear-gradient(135deg, rgba(124,77,255,0.3), rgba(0,229,255,0.15));
+      border: 1px solid rgba(124,77,255,0.3);
+    }
+    .msg-avatar--user {
+      background: var(--bg-card); border: 1px solid var(--border);
+    }
+    .msg-bubble {
+      max-width: 72%; padding: 14px 18px; border-radius: 14px;
+      font-size: 14px; line-height: 1.65;
+    }
+    .msg-bubble--ai {
+      background: var(--bg-card); border: 1px solid var(--border);
+      color: var(--text-1); border-radius: 4px 14px 14px 14px;
+    }
+    .msg-bubble--user {
+      background: linear-gradient(135deg, rgba(124,77,255,0.2), rgba(0,82,255,0.15));
+      border: 1px solid rgba(124,77,255,0.2);
+      color: var(--text-1); border-radius: 14px 4px 14px 14px;
+      text-align: right;
+    }
+    .msg-bubble pre { 
+      background: rgba(0,0,0,0.3); border-radius: 8px; padding: 12px; 
+      margin-top: 10px; font-family: var(--mono); font-size: 12px; 
+      overflow-x: auto; line-height: 1.5;
+    }
+    .msg-bubble code { font-family: var(--mono); font-size: 13px; color: var(--cyan); }
+    .msg-bubble strong { color: var(--text-1); }
+    .msg-bubble a { color: var(--accent); }
+    .msg-meta { font-size: 11px; color: var(--text-3); margin-top: 6px; padding: 0 4px; }
+
+    /* Typing indicator */
+    .typing-indicator { display: flex; gap: 5px; padding: 6px 0; }
+    .typing-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--accent-light); opacity: 0.4;
+      animation: typingBounce 1.2s ease-in-out infinite;
+    }
+    .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+    .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes typingBounce { 0%,80%,100%{transform:translateY(0)} 40%{transform:translateY(-6px)} }
+
+    /* Insight cards in responses */
+    .insight-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
+    .insight-card {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 10px; padding: 12px;
+    }
+    .insight-card__label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-3); margin-bottom: 4px; }
+    .insight-card__value { font-size: 22px; font-weight: 800; color: var(--text-1); }
+    .insight-card__sub { font-size: 11px; color: var(--text-3); margin-top: 2px; }
+
+    /* Suggestions */
+    .suggestions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 6px; }
+    .suggestion-chip {
+      padding: 6px 14px; border-radius: 20px; font-size: 12.5px;
+      background: var(--bg-card); border: 1px solid var(--border);
+      color: var(--text-2); cursor: pointer; transition: all 0.15s;
+    }
+    .suggestion-chip:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-glow); }
+
+    /* ── INPUT BAR ───────────────────────────────────────────── */
+    .input-bar {
+      padding: 16px 28px 20px;
+      border-top: 1px solid var(--border);
+      background: var(--bg-card); backdrop-filter: blur(12px);
+      flex-shrink: 0;
+    }
+    .input-bar-inner {
+      display: flex; align-items: flex-end; gap: 10px;
+      background: var(--bg-card); border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 16px; padding: 10px 10px 10px 16px;
+      transition: border-color 0.2s;
+    }
+    .input-bar-inner:focus-within { border-color: rgba(124,77,255,0.5); box-shadow: 0 0 0 3px rgba(124,77,255,0.06); }
+    #chatInput {
+      flex: 1; background: transparent; border: none; outline: none;
+      color: var(--text-1); font-family: var(--font); font-size: 14.5px;
+      resize: none; max-height: 160px; line-height: 1.55;
+      padding: 2px 0;
+    }
+    #chatInput::placeholder { color: var(--text-3); }
+    .send-btn {
+      width: 38px; height: 38px; border-radius: 10px; flex-shrink: 0;
+      background: linear-gradient(135deg, var(--accent), #0052ff);
+      border: none; cursor: pointer; display: flex; align-items: center; justify-content: center;
+      transition: all 0.18s; color: var(--text-1); }
+    .send-btn:hover { transform: scale(1.06); box-shadow: 0 4px 16px rgba(124,77,255,0.4); }
+    .send-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
+
+    .input-hints { display: flex; gap: 16px; margin-top: 10px; padding: 0 4px; }
+    .input-hint { font-size: 11.5px; color: var(--text-3); display: flex; align-items: center; gap: 5px; }
+    .input-hint kbd {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 4px; padding: 1px 5px; font-family: var(--mono); font-size: 10px;
+    }
+
+    /* ── WELCOME STATE ───────────────────────────────────────── */
+    .welcome {
+      display: flex; flex-direction: column; align-items: center; text-align: center;
+      padding: 48px 24px; gap: 20px;
+    }
+    .welcome-icon {
+      width: 72px; height: 72px; border-radius: 20px;
+      background: linear-gradient(135deg, rgba(124,77,255,0.2), rgba(0,229,255,0.1));
+      border: 1px solid rgba(124,77,255,0.2);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .welcome h2 { font-size: 24px; font-weight: 800; color: var(--text-1); }
+    .welcome p { font-size: 14px; color: var(--text-3); max-width: 420px; line-height: 1.6; }
+
+    .quick-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; max-width: 560px; width: 100%; margin-top: 8px; }
+    .quick-card {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 12px; padding: 14px 16px; cursor: pointer;
+      text-align: left; transition: all 0.18s;
+    }
+    .quick-card:hover { border-color: rgba(124,77,255,0.4); background: var(--accent-glow); transform: translateY(-1px); }
+    .quick-card-icon { color: var(--accent); margin-bottom: 8px; }
+    .quick-card h4 { font-size: 13px; font-weight: 700; color: var(--text-1); margin-bottom: 3px; }
+    .quick-card p { font-size: 12px; color: var(--text-3); line-height: 1.4; }
+
+    /* ── HISTORY PANEL ────────────────────────────────────────── */
+    .history-panel {
+      width: 240px; border-left: 1px solid var(--border);
+      background: var(--bg-card); padding: 16px 12px;
+      flex-shrink: 0; overflow-y: auto; display: flex; flex-direction: column; gap: 6px;
+    }
+    .history-title { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-3); padding: 0 4px 8px; }
+    .history-item {
+      padding: 8px 10px; border-radius: 8px; cursor: pointer;
+      border: 1px solid transparent; transition: all 0.15s;
+      font-size: 12.5px; color: var(--text-3);
+    }
+    .history-item:hover { background: var(--bg-card); border-color: var(--border); color: var(--text-2); }
+    .history-item.active { background: var(--accent-glow); border-color: rgba(124,77,255,0.2); color: var(--accent); }
+    .history-item-title { font-weight: 600; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .history-item-time { font-size: 10.5px; color: var(--text-3); }
+    .new-chat-btn {
+      display: flex; align-items: center; gap: 8px; padding: 8px 10px;
+      border-radius: 8px; border: 1px dashed rgba(255,255,255,0.12);
+      color: var(--text-3); font-size: 12.5px; cursor: pointer;
+      transition: all 0.15s; background: transparent; font-family: var(--font);
+      width: 100%; margin-bottom: 8px;
+    }
+    .new-chat-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-glow); }
+
+    /* ── LAYOUT ──────────────────────────────────────────────── */
+    .chat-layout { display: flex; flex: 1; overflow: hidden; }
+    .chat-main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+
+    /* Responsive: hide history panel on small screens */
+    @media (max-width: 900px) { .history-panel { display: none; } }
+
+    /* Markdown-like formatting in AI responses */
+    .msg-bubble--ai ul { padding-left: 18px; margin-top: 8px; }
+    .msg-bubble--ai li { margin-bottom: 4px; }
+    .msg-bubble--ai h3 { font-size: 15px; color: var(--text-1); margin: 12px 0 6px; }
+    .msg-bubble--ai p + p { margin-top: 8px; }
+  
+    /* Animated Glowing Search Bar */
+    .animated-glowing-search-wrapper {
+      position: relative;
+      border-radius: var(--radius-md);
+      padding: 1.5px;
+      background: var(--bg-card);
+      overflow: hidden;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      transition: all 0.3s ease;
+      width: 100%;
+    }
+
+    .animated-glowing-search-wrapper::before {
+      content: '';
+      position: absolute;
+      top: -100%; left: -100%;
+      width: 300%; height: 300%;
+      background: conic-gradient(from 0deg, transparent 0%, transparent 40%, var(--accent) 50%, var(--accent) 60%, transparent 100%);
+      animation: searchGlowSpin 4s linear infinite;
+      z-index: -2;
+      opacity: 0.15;
+      transition: opacity 0.3s ease;
+    }
+
+    .animated-glowing-search-wrapper:focus-within::before {
+      opacity: 1;
+      animation: searchGlowSpin 2s linear infinite;
+    }
+
+    .animated-glowing-search-wrapper::after {
+      content: '';
+      position: absolute;
+      inset: 1.5px;
+      background: var(--bg-card);
+      border-radius: calc(var(--radius-md) - 1.5px);
+      z-index: -1;
+    }
+
+    @keyframes searchGlowSpin {
+      100% { transform: rotate(360deg); }
+    }
+
+    .animated-glowing-search-input {
+      width: 100%;
+      padding: 14px 20px;
+      background: transparent;
+      border: none;
+      color: var(--text-1);
+      font-size: 14px;
+      outline: none;
+      z-index: 2;
+    }
+    .animated-glowing-search-input::placeholder {
+      color: var(--text-3);
+    }
+
+  </style>
+</head>
+<body>
+
+  <!-- SIDEBAR -->
+  
+
+  <div class="main">
+    <!-- Header -->
+    <div class="copilot-header">
+      <div class="copilot-header-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#b388ff" stroke-width="2">
+          <path d="M12 2a10 10 0 0 1 10 10c0 5.52-4.48 10-10 10S2 17.52 2 12 6.48 2 12 2z"/>
+          <path d="M8 12h.01M12 12h.01M16 12h.01" stroke-width="2.5"/>
+        </svg>
+      </div>
+      <div>
+        <h1>AI SEO Copilot</h1>
+        <p>Powered by local Ollama LLM &mdash; your data never leaves the server</p>
+      </div>
+      <div class="header-status">
+        <div class="status-dot" id="statusDot"></div>
+        <span id="statusText">AI Ready</span>
+      </div>
+    </div>
+
+    <!-- Context bar -->
+    <div class="context-bar">
+      <span class="context-label">Context</span>
+      <input class="context-url-input" id="contextUrl" type="text"
+        placeholder="https://yoursite.com — provide site context for analysis"
+        value="">
+      <div class="context-chip active" id="ctxGeneral" onclick="setContext('general')">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+        General SEO
+      </div>
+      <div class="context-chip" id="ctxTechnical" onclick="setContext('technical')">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+        Technical
+      </div>
+      <div class="context-chip" id="ctxContent" onclick="setContext('content')">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        Content
+      </div>
+      <div class="context-chip" id="ctxCompetitor" onclick="setContext('competitor')">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><path d="M13 6h3a2 2 0 0 1 2 2v7M11 18H8a2 2 0 0 1-2-2V9"/></svg>
+        Competitor
+      </div>
+      <div class="context-chip" id="ctxLocal" onclick="setContext('local')">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Local SEO
+      </div>
+    </div>
+
+    <!-- Chat layout -->
+    <div class="chat-layout">
+      <div class="chat-main">
+        <!-- Messages -->
+        <div class="messages" id="messages">
+          <!-- Welcome state -->
+          <div class="welcome" id="welcomeState">
+            <div class="welcome-icon">
+              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#b388ff" stroke-width="1.5">
+                <path d="M12 2a10 10 0 0 1 10 10c0 5.52-4.48 10-10 10S2 17.52 2 12 6.48 2 12 2z"/>
+                <path d="M8 12h.01M12 12h.01M16 12h.01" stroke-width="2.5"/>
+              </svg>
+            </div>
+            <h2>How can I help with your SEO?</h2>
+            <p>Ask me anything about search engine optimisation &mdash; technical audits, content strategy, keyword research, competitor analysis, and more.</p>
+            <div class="quick-grid">
+              <div class="quick-card" onclick="askQuick('How do I improve my Core Web Vitals scores?')">
+                <div class="quick-card-icon">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                </div>
+                <h4>Core Web Vitals</h4>
+                <p>How to improve LCP, FID, CLS for better rankings</p>
+              </div>
+              <div class="quick-card" onclick="askQuick('What is the best internal linking strategy for SEO?')">
+                <div class="quick-card-icon">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+                </div>
+                <h4>Internal Linking</h4>
+                <p>Best strategy to distribute PageRank across pages</p>
+              </div>
+              <div class="quick-card" onclick="askQuick('How do I write structured schema markup for an ecommerce product page?')">
+                <div class="quick-card-icon">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+                </div>
+                <h4>Schema Markup</h4>
+                <p>Structured data for rich snippets &amp; SERP features</p>
+              </div>
+              <div class="quick-card" onclick="askQuick('How do I do a competitor keyword gap analysis?')">
+                <div class="quick-card-icon">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><path d="M13 6h3a2 2 0 0 1 2 2v7M11 18H8a2 2 0 0 1-2-2V9"/></svg>
+                </div>
+                <h4>Keyword Gap Analysis</h4>
+                <p>Find opportunities competitors rank for but you don't</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Input bar -->
+        <div class="input-bar">
+          <div class="input-bar-inner">
+            <textarea id="chatInput" rows="1"
+              placeholder="Ask anything about SEO — technical, content, competitor, local…"
+              oninput="autoResize(this)"></textarea>
+            <button class="send-btn" id="sendBtn" onclick="sendMessage()" title="Send (Enter)">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
+              </svg>
+            </button>
+          </div>
+          <div class="input-hints">
+            <span class="input-hint"><kbd>Enter</kbd> to send</span>
+            <span class="input-hint"><kbd>Shift+Enter</kbd> for new line</span>
+            <span class="input-hint">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              Runs locally — private &amp; secure
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- History panel -->
+      <div class="history-panel" id="historyPanel">
+        <div class="history-title">Chat History</div>
+        <button class="new-chat-btn" onclick="newChat()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          New Conversation
+        </button>
+        <div id="historyList"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ── SIDEBAR ──────────────────────────────────────────────────
+    
+    
+    
+
+    // ── STATE ────────────────────────────────────────────────────
+    let currentContext = 'general';
+    let conversations  = JSON.parse(localStorage.getItem('copilot_convos') || '[]');
+    let activeConvoId  = null;
+    let isTyping       = false;
+
+    // ── CONTEXT ──────────────────────────────────────────────────
+    function setContext(ctx) {
+      currentContext = ctx;
+      document.querySelectorAll('.context-chip').forEach(c => c.classList.remove('active'));
+      document.getElementById('ctx' + ctx.charAt(0).toUpperCase() + ctx.slice(1)).classList.add('active');
+    }
+
+    // ── AUTO-RESIZE TEXTAREA ──────────────────────────────────────
+    function autoResize(el) {
+      el.style.height = 'auto';
+      el.style.height = Math.min(el.scrollHeight, 160) + 'px';
+    }
+
+    // ── KEYBOARD SHORTCUT ─────────────────────────────────────────
+    document.getElementById('chatInput').addEventListener('keydown', e => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+      }
+    });
+
+    // ── FORMAT AI RESPONSE ─────────────────────────────────────────
+    function formatResponse(text) {
+      // Basic markdown-like formatting
+      return text
+        .replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>')
+        .replace(/`([^`]+)`/g, '<code>$1</code>')
+        .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\*(.+?)\*/g, '<em>$1</em>')
+        .replace(/^### (.+)$/gm, '<h3>$1</h3>')
+        .replace(/^## (.+)$/gm, '<h3>$1</h3>')
+        .replace(/^- (.+)$/gm, '<li>$1</li>')
+        .replace(/(<li>[\s\S]+?<\/li>)/g, '<ul>$1</ul>')
+        .replace(/\n\n/g, '</p><p>')
+        .replace(/^(?!<[hup])(.+)$/gm, (m) => m ? m : '')
+        .trim();
+    }
+
+    // ── APPEND MESSAGE ─────────────────────────────────────────────
+    function appendMsg(role, content, id) {
+      const welcome = document.getElementById('welcomeState');
+      if (welcome) welcome.remove();
+
+      const msgs  = document.getElementById('messages');
+      const isAI  = role === 'ai';
+      const div   = document.createElement('div');
+      div.className = `msg msg--${isAI ? 'ai' : 'user'}`;
+      if (id) div.id = id;
+
+      const time = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+
+      div.innerHTML = `
+        <div class="msg-avatar msg-avatar--${isAI ? 'ai' : 'user'}">
+          ${isAI
+            ? `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#b388ff" stroke-width="2"><path d="M12 2a10 10 0 0 1 10 10c0 5.52-4.48 10-10 10S2 17.52 2 12 6.48 2 12 2z"/><path d="M8 12h.01M12 12h.01M16 12h.01" stroke-width="2.5"/></svg>`
+            : `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#a8adc8" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`}
+        </div>
+        <div>
+          <div class="msg-bubble msg-bubble--${isAI ? 'ai' : 'user'}">${isAI ? formatResponse(content) : escHtml(content)}</div>
+          <div class="msg-meta">${isAI ? 'AI Copilot' : 'You'} &middot; ${time}</div>
+        </div>`;
+
+      msgs.appendChild(div);
+      msgs.scrollTop = msgs.scrollHeight;
+      return div;
+    }
+
+    function escHtml(s) {
+      return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+
+    // ── TYPING INDICATOR ──────────────────────────────────────────
+    function showTyping() {
+      const msgs = document.getElementById('messages');
+      const div  = document.createElement('div');
+      div.className = 'msg msg--ai';
+      div.id = 'typingIndicator';
+      div.innerHTML = `
+        <div class="msg-avatar msg-avatar--ai">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#b388ff" stroke-width="2"><path d="M12 2a10 10 0 0 1 10 10c0 5.52-4.48 10-10 10S2 17.52 2 12 6.48 2 12 2z"/><path d="M8 12h.01M12 12h.01M16 12h.01" stroke-width="2.5"/></svg>
+        </div>
+        <div class="msg-bubble msg-bubble--ai">
+          <div class="typing-indicator">
+            <div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>
+          </div>
+        </div>`;
+      msgs.appendChild(div);
+      msgs.scrollTop = msgs.scrollHeight;
+    }
+
+    function hideTyping() {
+      const t = document.getElementById('typingIndicator');
+      if (t) t.remove();
+    }
+
+    // ── BUILD PROMPT ──────────────────────────────────────────────
+    function buildPrompt(userMsg, history) {
+      const siteUrl = document.getElementById('contextUrl').value.trim();
+      const contextDescriptions = {
+        general:    'general SEO best practices and strategy',
+        technical:  'technical SEO including crawling, indexing, Core Web Vitals, and site architecture',
+        content:    'content strategy, keyword research, on-page optimisation, and E-E-A-T signals',
+        competitor: 'competitor analysis, gap identification, and market positioning',
+        local:      'local SEO, Google Business Profile, citations, and geo-targeting',
+      };
+
+      let sys = `You are an expert enterprise SEO consultant and AI assistant specialised in ${contextDescriptions[currentContext] || 'SEO'}.
+${siteUrl ? `The user's website is: ${siteUrl}` : ''}
+Provide concise, accurate, actionable advice. Use markdown formatting (headers, bullet lists, code blocks for technical examples). Keep responses focused and professional.`;
+
+      const recent = history.slice(-8).map(m => `${m.role === 'user' ? 'User' : 'Assistant'}: ${m.content}`).join('\n');
+      return `${sys}\n\n${recent}\nUser: ${userMsg}\nAssistant:`;
+    }
+
+    // ── SEND MESSAGE ──────────────────────────────────────────────
+    async function sendMessage() {
+      if (isTyping) return;
+      const input = document.getElementById('chatInput');
+      const msg   = input.value.trim();
+      if (!msg) return;
+
+      input.value = '';
+      input.style.height = 'auto';
+      document.getElementById('sendBtn').disabled = true;
+      isTyping = true;
+
+      // Add to history
+      if (!activeConvoId) newChat(false);
+      const convo = conversations.find(c => c.id === activeConvoId);
+      if (!convo.title || convo.title === 'New Conversation') {
+        convo.title = msg.slice(0, 48) + (msg.length > 48 ? '…' : '');
+      }
+
+      convo.messages.push({ role: 'user', content: msg });
+      saveHistory();
+      renderHistory();
+
+      appendMsg('user', msg);
+      showTyping();
+
+      try {
+        const prompt = buildPrompt(msg, convo.messages.slice(0, -1));
+        const res = await fetch('/api/ask-ai', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ question: msg, context: prompt }),
+          signal: AbortSignal.timeout(60000)
+        });
+
+        hideTyping();
+
+        if (!res.ok) throw new Error(`Server error ${res.status}`);
+        const data = await res.json();
+
+        const answer = data.success ? data.answer : (data.error || 'The AI did not return a valid response.');
+        convo.messages.push({ role: 'ai', content: answer });
+        saveHistory();
+        appendMsg('ai', answer);
+
+      } catch (err) {
+        hideTyping();
+        const errMsg = err.name === 'TimeoutError'
+          ? 'Request timed out. The AI model may be loading — please try again.'
+          : `Connection error: ${err.message}`;
+        appendMsg('ai', errMsg);
+      }
+
+      isTyping = false;
+      document.getElementById('sendBtn').disabled = false;
+      document.getElementById('chatInput').focus();
+    }
+
+    // ── QUICK PROMPTS ─────────────────────────────────────────────
+    function askQuick(q) {
+      document.getElementById('chatInput').value = q;
+      sendMessage();
+    }
+
+    // ── HISTORY ───────────────────────────────────────────────────
+    function newChat(focus = true) {
+      const id = Date.now().toString();
+      activeConvoId = id;
+      conversations.unshift({ id, title: 'New Conversation', messages: [], ts: Date.now() });
+      saveHistory();
+      renderHistory();
+      // Clear messages and show welcome again
+      const msgs = document.getElementById('messages');
+      msgs.innerHTML = `<div class="welcome" id="welcomeState">
+        <div class="welcome-icon">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#b388ff" stroke-width="1.5">
+            <path d="M12 2a10 10 0 0 1 10 10c0 5.52-4.48 10-10 10S2 17.52 2 12 6.48 2 12 2z"/>
+            <path d="M8 12h.01M12 12h.01M16 12h.01" stroke-width="2.5"/>
+          </svg>
+        </div>
+        <h2>How can I help with your SEO?</h2>
+        <p>Ask me anything about search engine optimisation — technical audits, content strategy, keyword research, competitor analysis, and more.</p>
+      </div>`;
+      if (focus) document.getElementById('chatInput').focus();
+    }
+
+    function saveHistory() {
+      // Keep max 20 conversations
+      conversations = conversations.slice(0, 20);
+      localStorage.setItem('copilot_convos', JSON.stringify(conversations));
+    }
+
+    function renderHistory() {
+      const list = document.getElementById('historyList');
+      list.innerHTML = conversations.map(c => `
+        <div class="history-item ${c.id === activeConvoId ? 'active' : ''}" onclick="loadConvo('${c.id}')">
+          <div class="history-item-title">${escHtml(c.title || 'Conversation')}</div>
+          <div class="history-item-time">${new Date(c.ts).toLocaleDateString()}</div>
+        </div>`).join('');
+    }
+
+    function loadConvo(id) {
+      const convo = conversations.find(c => c.id === id);
+      if (!convo) return;
+      activeConvoId = id;
+      renderHistory();
+      const msgs = document.getElementById('messages');
+      msgs.innerHTML = '';
+      convo.messages.forEach(m => appendMsg(m.role, m.content));
+      if (!msgs.children.length) {
+        msgs.innerHTML = `<div class="welcome" id="welcomeState"><h2>Empty conversation</h2><p>Start typing to continue.</p></div>`;
+      }
+    }
+
+    // ── INIT ──────────────────────────────────────────────────────
+    renderHistory();
+    if (conversations.length) {
+      activeConvoId = conversations[0].id;
+      renderHistory();
+    }
+
+    // Pre-fill context URL from localStorage
+    const stored = localStorage.getItem('current_scanned_domain');
+    if (stored) document.getElementById('contextUrl').value = stored;
+
+    // Restore context URL on input change
+    document.getElementById('contextUrl').addEventListener('input', e => {
+      if (e.target.value) localStorage.setItem('current_scanned_domain', e.target.value);
+    });
+  </script>
+
+  <script src="sidebar.js?v=2"></script>
+</body>
+</html>

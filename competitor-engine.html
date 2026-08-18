@@ -1,0 +1,2139 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- Login check bypassed for direct access -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Competitor Intelligence | crawlX</title>
+  <meta name="description"
+    content="Enterprise AI Competitor Intelligence — identify competitors, analyse market position, and get evidence-based investment estimates.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+    rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-base: #09090b; --bg: #1A1A1A;
+      --bg-2: #0c0e1a;
+      --bg-card: rgba(20, 20, 25, 0.65);
+      --border: rgba(255, 255, 255, 0.08);
+      --border-hover: rgba(255, 255, 255, 0.16);
+      --accent: #10b981;
+      --accent-glow: rgba(16, 185, 129, 0.25);
+      --accent-light: #34d399;
+      --cyan: #00e5ff;
+      --cyan-glow: rgba(0, 229, 255, 0.15);
+      --green: #00e676;
+      --green-glow: rgba(0, 230, 118, 0.12);
+      --yellow: #ffd600;
+      --orange: #ff9100;
+      --red: #ff1744;
+      --text-1: #f4f4f5;
+      --text-2: rgba(244, 244, 245, 0.7);
+      --text-3: rgba(244, 244, 245, 0.4);
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 22px;
+      --font: 'Inter', sans-serif;
+      --mono: 'Fira Code', monospace;
+      --ease: cubic-bezier(0.4, 0, 0.2, 1);
+
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background-color: var(--bg-base);
+      color: var(--text-2);
+      font-family: var(--font);
+      overflow-x: hidden;
+      min-height: 100vh;
+      display: flex;
+    }
+
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--bg-card);
+      border-radius: 3px;
+    }
+
+    /* ── SIDEBAR ─────────────────────────────────────────────── */
+
+
+
+
+
+    .brand-logo svg {
+      width: 32px;
+      height: 32px;
+    }
+
+
+    /* ── MAIN LAYOUT ─────────────────────────────────────────── */
+    .main {
+      flex: 1;
+      padding: 28px 32px;
+      min-height: 100vh;
+    }
+
+    /* ── HEADER ──────────────────────────────────────────────── */
+    .page-header {
+      margin-bottom: 28px;
+    }
+
+    .page-header h1 {
+      font-size: 26px;
+      font-weight: 900;
+      color: var(--text-1);
+      letter-spacing: -0.5px;
+      line-height: 1.2;
+    }
+
+    .page-header h1 span {
+      background: linear-gradient(135deg, var(--accent-light), var(--cyan));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .page-header p {
+      color: var(--text-3);
+      font-size: 14px;
+      margin-top: 6px;
+      line-height: 1.5;
+    }
+
+    /* ── HERO INPUT SECTION ──────────────────────────────────── */
+    .hero-form-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 32px 36px;
+      margin-bottom: 28px;
+      backdrop-filter: blur(10px);
+    }
+
+    .hero-form-card h2 {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--text-1);
+      margin-bottom: 6px;
+    }
+
+    .hero-form-card p {
+      font-size: 13px;
+      color: var(--text-3);
+      margin-bottom: 24px;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      align-items: end;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-2);
+      letter-spacing: 0.04em;
+    }
+
+    .form-input {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--text-1);
+      font-family: var(--font);
+      font-size: 14px;
+      padding: 11px 16px;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      width: 100%;
+    }
+
+    .form-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+
+    .form-input::placeholder {
+      color: var(--text-3);
+    }
+
+    .form-btn {
+      background: linear-gradient(135deg, var(--accent), #5c2bd9);
+      border: none;
+      border-radius: 10px;
+      color: var(--text-1); font-family: var(--font);
+      font-size: 14px;
+      font-weight: 700;
+      padding: 12px 28px;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+      letter-spacing: 0.01em;
+      box-shadow: 0 4px 20px rgba(124, 77, 255, 0.35);
+    }
+
+    .form-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 24px rgba(124, 77, 255, 0.5);
+    }
+
+    .form-btn:active {
+      transform: translateY(0);
+    }
+
+    .optional-competitors {
+      margin-top: 16px;
+    }
+
+    .optional-label {
+      font-size: 11.5px;
+      color: var(--text-3);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .optional-badge {
+      background: var(--bg-card);
+      border-radius: 4px;
+      padding: 1px 6px;
+      font-size: 10px;
+    }
+
+    .comp-inputs-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .comp-input-mini {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text-1);
+      font-family: var(--font);
+      font-size: 13px;
+      padding: 8px 12px;
+      outline: none;
+      transition: border-color 0.2s;
+      width: 200px;
+    }
+
+    .comp-input-mini:focus {
+      border-color: rgba(124, 77, 255, 0.4);
+    }
+
+    .comp-input-mini::placeholder {
+      color: var(--text-3);
+    }
+
+    .add-comp-btn {
+      background: var(--bg-card);
+      border: 1px dashed rgba(255, 255, 255, 0.15);
+      border-radius: 8px;
+      color: var(--text-3);
+      font-family: var(--font);
+      font-size: 12px;
+      padding: 8px 14px;
+      cursor: pointer;
+      transition: all 0.18s;
+    }
+
+    .add-comp-btn:hover {
+      color: var(--text-2);
+      border-color: rgba(255, 255, 255, 0.25);
+    }
+
+    /* ── GLASS CARDS ─────────────────────────────────────────── */
+    .glass-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 24px;
+      margin-bottom: 20px;
+      backdrop-filter: blur(10px);
+    }
+
+    .card-title {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-1);
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 18px;
+    }
+
+    .card-title svg {
+      color: var(--accent);
+      flex-shrink: 0;
+    }
+
+    .card-title .badge {
+      margin-left: auto;
+      font-size: 10.5px;
+      font-weight: 600;
+      padding: 3px 9px;
+      border-radius: 20px;
+    }
+
+    .badge-verified {
+      background: rgba(0, 230, 118, 0.12);
+      color: var(--green);
+      border: 1px solid rgba(0, 230, 118, 0.2);
+    }
+
+    .badge-ai {
+      background: rgba(124, 77, 255, 0.12);
+      color: var(--accent);
+      border: 1px solid rgba(124, 77, 255, 0.2);
+    }
+
+    .badge-pred {
+      background: rgba(255, 193, 7, 0.1);
+      color: #ffc107;
+      border: 1px solid rgba(255, 193, 7, 0.2);
+    }
+
+    /* ── GRID LAYOUTS ────────────────────────────────────────── */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+
+    @media (max-width: 1100px) {
+      .grid-4 {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 800px) {
+
+      .grid-2,
+      .grid-3 {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* ── METRIC GAUGES ───────────────────────────────────────── */
+    .gauge-ring {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .gauge-ring svg {
+      overflow: visible;
+    }
+
+    .gauge-label {
+      font-size: 12px;
+      color: var(--text-3);
+      text-align: center;
+    }
+
+    .gauge-value {
+      font-size: 22px;
+      font-weight: 800;
+      font-family: var(--mono);
+      color: var(--text-1);
+    }
+
+    /* ── STAT TILES ──────────────────────────────────────────── */
+    .stat-tile {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 16px 18px;
+    }
+
+    .stat-tile__label {
+      font-size: 11px;
+      color: var(--text-3);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 6px;
+    }
+
+    .stat-tile__value {
+      font-size: 24px;
+      font-weight: 900;
+      color: var(--text-1);
+      font-family: var(--mono);
+      line-height: 1;
+    }
+
+    .stat-tile__sub {
+      font-size: 11.5px;
+      color: var(--text-3);
+      margin-top: 4px;
+    }
+
+    .stat-tile.accent {
+      border-color: rgba(124, 77, 255, 0.3);
+      background: rgba(124, 77, 255, 0.06);
+    }
+
+    .stat-tile.green {
+      border-color: rgba(0, 230, 118, 0.25);
+      background: rgba(0, 230, 118, 0.06);
+    }
+
+    .stat-tile.cyan {
+      border-color: rgba(0, 229, 255, 0.25);
+      background: rgba(0, 229, 255, 0.06);
+    }
+
+    .stat-tile.orange {
+      border-color: rgba(255, 145, 0, 0.25);
+      background: rgba(255, 145, 0, 0.06);
+    }
+
+    .stat-tile__value.green {
+      color: var(--green);
+    }
+
+    .stat-tile__value.cyan {
+      color: var(--cyan);
+    }
+
+    .stat-tile__value.accent {
+      color: var(--accent);
+    }
+
+    .stat-tile__value.orange {
+      color: var(--orange);
+    }
+
+    .stat-tile__value.red {
+      color: var(--red);
+    }
+
+    .stat-tile__value.yellow {
+      color: var(--yellow);
+    }
+
+    /* ── HONESTY NOTE ────────────────────────────────────────── */
+    .honesty-note {
+      background: rgba(255, 193, 7, 0.07);
+      border: 1px solid rgba(255, 193, 7, 0.2);
+      border-radius: 10px;
+      padding: 12px 16px;
+      font-size: 12.5px;
+      color: rgba(255, 255, 255, 0.6);
+      line-height: 1.5;
+      margin-bottom: 20px;
+    }
+
+    .honesty-note strong {
+      color: #ffc107;
+    }
+
+    /* ── COMPETITOR PROFILE CARD ─────────────────────────────── */
+    .comp-profile-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 18px;
+      margin-bottom: 20px;
+    }
+
+    .comp-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      transition: border-color 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .comp-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent), var(--cyan));
+    }
+
+    .comp-card:hover {
+      border-color: rgba(124, 77, 255, 0.3);
+    }
+
+    .comp-card.unreachable {
+      opacity: 0.55;
+      filter: grayscale(0.5);
+    }
+
+    .comp-card__header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .comp-card__avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--text-1); background: linear-gradient(135deg, var(--accent), #0052ff);
+    }
+
+    .comp-card__domain {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-1);
+    }
+
+    .comp-card__cat {
+      font-size: 11.5px;
+      color: var(--text-3);
+      margin-top: 2px;
+    }
+
+    .comp-card__score-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .mini-score {
+      font-size: 28px;
+      font-weight: 900;
+      font-family: var(--mono);
+    }
+
+    .score-label {
+      font-size: 11px;
+      color: var(--text-3);
+    }
+
+    .comp-tag {
+      display: inline-flex;
+      align-items: center;
+      background: var(--bg-card);
+      border-radius: 5px;
+      padding: 2px 8px;
+      font-size: 11px;
+      color: var(--text-2);
+      margin: 2px;
+    }
+
+    .comp-card__section {
+      margin-bottom: 12px;
+    }
+
+    .comp-card__section-label {
+      font-size: 10.5px;
+      color: var(--text-3);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      margin-bottom: 5px;
+    }
+
+    .comp-card__tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2px;
+    }
+
+    .comp-bar {
+      height: 4px;
+      background: var(--bg-card);
+      border-radius: 2px;
+      margin-top: 4px;
+    }
+
+    .comp-bar__fill {
+      height: 100%;
+      border-radius: 2px;
+      transition: width 0.8s var(--ease);
+    }
+
+    .auto-badge {
+      background: rgba(0, 229, 255, 0.1);
+      color: var(--cyan);
+      font-size: 10px;
+      padding: 2px 7px;
+      border-radius: 4px;
+      border: 1px solid rgba(0, 229, 255, 0.2);
+      margin-left: auto;
+    }
+
+    /* ── COMPARISON TABLE ────────────────────────────────────── */
+    .comp-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    .comp-table th {
+      padding: 10px 14px;
+      text-align: left;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-3);
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+
+    .comp-table td {
+      padding: 10px 14px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+      color: var(--text-2);
+      vertical-align: middle;
+    }
+
+    .comp-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .comp-table tr:hover td {
+      background: var(--bg-card);
+    }
+
+    .comp-table .yours td {
+      background: rgba(124, 77, 255, 0.06);
+    }
+
+    .comp-table .yours td:first-child {
+      border-left: 2px solid var(--accent);
+    }
+
+    .tick {
+      color: var(--green);
+      font-weight: 700;
+    }
+
+    .cross {
+      color: var(--red);
+      font-weight: 700;
+    }
+
+    /* ── AI INSIGHT Q&A ──────────────────────────────────────── */
+    .qa-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .qa-item {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .qa-question {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 18px;
+      cursor: pointer;
+      transition: background 0.15s;
+      user-select: none;
+    }
+
+    .qa-question:hover {
+      background: var(--bg-card);
+    }
+
+    .qa-question .q-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 7px;
+      background: rgba(124, 77, 255, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 14px;
+    }
+
+    .qa-question .q-text {
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--text-1);
+      flex: 1;
+    }
+
+    .qa-question .q-chevron {
+      color: var(--text-3);
+      transition: transform 0.2s;
+    }
+
+    .qa-item.open .q-chevron {
+      transform: rotate(90deg);
+    }
+
+    .qa-answer {
+      display: none;
+      padding: 0 18px 16px 58px;
+      font-size: 13.5px;
+      color: var(--text-2);
+      line-height: 1.65;
+      border-top: 1px solid var(--border);
+      padding-top: 12px;
+    }
+
+    .qa-item.open .qa-answer {
+      display: block;
+    }
+
+    /* ── MARKET DIALS ────────────────────────────────────────── */
+    .market-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+
+    @media (max-width: 1000px) {
+      .market-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    .market-dial {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .market-dial__label {
+      font-size: 11px;
+      color: var(--text-3);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      margin-bottom: 12px;
+    }
+
+    .market-dial__value {
+      font-size: 28px;
+      font-weight: 900;
+      font-family: var(--mono);
+      color: var(--text-1);
+    }
+
+    .market-dial__sub {
+      font-size: 12px;
+      color: var(--text-3);
+      margin-top: 4px;
+    }
+
+    /* ── RECOMMENDATION CARDS ────────────────────────────────── */
+    .rec-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 18px 20px;
+      margin-bottom: 12px;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 14px;
+      align-items: start;
+      transition: border-color 0.2s;
+    }
+
+    .rec-card:hover {
+      border-color: rgba(124, 77, 255, 0.25);
+    }
+
+    .rec-priority {
+      width: 36px;
+      height: 36px;
+      border-radius: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      font-weight: 900;
+      flex-shrink: 0;
+    }
+
+    .rec-priority.p1 {
+      background: rgba(255, 23, 68, 0.15);
+      color: var(--red);
+    }
+
+    .rec-priority.p2 {
+      background: rgba(255, 145, 0, 0.15);
+      color: var(--orange);
+    }
+
+    .rec-priority.p3 {
+      background: rgba(255, 214, 0, 0.12);
+      color: var(--yellow);
+    }
+
+    .rec-priority.p4 {
+      background: rgba(0, 229, 255, 0.1);
+      color: var(--cyan);
+    }
+
+    .rec-priority.p5 {
+      background: rgba(124, 77, 255, 0.12);
+      color: var(--accent);
+    }
+
+    .rec-body h4 {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--text-1);
+      margin-bottom: 5px;
+    }
+
+    .rec-body p {
+      font-size: 12.5px;
+      color: var(--text-3);
+      line-height: 1.5;
+    }
+
+    .rec-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      align-items: flex-end;
+      flex-shrink: 0;
+    }
+
+    .rec-impact {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 5px;
+    }
+
+    .impact-high {
+      background: rgba(0, 230, 118, 0.12);
+      color: var(--green);
+    }
+
+    .impact-med {
+      background: rgba(255, 193, 7, 0.1);
+      color: #ffc107;
+    }
+
+    .rec-cost {
+      font-size: 11px;
+      color: var(--text-3);
+    }
+
+    .rec-time {
+      font-size: 11px;
+      color: var(--text-3);
+    }
+
+    .confidence-bar {
+      width: 80px;
+      height: 3px;
+      background: var(--bg-card);
+      border-radius: 2px;
+      margin-top: 4px;
+    }
+
+    .confidence-bar__fill {
+      height: 100%;
+      border-radius: 2px;
+      background: linear-gradient(90deg, var(--accent), var(--cyan));
+    }
+
+    /* ── BUSINESS ESTIMATE CARDS ─────────────────────────────── */
+    .biz-estimate-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+
+    @media (max-width: 900px) {
+      .biz-estimate-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .biz-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px 18px;
+      position: relative;
+    }
+
+    .biz-card__type {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--text-3);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 6px;
+    }
+
+    .biz-card__value {
+      font-size: 22px;
+      font-weight: 900;
+      color: var(--text-1);
+      font-family: var(--mono);
+      line-height: 1.1;
+      margin-bottom: 4px;
+    }
+
+    .biz-card__label {
+      font-size: 11.5px;
+      color: var(--text-3);
+    }
+
+    .ai-prediction-badge {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: rgba(124, 77, 255, 0.12);
+      color: var(--accent);
+      font-size: 9px;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    .status-dot {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      margin-right: 4px;
+      background: var(--green);
+    }
+
+    /* ── TOPIC CLUSTER PILLS ─────────────────────────────────── */
+    .topic-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: rgba(124, 77, 255, 0.1);
+      border: 1px solid rgba(124, 77, 255, 0.2);
+      border-radius: 20px;
+      padding: 4px 12px;
+      font-size: 12px;
+      color: var(--accent);
+      margin: 3px;
+    }
+
+    .keyword-pill {
+      display: inline-flex;
+      align-items: center;
+      background: rgba(0, 229, 255, 0.08);
+      border: 1px solid rgba(0, 229, 255, 0.18);
+      border-radius: 20px;
+      padding: 4px 10px;
+      font-size: 12px;
+      color: var(--cyan);
+      margin: 3px;
+    }
+
+    .schema-pill {
+      display: inline-flex;
+      align-items: center;
+      background: rgba(0, 230, 118, 0.08);
+      border: 1px solid rgba(0, 230, 118, 0.18);
+      border-radius: 20px;
+      padding: 4px 10px;
+      font-size: 12px;
+      color: var(--green);
+      margin: 3px;
+    }
+
+    /* ── SECTION TABS ────────────────────────────────────────── */
+    .section-tabs {
+      display: flex;
+      gap: 4px;
+      padding: 4px;
+      background: var(--bg-card);
+      border-radius: 10px;
+      margin-bottom: 20px;
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 8px 14px;
+      border: none;
+      background: transparent;
+      color: var(--text-3);
+      font-family: var(--font);
+      font-size: 12.5px;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.18s;
+      white-space: nowrap;
+    }
+
+    .tab-btn.active {
+      background: rgba(124, 77, 255, 0.2);
+      color: var(--accent);
+    }
+
+    .tab-btn:hover:not(.active) {
+      color: var(--text-2);
+      background: var(--bg-card);
+    }
+
+    .tab-panel {
+      display: none;
+    }
+
+    .tab-panel.active {
+      display: block;
+    }
+
+    /* ── SVG PROGRESS BAR ────────────────────────────────────── */
+    .svg-bar-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .svg-bar-label {
+      font-size: 12px;
+      color: var(--text-2);
+      width: 130px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      flex-shrink: 0;
+    }
+
+    .svg-bar-track {
+      flex: 1;
+      height: 8px;
+      background: var(--bg-card);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .svg-bar-fill {
+      height: 100%;
+      border-radius: 4px;
+      transition: width 0.9s var(--ease);
+    }
+
+    .svg-bar-value {
+      font-size: 12px;
+      color: var(--text-3);
+      width: 48px;
+      text-align: right;
+      flex-shrink: 0;
+      font-family: var(--mono);
+    }
+
+    /* ── EXEC SUMMARY ────────────────────────────────────────── */
+    .exec-summary {
+      background: radial-gradient(120% 140% at 0% 0%, rgba(124, 77, 255, 0.12) 0%, rgba(0, 229, 255, 0.05) 50%, transparent 100%),
+        rgba(14, 16, 28, 0.8);
+      border: 1px solid rgba(124, 77, 255, 0.22);
+      border-radius: var(--radius-md);
+      padding: 24px 28px;
+      margin-bottom: 20px;
+    }
+
+    .exec-summary__title {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .exec-summary__body {
+      font-size: 15px;
+      color: var(--text-1);
+      line-height: 1.7;
+      font-weight: 400;
+    }
+
+    /* ── LOADING OVERLAY ─────────────────────────────────────── */
+    #compLoader {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(5, 6, 12, 0.97);
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      backdrop-filter: blur(24px);
+    }
+
+    .loader-box {
+      text-align: center;
+      width: 90%;
+      max-width: 520px;
+      padding: 40px;
+      background: var(--bg-card);
+      border: 1px solid rgba(124, 77, 255, 0.2);
+      border-radius: 24px;
+    }
+
+    .loader-spinner {
+      width: 56px;
+      height: 56px;
+      border: 3px solid rgba(124, 77, 255, 0.1);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 22px;
+    }
+
+    .loader-box h2 {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--text-1);
+      margin-bottom: 8px;
+    }
+
+    .loader-box p {
+      color: var(--text-3);
+      font-size: 13.5px;
+      margin-bottom: 28px;
+    }
+
+    .loader-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      text-align: left;
+      max-width: 340px;
+      margin: 0 auto;
+    }
+
+    .step-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 13.5px;
+      color: rgba(255, 255, 255, 0.25);
+      transition: color 0.3s;
+    }
+
+    .step-icon {
+      font-size: 14px;
+      width: 20px;
+      text-align: center;
+      display: inline-block;
+    }
+
+    .step-active {
+      display: inline-block;
+      animation: spin 1.5s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(12px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .animate-in {
+      animation: fadeIn 0.45s var(--ease) both;
+    }
+
+    @media (max-width: 900px) {
+      .grid-2-col-responsive {
+        grid-template-columns: 1fr !important;
+      }
+    }
+
+    /* ── PRINT STYLES ────────────────────────────────────────── */
+    @media print {
+      body {
+        background: #fff !important;
+        color: #000 !important;
+      }
+
+      .sidebar,
+      .hero-form-card,
+      #compLoader,
+      .add-comp-btn,
+      .rec-priority,
+      .ml-auto {
+        display: none !important;
+      }
+
+      .main {
+        padding: 0 !important;
+        margin: 0 !important;
+        width: 100% !important;
+      }
+
+      .glass-card {
+        background: #fff !important;
+        border: 1px solid #ddd !important;
+        color: #000 !important;
+        page-break-inside: avoid;
+        box-shadow: none !important;
+      }
+
+      .card-title,
+      .exec-summary__title {
+        color: #000 !important;
+        border-bottom: 2px solid #000 !important;
+      }
+
+      .comp-table th {
+        background: #eee !important;
+        color: #000 !important;
+      }
+
+      .comp-table td {
+        color: #000 !important;
+        border-bottom: 1px solid #ddd !important;
+      }
+
+      .keyword-pill,
+      .schema-pill,
+      .topic-pill {
+        background: #f0f0f0 !important;
+        color: #333 !important;
+        border: 1px solid #ccc !important;
+      }
+
+      .biz-card {
+        background: #f9f9f9 !important;
+        border: 1px solid #ddd !important;
+        color: #000 !important;
+      }
+    }
+  
+    /* Animated Glowing Search Bar */
+    .animated-glowing-search-wrapper {
+      position: relative;
+      border-radius: var(--radius-md);
+      padding: 1.5px;
+      background: var(--bg-card);
+      overflow: hidden;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      transition: all 0.3s ease;
+      width: 100%;
+    }
+
+    .animated-glowing-search-wrapper::before {
+      content: '';
+      position: absolute;
+      top: -100%; left: -100%;
+      width: 300%; height: 300%;
+      background: conic-gradient(from 0deg, transparent 0%, transparent 40%, var(--accent) 50%, var(--accent) 60%, transparent 100%);
+      animation: searchGlowSpin 4s linear infinite;
+      z-index: -2;
+      opacity: 0.15;
+      transition: opacity 0.3s ease;
+    }
+
+    .animated-glowing-search-wrapper:focus-within::before {
+      opacity: 1;
+      animation: searchGlowSpin 2s linear infinite;
+    }
+
+    .animated-glowing-search-wrapper::after {
+      content: '';
+      position: absolute;
+      inset: 1.5px;
+      background: var(--bg-card);
+      border-radius: calc(var(--radius-md) - 1.5px);
+      z-index: -1;
+    }
+
+    @keyframes searchGlowSpin {
+      100% { transform: rotate(360deg); }
+    }
+
+    .animated-glowing-search-input {
+      width: 100%;
+      padding: 14px 20px;
+      background: transparent;
+      border: none;
+      color: var(--text-1);
+      font-size: 14px;
+      outline: none;
+      z-index: 2;
+    }
+    .animated-glowing-search-input::placeholder {
+      color: var(--text-3);
+    }
+
+  </style>
+</head>
+
+<body>
+
+  <!-- SIDEBAR -->
+
+
+  <!-- LOADING OVERLAY -->
+  <div id="compLoader">
+    <div class="loader-box">
+      <div class="loader-spinner"></div>
+      <h2>AI Competitor Intelligence</h2>
+      <p>Crawling your site, discovering competitors, and running deep analysis…</p>
+      <div class="loader-steps">
+        <div class="step-item" id="step-0"><span class="step-icon step-pending">○</span><span>Discovering real
+            competitors...</span></div>
+        <div class="step-item" id="step-1"><span class="step-icon step-pending">○</span><span>Analyzing website
+            niche...</span></div>
+        <div class="step-item" id="step-2"><span class="step-icon step-pending">○</span><span>Comparing with similar
+            businesses...</span></div>
+        <div class="step-item" id="step-3"><span class="step-icon step-pending">○</span><span>Ranking
+            competitors...</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <main class="main" id="mainContent">
+    <!-- Page Header -->
+    <div class="page-header">
+      <h1>AI Competitor <span>Intelligence</span> & Market Analysis</h1>
+      <p>Enterprise-grade competitor discovery, market positioning, keyword strategy, and investment estimation —
+        powered by real crawl data and AI analysis.</p>
+    </div>
+
+    <!-- Hero Input Form -->
+    <div class="hero-form-card">
+      <h2>Analyse Your Competitive Landscape</h2>
+      <p>Enter your website URL. crawlX will automatically discover and analyse your competitors, market position, and
+        growth opportunities.</p>
+      <form id="intelligenceForm">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="userUrl">Your Website URL</label>
+            <input type="text" class="form-input" id="userUrl" placeholder="e.g. mysite.com or https://mysite.com"
+              autocomplete="off">
+          </div>
+          <button type="submit" class="form-btn" id="analyseBtn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+              style="margin-right:7px;vertical-align:-3px">
+              <circle cx="11" cy="11" r="8" />
+              <path d="m21 21-4.35-4.35" />
+            </svg>
+            Analyse Now
+          </button>
+        </div>
+
+        <div class="optional-competitors">
+          <div class="optional-label">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10" />
+              <line x1="12" y1="8" x2="12" y2="12" />
+              <line x1="12" y1="16" x2="12.01" y2="16" />
+            </svg>
+            Optional: Also analyse specific competitors <span class="optional-badge">up to 4</span>
+          </div>
+          <div class="comp-inputs-row" id="compInputsRow">
+            <input type="text" class="comp-input-mini comp-manual" placeholder="competitor1.com" autocomplete="off">
+            <input type="text" class="comp-input-mini comp-manual" placeholder="competitor2.com" autocomplete="off">
+            <button type="button" class="add-comp-btn" id="addCompBtn">+ Add</button>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <!-- Results Area (hidden until analysis complete) -->
+    <div id="resultsArea" style="display:none;">
+
+      <!-- Phase 1: Business Fingerprint Card -->
+      <div class="glass-card" id="businessFingerprintCard">
+        <div class="card-title">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+          </svg>
+          Business Fingerprint DNA
+          <div class="badge badge-ai">AI NORMALIZED</div>
+        </div>
+
+        <div class="grid-2">
+          <div class="stat-tile">
+            <div class="stat-tile__label">Company Name</div>
+            <div class="stat-tile__value" id="bf-company">Unknown</div>
+            <div class="stat-tile__sub">Primary Entity</div>
+          </div>
+          <div class="stat-tile">
+            <div class="stat-tile__label">Primary Industry</div>
+            <div class="stat-tile__value" id="bf-industry">Unknown</div>
+            <div class="stat-tile__sub" id="bf-subindustry">Sub-Industry: Unknown</div>
+          </div>
+        </div>
+
+        <div class="grid-3">
+          <div class="stat-tile accent">
+            <div class="stat-tile__label">Business Model</div>
+            <div class="stat-tile__value accent" id="bf-model" style="font-size: 18px;">Unknown</div>
+          </div>
+          <div class="stat-tile cyan">
+            <div class="stat-tile__label">Target Market</div>
+            <div class="stat-tile__value cyan" id="bf-market" style="font-size: 18px;">Unknown</div>
+          </div>
+          <div class="stat-tile orange">
+            <div class="stat-tile__label">Target Audience</div>
+            <div class="stat-tile__value orange" id="bf-audience" style="font-size: 18px;">Unknown</div>
+          </div>
+        </div>
+
+        <div style="margin-top:24px;">
+          <h4
+            style="font-size: 12px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 12px;">
+            Core Offerings & DNA</h4>
+
+          <div style="display:flex; flex-direction:column; gap: 16px;">
+            <div>
+              <span style="font-size: 12px; color: var(--text-2); display: inline-block; width: 80px;">Products:</span>
+              <span id="bf-products"></span>
+            </div>
+            <div>
+              <span style="font-size: 12px; color: var(--text-2); display: inline-block; width: 80px;">Services:</span>
+              <span id="bf-services"></span>
+            </div>
+            <div>
+              <span style="font-size: 12px; color: var(--text-2); display: inline-block; width: 80px;">Topics:</span>
+              <span id="bf-topics"></span>
+            </div>
+          </div>
+        </div>
+
+        <div
+          style="margin-top:24px; padding-top: 16px; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between;">
+          <div style="font-size: 12px; color: var(--text-3);">
+            <strong>Evidence:</strong> <span id="bf-evidence">Pending</span>
+          </div>
+          <div class="gauge-ring" style="flex-direction: row;">
+            <div class="gauge-label">Confidence Score</div>
+            <div class="gauge-value" id="bf-confidence" style="color: var(--green);">0%</div>
+          </div>
+        </div>
+
+        <!-- Add a button to trigger Phase 2 -->
+        <div style="margin-top: 20px; text-align: right;">
+          <button id="discoverCandidatesBtn" class="form-btn" style="padding: 10px 20px; font-size: 13px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              style="margin-right:6px;vertical-align:-2px">
+              <circle cx="11" cy="11" r="8" />
+              <path d="m21 21-4.35-4.35" />
+            </svg>
+            Discover Competitors
+          </button>
+        </div>
+      </div>
+
+      <!-- Phase 2: Competitor Discovery Table -->
+      <div class="glass-card" id="candidateDiscoveryCard" style="display:none; margin-top: 20px;">
+        <div class="card-title">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+            <circle cx="9" cy="7" r="4" />
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+          </svg>
+          Competitor Discovery Pool
+          <div class="badge" style="background: rgba(0,229,255,0.1); color: var(--cyan);">UNVERIFIED</div>
+        </div>
+
+        <div id="candidateLoader"
+          style="display:none; text-align:center; padding: 20px; color: var(--text-3); font-size: 13px;">
+          <div class="loader-spinner" style="width: 24px; height: 24px; border-width: 2px; margin: 0 auto 10px;"></div>
+          Running multi-source discovery (SERP, Knowledge Graph)...
+        </div>
+
+        <div style="overflow-x: auto;">
+          <table class="comp-table" id="candidatesTable" style="display:none;">
+            <thead>
+              <tr>
+                <th>Competitor</th>
+                <th>Industry</th>
+                <th>Category (Intent)</th>
+                <th>Evidence / Source</th>
+                <th>Score</th>
+              </tr>
+            </thead>
+            <tbody id="candidatesTbody">
+            </tbody>
+          </table>
+        </div>
+        <div style="margin-top: 20px; text-align: right;">
+          <button id="classifyBusinessBtn" class="form-btn" style="padding: 10px 20px; font-size: 13px;" disabled>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              style="margin-right:6px;vertical-align:-2px">
+              <path
+                d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z">
+              </path>
+            </svg>
+            Run Deep Classification
+          </button>
+        </div>
+      </div>
+
+      <!-- Phase 3: Business Classification Profile -->
+      <div class="glass-card" id="businessClassificationCard" style="display:none; margin-top: 20px;">
+        <div class="card-title">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2v20" />
+            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+          </svg>
+          Deep Business Classification
+          <div class="badge" style="background: rgba(0, 200, 83, 0.1); color: #00c853;">VERIFIED</div>
+        </div>
+
+        <div id="classLoader"
+          style="display:none; text-align:center; padding: 20px; color: var(--text-3); font-size: 13px;">
+          <div class="loader-spinner" style="width: 24px; height: 24px; border-width: 2px; margin: 0 auto 10px;"></div>
+          Running AI Normalization against competitors and DNA...
+        </div>
+
+        <div id="classContent" style="display:none;">
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
+            <div class="stat-tile">
+              <div class="stat-label">Primary Industry</div>
+              <div class="stat-value" id="bc-industry">Loading...</div>
+            </div>
+            <div class="stat-tile">
+              <div class="stat-label">Brand Position</div>
+              <div class="stat-value" id="bc-brand">Loading...</div>
+            </div>
+            <div class="stat-tile">
+              <div class="stat-label">Market Scope</div>
+              <div class="stat-value" id="bc-market">Loading...</div>
+            </div>
+          </div>
+
+          <div style="margin-top: 24px;">
+            <div class="stat-label">Audience Segments</div>
+            <div id="bc-audiences" style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px;"></div>
+          </div>
+
+          <div style="margin-top: 24px;">
+            <div class="stat-label">Technology Stack</div>
+            <div id="bc-tech" style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px;"></div>
+          </div>
+
+          <div
+            style="margin-top:24px; padding-top: 16px; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between;">
+            <div style="font-size: 12px; color: var(--text-3);">
+              <strong>Evidence:</strong> <span id="bc-evidence"></span>
+            </div>
+            <div class="gauge-ring" style="flex-direction: row;">
+              <div class="gauge-label">Confidence</div>
+              <div class="gauge-value" id="bc-confidence" style="color: var(--green);">0%</div>
+            </div>
+          </div>
+        </div>
+        <div style="margin-top: 20px; text-align: right;">
+          <button id="verifyCompetitorsBtn" class="form-btn" style="padding: 10px 20px; font-size: 13px;" disabled>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              style="margin-right:6px;vertical-align:-2px">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+              <polyline points="22 4 12 14.01 9 11.01" />
+            </svg>
+            Verify Competitors
+          </button>
+        </div>
+      </div>
+
+      <!-- On-Page SEO Score Comparison Card -->
+      <div class="glass-card" id="onPageSeoComparisonCard" style="display:none; margin-top: 20px;">
+        <div class="card-title">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="20" x2="18" y2="10" />
+            <line x1="12" y1="20" x2="12" y2="4" />
+            <line x1="6" y1="20" x2="6" y2="14" />
+          </svg>
+          On-Page SEO Score Comparison
+          <div class="badge" style="background: rgba(0, 200, 83, 0.1); color: #00c853;">• Verified Crawl Data</div>
+        </div>
+        
+        <div id="onPageSeoRings" style="display: flex; justify-content: space-around; align-items: center; flex-wrap: wrap; gap: 20px; margin-bottom: 30px; text-align: center;">
+          <!-- Rings will be generated dynamically -->
+        </div>
+
+        <div style="margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--border);">
+          <h4 id="breakdownTitle" style="margin-bottom: 16px; color: var(--text-1); font-size: 14px; font-weight: 600;">Score Dimension Breakdown</h4>
+          <div id="dimensionBars" style="display: flex; flex-direction: column; gap: 12px; max-width: 600px; margin-bottom: 30px;">
+            <!-- Bars will be generated dynamically -->
+          </div>
+        </div>
+
+        <div style="margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--border);">
+          <h4 style="margin-bottom: 16px; color: var(--text-1); font-size: 14px; font-weight: 600;">Competitor Profiles</h4>
+          <div id="competitorProfilesGrid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px;">
+            <!-- Competitor Profile Cards will be generated dynamically -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Full Comparison Matrix Card -->
+      <div class="glass-card" id="fullComparisonMatrixCard" style="display:none; margin-top: 20px;">
+        <div class="card-title">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+            <line x1="3" y1="9" x2="21" y2="9" />
+            <line x1="9" y1="21" x2="9" y2="9" />
+          </svg>
+          Full Comparison Matrix
+          <div class="badge" style="background: rgba(0, 200, 83, 0.1); color: #00c853;">• Verified Crawl Data</div>
+        </div>
+        <div style="overflow-x: auto;">
+          <table class="comp-table" id="fullMatrixTable">
+            <thead>
+              <tr id="fullMatrixHead">
+                <!-- Columns dynamically added -->
+              </tr>
+            </thead>
+            <tbody id="fullMatrixBody">
+              <!-- Rows dynamically added -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Market Intelligence Dashboard Card -->
+      <div class="glass-card" id="marketIntelligenceCard" style="display:none; margin-top: 20px;">
+        <div class="card-title">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+          </svg>
+          Market Intelligence Dashboard
+          <div id="marketIntelBadge" class="badge" style="background: rgba(255, 171, 0, 0.1); color: #ffab00;">✦ AI Prediction</div>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px;">
+          <div class="stat-tile" style="text-align: center; padding: 20px;">
+            <div class="stat-label">Competition Level</div>
+            <div class="stat-value" id="mi-compLevel" style="font-size: 28px; font-weight: 800; margin: 10px 0;">Loading...</div>
+            <div class="stat-label" id="mi-compScore" style="font-size: 12px; color: var(--text-3);">Score: --</div>
+          </div>
+          <div class="stat-tile" style="text-align: center; padding: 20px;">
+            <div class="stat-label">Opportunity Score</div>
+            <div class="stat-value" id="mi-oppScore" style="font-size: 28px; font-weight: 800; color: var(--cyan); margin: 10px 0;">Loading...</div>
+            <div class="stat-label" style="font-size: 12px; color: var(--text-3);">Higher = more opportunity</div>
+          </div>
+          <div class="stat-tile" style="text-align: center; padding: 20px;">
+            <div class="stat-label">Market Saturation</div>
+            <div class="stat-value" id="mi-saturation" style="font-size: 28px; font-weight: 800; color: var(--orange); margin: 10px 0;">Loading...</div>
+            <div class="stat-label" style="font-size: 12px; color: var(--text-3);">Based on competitor density</div>
+          </div>
+          <div class="stat-tile" style="text-align: center; padding: 20px;">
+            <div class="stat-label">Industry Difficulty</div>
+            <div class="stat-value" id="mi-difficulty" style="font-size: 28px; font-weight: 800; color: var(--accent); margin: 10px 0;">Loading...</div>
+            <div class="stat-label" id="mi-difficultyScore" style="font-size: 12px; color: var(--text-3);">Score: --</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Business & Traffic Intelligence Card -->
+      <div class="glass-card" id="businessTrafficIntelligenceCard" style="display:none; margin-top: 20px;">
+        <div class="card-title">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="12" y1="1" x2="12" y2="23" />
+            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+          </svg>
+          Business & Traffic Intelligence
+          <div class="badge" style="background: rgba(255, 171, 0, 0.1); color: #ffab00;">✦ AI Prediction</div>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px;">
+          <div class="stat-tile" style="padding: 16px; position: relative;">
+            <div style="font-size: 10px; color: var(--cyan); border: 1px solid var(--cyan); border-radius: 4px; padding: 1px 5px; position: absolute; right: 16px; top: 16px; font-weight: 700; text-transform: uppercase;">Estimate</div>
+            <div class="stat-label">Your Est. Monthly Traffic</div>
+            <div class="stat-value" id="bt-userTraffic" style="color: var(--cyan); margin-top: 8px;">Loading...</div>
+            <div class="stat-label" id="bt-userTrafficConf" style="font-size: 11.5px; color: var(--text-3); margin-top: 4px;">-- confidence • Formula-based</div>
+          </div>
+          <div class="stat-tile" style="padding: 16px; position: relative;">
+            <div style="font-size: 10px; color: var(--cyan); border: 1px solid var(--cyan); border-radius: 4px; padding: 1px 5px; position: absolute; right: 16px; top: 16px; font-weight: 700; text-transform: uppercase;">Estimate</div>
+            <div class="stat-label">Top Competitor Traffic</div>
+            <div class="stat-value" id="bt-topCompTraffic" style="color: var(--green); margin-top: 8px;">Loading...</div>
+            <div class="stat-label" style="font-size: 11.5px; color: var(--text-3); margin-top: 4px;">Based on crawl depth × signals</div>
+          </div>
+          <div class="stat-tile" style="padding: 16px; position: relative;">
+            <div style="font-size: 10px; color: var(--cyan); border: 1px solid var(--cyan); border-radius: 4px; padding: 1px 5px; position: absolute; right: 16px; top: 16px; font-weight: 700; text-transform: uppercase;">Estimate</div>
+            <div class="stat-label">Traffic Gap</div>
+            <div class="stat-value" id="bt-trafficGap" style="color: var(--red); margin-top: 8px;">Loading...</div>
+            <div class="stat-label" style="font-size: 11.5px; color: var(--text-3); margin-top: 4px;">Monthly visits to close</div>
+          </div>
+          <div class="stat-tile" style="padding: 16px; position: relative;">
+            <div style="font-size: 10px; color: var(--cyan); border: 1px solid var(--cyan); border-radius: 4px; padding: 1px 5px; position: absolute; right: 16px; top: 16px; font-weight: 700; text-transform: uppercase;">Estimate</div>
+            <div class="stat-label">Est. Monthly SEO Investment</div>
+            <div class="stat-value" id="bt-seoInvestment" style="margin-top: 8px;">Loading...</div>
+            <div class="stat-label" style="font-size: 11.5px; color: var(--text-3); margin-top: 4px;">Investment derived from score & page gap</div>
+          </div>
+          <div class="stat-tile" style="padding: 16px; position: relative;">
+            <div style="font-size: 10px; color: var(--cyan); border: 1px solid var(--cyan); border-radius: 4px; padding: 1px 5px; position: absolute; right: 16px; top: 16px; font-weight: 700; text-transform: uppercase;">Estimate</div>
+            <div class="stat-label">Time to Compete</div>
+            <div class="stat-value" id="bt-timeToCompete" style="margin-top: 8px;">Loading...</div>
+            <div class="stat-label" style="font-size: 11.5px; color: var(--text-3); margin-top: 4px;">Time to match competitor average</div>
+          </div>
+          <div class="stat-tile" style="padding: 16px; position: relative;">
+            <div style="font-size: 10px; color: var(--cyan); border: 1px solid var(--cyan); border-radius: 4px; padding: 1px 5px; position: absolute; right: 16px; top: 16px; font-weight: 700; text-transform: uppercase;">Estimate</div>
+            <div class="stat-label">Revenue Model Detected</div>
+            <div class="stat-value" id="bt-revModel" style="margin-top: 8px;">Loading...</div>
+            <div class="stat-label" id="bt-revValue" style="font-size: 11.5px; color: var(--text-3); margin-top: 4px;">Avg. value per visitor: --</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Competitor Keyword Strategy & Competitor Topic Clusters Card -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px;" class="grid-2-col-responsive" id="keywordTopicClustersContainer">
+        <div class="glass-card" id="competitorKeywordStrategyCard" style="display:none; margin-bottom: 0;">
+          <div class="card-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
+            Competitor Keyword Strategy
+            <div class="badge" style="background: rgba(0, 200, 83, 0.1); color: #00c853;">• Crawl Data</div>
+          </div>
+          <div style="margin-bottom: 20px;">
+            <div style="color: var(--red); font-size: 13px; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 6px;">
+              <span style="display:inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--red);"></span>
+              Gaps — Competitor keywords you're not targeting:
+            </div>
+            <div id="keywordGapsList" style="display: flex; gap: 8px; flex-wrap: wrap;"></div>
+          </div>
+          <div>
+            <div style="color: var(--green); font-size: 13px; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 6px;">
+              <span style="display:inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--green);"></span>
+              Your current keywords (from headings):
+            </div>
+            <div id="userKeywordsList" style="display: flex; gap: 8px; flex-wrap: wrap;"></div>
+          </div>
+        </div>
+
+        <div class="glass-card" id="competitorTopicClustersCard" style="display:none; margin-bottom: 0;">
+          <div class="card-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+            </svg>
+            Competitor Topic Clusters
+            <div class="badge" style="background: rgba(0, 200, 83, 0.1); color: #00c853;">• Crawl Data</div>
+          </div>
+          <div id="topicClustersList" style="display: flex; flex-direction: column; gap: 12px;">
+            <!-- Topic clusters will be added dynamically -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Phase 4: Verification Dashboard -->
+      <div class="glass-card" id="verificationDashboardCard" style="display:none; margin-top: 20px;">
+        <div class="card-title">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+          </svg>
+          Competitor Verification Engine
+          <div class="badge" style="background: rgba(0, 200, 83, 0.1); color: #00c853;">VERIFIED</div>
+        </div>
+
+        <div id="verifyLoader"
+          style="display:none; text-align:center; padding: 20px; color: var(--text-3); font-size: 13px;">
+          <div class="loader-spinner" style="width: 24px; height: 24px; border-width: 2px; margin: 0 auto 10px;"></div>
+          Running AI semantic verification against candidate pool...
+        </div>
+
+        <div id="verifyContent" style="display:none;">
+          <h4 style="margin-bottom: 12px; color: var(--text-2); font-size: 13px;">Verified True Competitors</h4>
+          <div style="overflow-x: auto; margin-bottom: 24px;">
+            <table class="comp-table" id="verifiedTable">
+              <thead>
+                <tr>
+                  <th>Competitor</th>
+                  <th>Similarity Matrix</th>
+                  <th>Confidence</th>
+                  <th>Evidence</th>
+                </tr>
+              </thead>
+              <tbody id="verifiedTbody">
+              </tbody>
+            </table>
+          </div>
+
+          <h4 style="margin-bottom: 12px; color: var(--text-3); font-size: 13px;">Rejected Candidates</h4>
+          <div style="overflow-x: auto;">
+            <table class="comp-table" id="rejectedTable" style="opacity: 0.7;">
+              <thead>
+                <tr>
+                  <th>Domain</th>
+                  <th>Reason for Rejection</th>
+                </tr>
+              </thead>
+              <tbody id="rejectedTbody">
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div style="margin-top: 20px; text-align: right;">
+          <button id="rankCompetitorsBtn" class="form-btn" style="padding: 10px 20px; font-size: 13px;" disabled>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              style="margin-right:6px;vertical-align:-2px">
+              <polygon
+                points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2">
+              </polygon>
+            </svg>
+            Rank Verified Competitors
+          </button>
+        </div>
+      </div>
+
+      <!-- Phase 5: Ranking Dashboard -->
+      <div class="glass-card" id="rankingDashboardCard" style="display:none; margin-top: 20px;">
+        <div class="card-title">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+            <path d="M12 8v4" />
+            <path d="M12 16h.01" />
+          </svg>
+          Competitor Ranking Engine
+          <div class="badge" style="background: rgba(255, 171, 0, 0.1); color: #ffab00;">RANKED</div>
+        </div>
+
+        <div id="rankLoader"
+          style="display:none; text-align:center; padding: 20px; color: var(--text-3); font-size: 13px;">
+          <div class="loader-spinner" style="width: 24px; height: 24px; border-width: 2px; margin: 0 auto 10px;"></div>
+          Calculating multi-dimensional weights and sorting Tiers...
+        </div>
+
+        <div id="rankContent" style="display:none;">
+          <h4 style="margin-bottom: 12px; color: var(--text-2); font-size: 13px;">Tier 1 - Primary Competitors</h4>
+          <div style="overflow-x: auto; margin-bottom: 24px;">
+            <table class="comp-table" id="tier1Table">
+              <thead>
+                <tr>
+                  <th>Competitor</th>
+                  <th>Overall Score</th>
+                  <th>Priority</th>
+                  <th>Business Summary</th>
+                </tr>
+              </thead>
+              <tbody id="tier1Tbody">
+              </tbody>
+            </table>
+          </div>
+
+          <h4 style="margin-bottom: 12px; color: var(--text-3); font-size: 13px;">Tier 2 & 3 - Secondary Competitors
+          </h4>
+          <div style="overflow-x: auto;">
+            <table class="comp-table" id="tierOthersTable" style="opacity: 0.8;">
+              <thead>
+                <tr>
+                  <th>Competitor</th>
+                  <th>Tier</th>
+                  <th>Score</th>
+                  <th>Summary</th>
+                </tr>
+              </thead>
+              <tbody id="tierOthersTbody">
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div style="margin-top: 20px; text-align: right;">
+          <button id="compareSeoBtn" class="form-btn" style="padding: 10px 20px; font-size: 13px;" disabled>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              style="margin-right:6px;vertical-align:-2px">
+              <path d="M21.21 15.89A10 10 0 1 1 8 2.83" />
+              <path d="M22 12A10 10 0 0 0 12 2v10z" />
+            </svg>
+            Run Automatic SEO Comparison
+          </button>
+        </div>
+      </div>
+
+      <!-- Phase 6: SEO Comparison Dashboard -->
+      <div class="glass-card" id="seoComparisonDashboardCard" style="display:none; margin-top: 20px;">
+        <div class="card-title">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+            <line x1="3" y1="9" x2="21" y2="9" />
+            <line x1="9" y1="21" x2="9" y2="9" />
+          </svg>
+          Automatic SEO Comparison Engine
+          <div class="badge" style="background: rgba(144, 202, 249, 0.1); color: #90caf9;">ANALYZED</div>
+        </div>
+
+        <div id="compareLoader"
+          style="display:none; text-align:center; padding: 20px; color: var(--text-3); font-size: 13px;">
+          <div class="loader-spinner" style="width: 24px; height: 24px; border-width: 2px; margin: 0 auto 10px;"></div>
+          Running massive side-by-side SEO analysis against Tier 1 Competitors...
+        </div>
+
+        <div id="compareContent" style="display:none;">
+          <div
+            style="padding: 16px; background: rgba(0,0,0,0.2); border-radius: 8px; border: 1px solid var(--border); margin-bottom: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <div
+                  style="font-size: 12px; color: var(--text-3); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px;">
+                  Market Comparison Report</div>
+                <div id="compareReportText"
+                  style="font-size: 13px; color: var(--text-1); line-height: 1.5; white-space: pre-wrap;"></div>
+              </div>
+            </div>
+          </div>
+
+          <h4 style="margin-bottom: 12px; color: var(--text-2); font-size: 13px;">SEO Comparison Matrix</h4>
+          <div style="overflow-x: auto;">
+            <table class="comp-table" id="matrixTable">
+              <thead>
+                <tr>
+                  <th>Competitor</th>
+                  <th>Outcome</th>
+                  <th>Tech SEO</th>
+                  <th>Performance</th>
+                  <th>Content</th>
+                  <th>EEAT</th>
+                  <th>Gap Score</th>
+                </tr>
+              </thead>
+              <tbody id="matrixTbody">
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div style="margin-top: 20px; text-align: right;">
+          <button id="analyzeOppsBtn" class="form-btn" style="padding: 10px 20px; font-size: 13px;" disabled>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              style="margin-right:6px;vertical-align:-2px">
+              <path
+                d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+              <polyline points="7.5 4.21 12 6.81 16.5 4.21" />
+              <polyline points="7.5 19.79 7.5 14.6 3 12" />
+              <polyline points="21 12 16.5 14.6 16.5 19.79" />
+              <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
+              <line x1="12" y1="22.08" x2="12" y2="12" />
+            </svg>
+            Analyze Gaps & Generate Roadmap
+          </button>
+        </div>
+      </div>
+
+      <!-- Phase 7: Gap & Opportunity Engine Dashboard -->
+      <div class="glass-card" id="gapOpportunityDashboardCard" style="display:none; margin-top: 20px;">
+        <div class="card-title">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+            <polyline points="22 4 12 14.01 9 11.01" />
+          </svg>
+          Gap & Opportunity Engine
+          <div class="badge" style="background: rgba(156, 39, 176, 0.1); color: #9c27b0;">STRATEGY</div>
+        </div>
+
+        <div id="oppLoader"
+          style="display:none; text-align:center; padding: 20px; color: var(--text-3); font-size: 13px;">
+          <div class="loader-spinner" style="width: 24px; height: 24px; border-width: 2px; margin: 0 auto 10px;"></div>
+          Synthesizing Comparison Matrix into actionable Priority Roadmaps...
+        </div>
+
+        <div id="oppContent" style="display:none;">
+
+          <h4 style="margin-bottom: 12px; color: var(--text-2); font-size: 13px;">Identified SEO Gaps</h4>
+          <div style="overflow-x: auto; margin-bottom: 24px;">
+            <table class="comp-table" id="gapsTable">
+              <thead>
+                <tr>
+                  <th>Gap Type</th>
+                  <th>Description</th>
+                  <th>Missing Elements</th>
+                </tr>
+              </thead>
+              <tbody id="gapsTbody">
+              </tbody>
+            </table>
+          </div>
+
+          <h4 style="margin-bottom: 12px; color: var(--text-2); font-size: 13px;">Strategic Roadmap Timeline</h4>
+          <div style="overflow-x: auto; margin-bottom: 24px;">
+            <table class="comp-table" id="roadmapTable">
+              <thead>
+                <tr>
+                  <th>Phase</th>
+                  <th>Action Items</th>
+                </tr>
+              </thead>
+              <tbody id="roadmapTbody">
+              </tbody>
+            </table>
+          </div>
+
+          <h4 style="margin-bottom: 12px; color: var(--text-2); font-size: 13px;">High Priority Recommendations</h4>
+          <div style="overflow-x: auto;">
+            <table class="comp-table" id="recsTable">
+              <thead>
+                <tr>
+                  <th>Category</th>
+                  <th>Action Needed</th>
+                  <th>Expected ROI</th>
+                  <th>Priority Score</th>
+                </tr>
+              </thead>
+              <tbody id="recsTbody">
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+        <div style="margin-top: 20px; text-align: right;">
+          <button id="generateReportBtn" class="form-btn" style="padding: 10px 20px; font-size: 13px;" disabled>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              style="margin-right:6px;vertical-align:-2px">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+              <polyline points="14 2 14 8 20 8" />
+              <line x1="16" y1="13" x2="8" y2="13" />
+              <line x1="16" y1="17" x2="8" y2="17" />
+              <polyline points="10 9 9 9 8 9" />
+            </svg>
+            Generate Executive Business Report
+          </button>
+        </div>
+      </div>
+
+      <!-- Phase 8: Business Intelligence Report Engine Dashboard -->
+      <div class="glass-card" id="executiveReportDashboardCard" style="display:none; margin-top: 20px;">
+        <div class="card-title">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+            <polyline points="14 2 14 8 20 8" />
+            <line x1="16" y1="13" x2="8" y2="13" />
+            <line x1="16" y1="17" x2="8" y2="17" />
+            <polyline points="10 9 9 9 8 9" />
+          </svg>
+          Business Intelligence Report Engine
+          <div class="badge" style="background: rgba(76, 175, 80, 0.1); color: #4caf50;">COMPLETE</div>
+        </div>
+
+        <div id="reportLoader"
+          style="display:none; text-align:center; padding: 20px; color: var(--text-3); font-size: 13px;">
+          <div class="loader-spinner" style="width: 24px; height: 24px; border-width: 2px; margin: 0 auto 10px;"></div>
+          Aggregating entire intelligence pipeline and generating AI Executive Summary...
+        </div>
+
+        <div id="reportContent" style="display:none;">
+          <div
+            style="padding: 16px; background: rgba(0,0,0,0.2); border-radius: 8px; border: 1px solid var(--border); margin-bottom: 20px;">
+            <div
+              style="font-size: 12px; color: var(--text-3); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">
+              AI Executive Summary</div>
+            <div id="execSummaryText"
+              style="font-size: 14px; color: var(--text-1); line-height: 1.6; white-space: pre-wrap;"></div>
+          </div>
+
+          <div style="display: flex; gap: 10px; margin-top: 20px;">
+            <button id="exportPdfBtn" class="form-btn"
+              style="background: rgba(244, 67, 54, 0.1); color: #f44336; border: 1px solid rgba(244, 67, 54, 0.3);">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                style="margin-right:6px;vertical-align:-2px">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                <polyline points="7 10 12 15 17 10" />
+                <line x1="12" y1="15" x2="12" y2="3" />
+              </svg>
+              Export as PDF
+            </button>
+            <button id="exportJsonBtn" class="form-btn"
+              style="background: rgba(33, 150, 243, 0.1); color: #2196f3; border: 1px solid rgba(33, 150, 243, 0.3);">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                style="margin-right:6px;vertical-align:-2px">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                <polyline points="14 2 14 8 20 8" />
+                <line x1="16" y1="13" x2="8" y2="13" />
+                <line x1="16" y1="17" x2="8" y2="17" />
+                <polyline points="10 9 9 9 8 9" />
+              </svg>
+              Export as JSON
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <script src="competitor-engine.js?v=2"></script>
+  <script src="sidebar.js?v=2"></script>
+</body>
+
+</html>

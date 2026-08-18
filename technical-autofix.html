@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script>
+    if (localStorage.getItem('logged_in') !== 'true') {
+      window.location.href = 'login.html';
+    }
+  </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Technical Auto Fix | crawlX</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-base: #09090b; --bg: #1A1A1A;
+      --bg-card: rgba(20, 20, 25, 0.65);
+      --border: rgba(255, 255, 255, 0.08);
+      --border-hover: rgba(255, 255, 255, 0.16);
+      
+      --accent: #10b981;
+      --accent-light: #34d399;
+      --cyan: #00e5ff;
+      --green: #00e676;
+      --green-bg: rgba(0, 230, 118, 0.08);
+      --green-border: rgba(0, 230, 118, 0.2);
+      --yellow: #ffd600;
+      --orange: #ff9100;
+      --orange-bg: rgba(255, 145, 0, 0.08);
+      --orange-border: rgba(255, 145, 0, 0.2);
+      --red: #ff1744;
+      --red-bg: rgba(255, 23, 68, 0.08);
+      --red-border: rgba(255, 23, 68, 0.2);
+      
+      --text-1: #f4f4f5;
+      --text-2: rgba(244, 244, 245, 0.7);
+      --text-3: rgba(244, 244, 245, 0.4);
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 20px;
+      --font-main: 'Inter', sans-serif;
+      --ease: cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: var(--bg-base);
+      color: var(--text-2);
+      font-family: var(--font-main);
+      overflow-x: hidden;
+      min-height: 100vh;
+      display: flex;
+    }
+
+    /* Scrollbars */
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background-color: var(--bg-base); }
+    ::-webkit-scrollbar-thumb { background: var(--bg-card-hover); border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--bg-card-hover); }
+
+    /* Layout: Sidebar */
+    
+    
+    
+    
+    .brand-logo svg { width: 28px; height: 28px; display: block; }
+    
+    
+    /* Layout: Main Container */
+    .main {  flex: 1; padding: 40px; min-width: 0; transition: margin-left 0.3s var(--ease); }
+    
+
+    /* Header */
+    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; flex-wrap: wrap; gap: 20px; }
+    .header__info { flex: 1; min-width: 280px; }
+    .header__title { font-size: 26px; font-weight: 800; letter-spacing: -0.8px; color: var(--text-1); margin-bottom: 6px; }
+    .header__subtitle { font-size: 13.5px; color: var(--text-2); }
+    .header__subtitle strong { color: var(--accent); font-family: 'Fira Code', monospace; font-size: 12.5px; }
+
+    /* Form selector */
+    .selector-form { display: flex; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 4px; width: 380px; transition: all 0.2s; }
+    .selector-form:focus-within { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(124, 77, 255, 0.25); }
+    .selector-input { flex: 1; background: transparent; border: none; outline: none; color: var(--text-1); padding: 6px 12px; font-size: 12.5px; }
+    .selector-btn { background: var(--accent); border: none; border-radius: var(--radius-sm); color: var(--text-1); cursor: pointer; font-size: 11.5px; font-weight: 600; padding: 6px 14px; transition: background 0.2s; }
+    .selector-btn:hover { background: var(--accent-light); }
+
+    /* Glass Cards */
+    .glass-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); backdrop-filter: blur(10px); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); padding: 24px; margin-bottom: 24px; }
+    .glass-card__title { font-size: 15px; font-weight: 750; color: var(--text-1); margin-bottom: 18px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid rgba(255,255,255,0.03); padding-bottom: 12px; }
+    .glass-card__title svg { color: var(--accent); }
+
+    /* Split panels grid */
+    .split-grid-diagnostics { display: grid; grid-template-columns: 320px 1fr; gap: 24px; margin-bottom: 24px; }
+    @media (max-width: 992px) { .split-grid-diagnostics { grid-template-columns: 1fr; } }
+
+    /* Issue List Items */
+    .issue-list { display: flex; flex-direction: column; gap: 8px; }
+    .issue-item { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; transition: all 0.2s; }
+    .issue-item:hover { border-color: var(--border-hover); background: var(--bg-card); }
+    .issue-item.active { border-color: var(--accent); background: rgba(124, 77, 255, 0.08); }
+    .issue-item-title { font-size: 13px; font-weight: 700; color: var(--text-1); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    
+    /* Severity Badges */
+    .severity-badge { font-size: 9.5px; font-weight: 800; text-transform: uppercase; padding: 2px 6px; border-radius: 4px; letter-spacing: 0.5px; }
+    .severity-badge--critical { background: var(--red-bg); color: var(--red); border: 1px solid var(--red-border); }
+    .severity-badge--warning { background: var(--orange-bg); color: var(--orange); border: 1px solid var(--orange-border); }
+    .severity-badge--info { background: rgba(0, 229, 255, 0.08); color: var(--cyan); border: 1px solid rgba(0, 229, 255, 0.2); }
+
+    /* Detailed Card Layout */
+    .detail-container { display: flex; flex-direction: column; gap: 16px; }
+    .detail-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 12px; }
+    .detail-title { font-size: 18px; font-weight: 800; color: var(--text-1); }
+    .detail-matrix { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin: 8px 0; }
+    @media (max-width: 600px) { .detail-matrix { grid-template-columns: repeat(2, 1fr); } }
+    .matrix-box { background: rgba(0,0,0,0.2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 12px; text-align: center; }
+    .matrix-box-val { font-family: 'Fira Code', monospace; font-size: 16px; font-weight: 700; color: var(--cyan); }
+    .matrix-box-label { font-size: 10px; font-weight: 700; color: var(--text-3); text-transform: uppercase; margin-top: 4px; }
+
+    .detail-section { display: flex; flex-direction: column; gap: 6px; }
+    .detail-section-label { font-size: 12.5px; font-weight: 700; color: var(--text-1); }
+    .detail-section-desc { font-size: 13px; line-height: 1.5; color: var(--text-2); }
+
+    /* Code Snippet Box */
+    .code-box { position: relative; background: #090a0f; border: 1px solid var(--border); border-radius: var(--radius-md); padding: 16px; font-family: 'Fira Code', monospace; font-size: 12px; color: #a29bfe; overflow-x: auto; max-height: 240px; }
+    .code-box-copy { position: absolute; right: 12px; top: 12px; background: var(--bg-card); border: 1px solid var(--border); color: var(--text-2); padding: 4px 8px; border-radius: var(--radius-sm); font-size: 10px; cursor: pointer; transition: all 0.2s; }
+    .code-box-copy:hover { border-color: var(--accent); color: var(--text-1); background: rgba(124, 77, 255, 0.1); }
+
+  
+    /* Animated Glowing Search Bar */
+    .animated-glowing-search-wrapper {
+      position: relative;
+      border-radius: var(--radius-md);
+      padding: 1.5px;
+      background: var(--bg-card);
+      overflow: hidden;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      transition: all 0.3s ease;
+      width: 100%;
+    }
+
+    .animated-glowing-search-wrapper::before {
+      content: '';
+      position: absolute;
+      top: -100%; left: -100%;
+      width: 300%; height: 300%;
+      background: conic-gradient(from 0deg, transparent 0%, transparent 40%, var(--accent) 50%, var(--accent) 60%, transparent 100%);
+      animation: searchGlowSpin 4s linear infinite;
+      z-index: -2;
+      opacity: 0.15;
+      transition: opacity 0.3s ease;
+    }
+
+    .animated-glowing-search-wrapper:focus-within::before {
+      opacity: 1;
+      animation: searchGlowSpin 2s linear infinite;
+    }
+
+    .animated-glowing-search-wrapper::after {
+      content: '';
+      position: absolute;
+      inset: 1.5px;
+      background: var(--bg-card);
+      border-radius: calc(var(--radius-md) - 1.5px);
+      z-index: -1;
+    }
+
+    @keyframes searchGlowSpin {
+      100% { transform: rotate(360deg); }
+    }
+
+    .animated-glowing-search-input {
+      width: 100%;
+      padding: 14px 20px;
+      background: transparent;
+      border: none;
+      color: var(--text-1);
+      font-size: 14px;
+      outline: none;
+      z-index: 2;
+    }
+    .animated-glowing-search-input::placeholder {
+      color: var(--text-3);
+    }
+
+  </style>
+
+  
+\n</head>
+<body>
+
+  
+    
+
+  <!-- Main Container -->
+  <main class="main">
+    <header class="header">
+      <div class="header__info">
+        <h1 class="header__title">AI Technical SEO Auto Fix</h1>
+        <div class="header__subtitle">Detect redirect chains, hreflang tags, robots.txt directives and generate developer code fixes.</div>
+      </div>
+      <div class="header__actions">
+        <form class="selector-form" id="autofixForm">
+          <div class="animated-glowing-search-wrapper"><input  type="text"  class="animated-glowing-search-input"  id="targetUrlInput" placeholder="Enter URL (e.g. site.com)" required></div>
+          <button type="submit" class="selector-btn">Detect Issues</button>
+        </form>
+      </div>
+    </header>
+
+    <!-- Results panel -->
+    <div id="resultsWrapper" style="display:none;" class="split-grid-diagnostics">
+      
+      <!-- Issue Checklist sidebar -->
+      <div>
+        <div class="glass-card" style="padding: 16px; margin-bottom:0; min-height: 520px;">
+          <h3 style="font-size:13.5px; font-weight:700; color:var(--text-1); margin-bottom:12px; padding-bottom:8px; border-bottom:1px solid var(--border);">Diagnosed Issues</h3>
+          <div class="issue-list" id="issueChecklist">
+            <!-- Populated dynamically -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Selected Issue Detail Panel -->
+      <div>
+        <div class="glass-card" style="min-height: 520px;">
+          <div id="issueDetailEmpty" style="display:flex; align-items:center; justify-content:center; height:460px; flex-direction:column; color:var(--text-3);">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin-bottom:12px;"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+            <span>Select an issue from the checklist to reveal auto-fix developer snippets</span>
+          </div>
+
+          <div id="issueDetailPanel" style="display:none;" class="detail-container">
+            <div class="detail-header">
+              <h2 class="detail-title" id="detTitle">Issue Title</h2>
+              <span class="severity-badge" id="detSeverity">Critical</span>
+            </div>
+
+            <!-- 8-part metrics grid -->
+            <div class="detail-matrix">
+              <div class="matrix-box">
+                <div class="matrix-box-val" id="detSeoImpact">0/100</div>
+                <div class="matrix-box-label">SEO Impact</div>
+              </div>
+              <div class="matrix-box">
+                <div class="matrix-box-val" id="detPriority">#1</div>
+                <div class="matrix-box-label">Priority Rank</div>
+              </div>
+              <div class="matrix-box">
+                <div class="matrix-box-val" id="detEstimatedImprovement">+0%</div>
+                <div class="matrix-box-label">Improvement</div>
+              </div>
+              <div class="matrix-box">
+                <div class="matrix-box-val" id="detTrafficUplift">+0 hits</div>
+                <div class="matrix-box-label">Traffic Lift</div>
+              </div>
+            </div>
+
+            <!-- Problem Explanation -->
+            <div class="detail-section">
+              <span class="detail-section-label">Problem Explanation</span>
+              <p class="detail-section-desc" id="detExplanation">Explanation here...</p>
+            </div>
+
+            <!-- Why it matters -->
+            <div class="detail-section">
+              <span class="detail-section-label">Why it Matters</span>
+              <p class="detail-section-desc" id="detWhyItMatters">Description...</p>
+            </div>
+
+            <!-- Business Impact -->
+            <div class="detail-section">
+              <span class="detail-section-label">Business & Financial Impact</span>
+              <p class="detail-section-desc" id="detBusinessImpact">Business impact details...</p>
+            </div>
+
+            <!-- Fix Instructions -->
+            <div class="detail-section">
+              <span class="detail-section-label">Fix Instructions</span>
+              <p class="detail-section-desc" id="detFixInstructions">Instructions...</p>
+            </div>
+
+            <!-- Developer Implementation Guide -->
+            <div class="detail-section">
+              <span class="detail-section-label">Developer Implementation Guide</span>
+              <p class="detail-section-desc" id="detDeveloperGuide">Guide details...</p>
+            </div>
+
+            <!-- Ready-to-use Code snippet -->
+            <div class="detail-section">
+              <span class="detail-section-label">Developer-Ready Code Fix</span>
+              <div class="code-box">
+                <button class="code-box-copy" onclick="copySnippetText()">Copy Code</button>
+                <pre id="detCodeSnippet">Code snippet...</pre>
+              </div>
+            </div>
+            
+            <div style="font-size:11px; color:var(--text-3); text-align:right;" id="detRevenueText">Estimated revenue impact: +$0/mo</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <script>
+    
+</script>
+  <script src="technical-autofix.js" defer></script>
+  <script src="ask-ai.js" defer></script>
+
+  
+\n
+  <script src="sidebar.js?v=2"></script>
+</body>
+</html>

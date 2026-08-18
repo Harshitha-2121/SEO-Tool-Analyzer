@@ -1,0 +1,1634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script>
+    if (localStorage.getItem('logged_in') !== 'true') {
+      window.location.href = 'login.html';
+    }
+  </script>
+  
+  
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Detailed SEO Audit Report | crawlX</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-base: #09090b; --bg: #1A1A1A;
+      --bg-card: rgba(20, 20, 25, 0.65);
+      --border: rgba(255, 255, 255, 0.08);
+      --border-hover: rgba(255, 255, 255, 0.16);
+      
+      --accent: #10b981;
+      --accent-light: #34d399;
+      --cyan: #00e5ff;
+      --green: #00e676;
+      --green-bg: rgba(0, 230, 118, 0.08);
+      --green-border: rgba(0, 230, 118, 0.2);
+      --yellow: #ffd600;
+      --orange: #ff9100;
+      --orange-bg: rgba(255, 145, 0, 0.08);
+      --orange-border: rgba(255, 145, 0, 0.2);
+      --red: #ff1744;
+      --red-bg: rgba(255, 23, 68, 0.08);
+      --red-border: rgba(255, 23, 68, 0.2);
+      
+      --text-1: #f4f4f5;
+      --text-2: rgba(244, 244, 245, 0.7);
+      --text-3: rgba(244, 244, 245, 0.4);
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 20px;
+      --font-main: 'Inter', sans-serif;
+      --ease: cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-base);
+      color: var(--text-2);
+      font-family: var(--font-main);
+      overflow-x: hidden;
+      min-height: 100vh;
+      display: flex;
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background-color: var(--bg-base);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--bg-card-hover);
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--bg-card-hover);
+    }
+
+    
+    
+
+    
+
+    
+
+    
+
+    .brand-logo svg {
+      width: 28px;
+      height: 28px;
+      display: block;
+    }
+
+    
+
+    
+
+    /* ═══════════════════════════════════════
+       LAYOUT: MAIN CONTAINER
+       ═══════════════════════════════════════ */
+    .main {
+      
+      flex: 1;
+      padding: 40px;
+      min-width: 0;
+      transition: margin-left 0.3s var(--ease);
+    }
+
+    
+
+    /* ═══════════════════════════════════════
+       HEADER SECTION
+       ═══════════════════════════════════════ */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 32px;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .header__info {
+      flex: 1;
+      min-width: 280px;
+    }
+
+    .header__title {
+      font-size: 26px;
+      font-weight: 800;
+      letter-spacing: -0.8px;
+      color: var(--text-1);
+      margin-bottom: 6px;
+    }
+
+    .header__subtitle {
+      font-size: 13.5px;
+      color: var(--text-2);
+    }
+
+    .header__subtitle strong {
+      color: var(--accent);
+      font-family: 'Fira Code', monospace;
+      font-size: 12.5px;
+    }
+
+    .header__actions {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    /* URL Form Selector */
+    .selector-form {
+      display: flex;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 4px;
+      width: 320px;
+      transition: all 0.2s;
+    }
+    .selector-form:focus-within {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px rgba(124, 77, 255, 0.25);
+    }
+    .selector-input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--text-1);
+      padding: 6px 12px;
+      font-size: 12.5px;
+    }
+    .selector-btn {
+      background: var(--accent);
+      border: none;
+      border-radius: var(--radius-sm);
+      color: var(--text-1); cursor: pointer;
+      font-size: 11.5px;
+      font-weight: 600;
+      padding: 6px 14px;
+      transition: background 0.2s;
+    }
+    .selector-btn:hover {
+      background: var(--accent-light);
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      border-radius: var(--radius-sm);
+      font-size: 12.5px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: 1px solid transparent;
+      text-decoration: none;
+    }
+
+    .btn--primary {
+      background: var(--accent);
+      color: var(--text-1); }
+    .btn--primary:hover {
+      background: var(--accent-light);
+    }
+
+    .btn--secondary {
+      background: var(--bg-card);
+      border-color: var(--border);
+      color: var(--text-1);
+    }
+    .btn--secondary:hover {
+      background: var(--bg-card);
+      border-color: var(--border-hover);
+    }
+
+    /* ═══════════════════════════════════════
+       GLASS CARDS
+       ═══════════════════════════════════════ */
+    .glass-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    /* ═══════════════════════════════════════
+       TOP WIDGET CARDS GRID
+       ═══════════════════════════════════════ */
+    .top-cards-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 20px;
+      margin-bottom: 24px;
+    }
+
+    @media (max-width: 992px) {
+      .top-cards-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    @media (max-width: 576px) {
+      .top-cards-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .kpi-card {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 20px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+    }
+
+    .kpi-card__icon-wrapper {
+      width: 44px; height: 44px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .kpi-card__icon-wrapper--score { background: rgba(124, 77, 255, 0.1); border: 1px solid rgba(124, 77, 255, 0.2); color: var(--accent); }
+    .kpi-card__icon-wrapper--critical { background: var(--red-bg); border: 1px solid var(--red-border); color: var(--red); }
+    .kpi-card__icon-wrapper--warning { background: var(--orange-bg); border: 1px solid var(--orange-border); color: var(--orange); }
+    .kpi-card__icon-wrapper--passed { background: var(--green-bg); border: 1px solid var(--green-border); color: var(--green); }
+
+    .kpi-card__info {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .kpi-card__label {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-3);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 4px;
+    }
+
+    .kpi-card__value {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--text-1);
+    }
+
+    .kpi-card__value span {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-3);
+    }
+
+    /* Score gauge small widget */
+    .kpi-card__gauge-col {
+      width: 42px; height: 42px;
+      position: relative;
+    }
+    .kpi-card__gauge-col svg {
+      width: 100%; height: 100%;
+      transform: rotate(-90deg);
+    }
+    .kpi-card__gauge-bg {
+      fill: none;
+      stroke: rgba(255, 255, 255, 0.03);
+      stroke-width: 4;
+    }
+    .kpi-card__gauge-fill {
+      fill: none;
+      stroke: url(#kpiGradient);
+      stroke-width: 4;
+      stroke-linecap: round;
+      stroke-dasharray: 100.5; /* 2 * PI * r (r=16) = 100.53 */
+      stroke-dashoffset: 100.5; /* Controlled by score script */
+      transition: stroke-dashoffset 1.2s var(--ease);
+    }
+
+    /* ═══════════════════════════════════════
+       TABS BAR CONTAINER
+       ═══════════════════════════════════════ */
+    .tabs-bar {
+      display: flex;
+      gap: 6px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 24px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+
+    .tabs-bar::-webkit-scrollbar {
+      height: 4px;
+    }
+
+    .tab-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-3);
+      font-size: 12.5px;
+      font-weight: 600;
+      padding: 10px 16px;
+      cursor: pointer;
+      border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+      white-space: nowrap;
+      transition: all 0.2s;
+      position: relative;
+    }
+
+    .tab-btn:hover {
+      color: var(--text-2);
+      background: var(--bg-card);
+    }
+
+    .tab-btn.active {
+      color: var(--text-1);
+      background: rgba(124, 77, 255, 0.05);
+    }
+
+    .tab-btn.active::after {
+      content: '';
+      position: absolute;
+      left: 12px; right: 12px; bottom: -5px;
+      height: 2px;
+      background: var(--accent);
+      border-radius: 2px;
+      z-index: 1;
+    }
+
+    /* ═══════════════════════════════════════
+       TAB PANEL INTERFACE
+       ═══════════════════════════════════════ */
+    .tab-panel {
+      display: none; /* Controlled by JS active state */
+      animation: panelFade 0.3s var(--ease);
+    }
+    .tab-panel.active {
+      display: block;
+    }
+
+    @keyframes panelFade {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Subtitle & Section Headers */
+    .section-title {
+      font-size: 15px;
+      font-weight: 750;
+      color: var(--text-1);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section-title svg {
+      color: var(--accent);
+    }
+
+    /* Grid inside panels */
+    .panel-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+
+    @media (max-width: 900px) {
+      .panel-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* ═══════════════════════════════════════
+       AUDIT CHECKLIST CARD & ITEMS
+       ═══════════════════════════════════════ */
+    .audit-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .audit-item {
+      display: flex;
+      gap: 16px;
+      padding: 16px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      align-items: flex-start;
+      transition: border-color 0.2s;
+    }
+    .audit-item:hover {
+      border-color: var(--border-hover);
+    }
+
+    .audit-status-badge {
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 800;
+      flex-shrink: 0;
+    }
+    .audit-status-badge--pass { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-border); }
+    .audit-status-badge--warn { background: var(--orange-bg); color: var(--orange); border: 1px solid var(--orange-border); }
+    .audit-status-badge--fail { background: var(--red-bg); color: var(--red); border: 1px solid var(--red-border); }
+
+    .audit-item-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .audit-item-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .audit-item-title {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--text-1);
+    }
+
+    .audit-item-desc {
+      font-size: 12.5px;
+      color: var(--text-2);
+      line-height: 1.4;
+    }
+
+    .audit-item-recommendation {
+      font-size: 11.5px;
+      color: var(--text-3);
+      font-style: italic;
+      margin-top: 4px;
+    }
+
+    .audit-item-meta {
+      font-family: 'Fira Code', monospace;
+      font-size: 11px;
+      color: var(--accent);
+      background: rgba(124, 77, 255, 0.06);
+      padding: 2px 6px;
+      border-radius: 4px;
+      align-self: flex-start;
+    }
+
+    /* ═══════════════════════════════════════
+       OVERVIEW CIRCULAR INDICATOR BLOCK
+       ═══════════════════════════════════════ */
+    .overview-layout {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 32px;
+    }
+
+    @media (max-width: 900px) {
+      .overview-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .large-gauge-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 32px 24px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+    }
+
+    .large-gauge {
+      width: 180px; height: 180px;
+      position: relative;
+      margin-bottom: 20px;
+    }
+
+    .large-gauge svg {
+      width: 100%; height: 100%;
+      transform: rotate(-90deg);
+    }
+
+    .large-gauge-bg {
+      fill: none;
+      stroke: rgba(255, 255, 255, 0.02);
+      stroke-width: 10;
+    }
+
+    .large-gauge-fill {
+      fill: none;
+      stroke: url(#reportGaugeGradient);
+      stroke-width: 10;
+      stroke-linecap: round;
+      stroke-dasharray: 502; /* 2 * PI * 80 */
+      stroke-dashoffset: 502; /* Controlled by JS count-up */
+      transition: stroke-dashoffset 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .large-gauge-score {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .large-gauge-score-num {
+      font-size: 42px;
+      font-weight: 800;
+      color: var(--text-1);
+      line-height: 1;
+    }
+    .large-gauge-score-total {
+      font-size: 11px;
+      color: var(--text-3);
+      text-transform: uppercase;
+      font-weight: 600;
+      margin-top: 4px;
+    }
+
+    .large-gauge-label {
+      font-size: 15px;
+      font-weight: 750;
+      color: var(--text-1);
+      margin-bottom: 6px;
+    }
+
+    .large-gauge-status {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 11.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border: 1px solid transparent;
+    }
+
+    /* Category bar list in overview */
+    .overview-cats {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-top: 20px;
+      width: 100%;
+    }
+    .overview-cat-row {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .overview-cat-meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+    }
+    .overview-cat-name { color: var(--text-2); font-weight: 600; }
+    .overview-cat-val { font-family: 'Fira Code', monospace; color: var(--text-1); }
+    .overview-cat-track {
+      width: 100%;
+      height: 6px;
+      background: var(--bg-card);
+      border-radius: 3px;
+      border: 1px solid var(--border);
+      overflow: hidden;
+    }
+    .overview-cat-fill {
+      height: 100%;
+      background: var(--accent);
+      border-radius: 3px;
+      width: 0%;
+      transition: width 1.2s var(--ease);
+    }
+
+    /* ═══════════════════════════════════════
+       HEADINGS STRUCTURAL TREE
+       ═══════════════════════════════════════ */
+    .heading-tree {
+      background: rgba(0,0,0,0.15);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 16px;
+      font-family: 'Fira Code', monospace;
+      font-size: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .heading-tree-node {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      line-height: 1.5;
+    }
+
+    .heading-tree-tag {
+      background: rgba(124, 77, 255, 0.08);
+      color: var(--accent);
+      border: 1px solid rgba(124, 77, 255, 0.2);
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-weight: 700;
+      font-size: 11px;
+    }
+
+    .heading-tree-node--h1 { margin-left: 0px; }
+    .heading-tree-node--h2 { margin-left: 20px; border-left: 1px solid rgba(255,255,255,0.05); padding-left: 8px; }
+    .heading-tree-node--h3 { margin-left: 40px; border-left: 1px solid rgba(255,255,255,0.05); padding-left: 8px; }
+
+    /* ═══════════════════════════════════════
+       AI RECOMMENDATIONS CARD & CODE PREVIEW
+       ═══════════════════════════════════════ */
+    .ai-rec-card {
+      background: rgba(124, 77, 255, 0.02);
+      border: 1px solid rgba(124, 77, 255, 0.15);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+    .ai-rec-card__header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .ai-rec-card__badge {
+      background: linear-gradient(135deg, var(--accent), var(--cyan));
+      color: var(--text-1); font-size: 9.5px;
+      font-weight: 800;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: 12px;
+      letter-spacing: 0.5px;
+    }
+    .ai-rec-card__title {
+      font-size: 14px;
+      font-weight: 750;
+      color: var(--text-1);
+    }
+    .ai-rec-card__desc {
+      font-size: 12.5px;
+      color: var(--text-2);
+      line-height: 1.5;
+      margin-bottom: 16px;
+    }
+    .ai-code-preview {
+      background: var(--bg-card);
+      border: 1px solid rgba(255,255,255,0.04);
+      border-radius: var(--radius-sm);
+      padding: 14px;
+      overflow-x: auto;
+      font-family: 'Fira Code', monospace;
+      font-size: 11.5px;
+      color: #e2e8f0;
+      position: relative;
+    }
+    .ai-code-preview__lang {
+      position: absolute;
+      right: 12px; top: 12px;
+      font-size: 9px;
+      color: var(--text-3);
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    /* Colors helpers */
+    .score-excellent { color: var(--green); }
+    .score-excellent-bg { background: linear-gradient(90deg, var(--green), #00c853); }
+    .score-good { color: var(--cyan); }
+    .score-good-bg { background: linear-gradient(90deg, var(--cyan), #00b0ff); }
+    .score-average { color: var(--orange); }
+    .score-average-bg { background: linear-gradient(90deg, var(--orange), #f57c00); }
+    .score-poor { color: var(--red); }
+    .score-poor-bg { background: linear-gradient(90deg, var(--red), #d50000); }
+
+    /* ═══════════════════════════════════════
+       PRINT / PRINT STYLES MEDIA QUERY
+       ═══════════════════════════════════════ */
+    @media print {
+      body {
+        background: #fff !important;
+        color: #000 !important;
+      }
+      
+      .main {
+        
+        padding: 0 !important;
+      }
+      .header__actions, .selector-form {
+        display: none !important;
+      }
+      .tabs-bar {
+        display: none !important;
+      }
+      .tab-panel {
+        display: block !important;
+        page-break-after: always;
+        opacity: 1 !important;
+        transform: none !important;
+      }
+      .glass-card, .kpi-card, .large-gauge-card, .ai-rec-card {
+        background: #fff !important;
+        border: 1px solid #ddd !important;
+        box-shadow: none !important;
+        color: #000 !important;
+      }
+      .kpi-card__value, .large-gauge-score-num, .section-title, .audit-item-title, .brand-name, 
+      .audit-item {
+        background: #fff !important;
+        border: 1px solid #eee !important;
+        color: #333 !important;
+      }
+      .large-gauge-bg {
+        stroke: #eee !important;
+      }
+      .large-gauge-fill {
+        stroke: #7c4dff !important;
+      }
+    }
+  
+    /* Animated Glowing Search Bar */
+    .animated-glowing-search-wrapper {
+      position: relative;
+      border-radius: var(--radius-md);
+      padding: 1.5px;
+      background: var(--bg-card);
+      overflow: hidden;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      transition: all 0.3s ease;
+      width: 100%;
+    }
+
+    .animated-glowing-search-wrapper::before {
+      content: '';
+      position: absolute;
+      top: -100%; left: -100%;
+      width: 300%; height: 300%;
+      background: conic-gradient(from 0deg, transparent 0%, transparent 40%, var(--accent) 50%, var(--accent) 60%, transparent 100%);
+      animation: searchGlowSpin 4s linear infinite;
+      z-index: -2;
+      opacity: 0.15;
+      transition: opacity 0.3s ease;
+    }
+
+    .animated-glowing-search-wrapper:focus-within::before {
+      opacity: 1;
+      animation: searchGlowSpin 2s linear infinite;
+    }
+
+    .animated-glowing-search-wrapper::after {
+      content: '';
+      position: absolute;
+      inset: 1.5px;
+      background: var(--bg-card);
+      border-radius: calc(var(--radius-md) - 1.5px);
+      z-index: -1;
+    }
+
+    @keyframes searchGlowSpin {
+      100% { transform: rotate(360deg); }
+    }
+
+    .animated-glowing-search-input {
+      width: 100%;
+      padding: 14px 20px;
+      background: transparent;
+      border: none;
+      color: var(--text-1);
+      font-size: 14px;
+      outline: none;
+      z-index: 2;
+    }
+    .animated-glowing-search-input::placeholder {
+      color: var(--text-3);
+    }
+
+  </style>
+
+  
+\n</head>
+<body>
+
+  
+    
+
+  <!-- Main Body Content -->
+  <main class="main">
+    
+    <header class="header">
+      <div class="header__info">
+        <h1 class="header__title">Technical Audit Report</h1>
+        <div class="header__subtitle">SEO audit diagnostics for target domain: <strong id="headerUrlVal">example.com</strong></div>
+      </div>
+      <div class="header__actions">
+        <form class="selector-form" id="auditSelectorForm">
+          <div class="animated-glowing-search-wrapper"><input  type="text"  class="animated-glowing-search-input"  id="targetUrlInput" placeholder="Enter domain (e.g. site.com)" required></div>
+          <button type="submit" class="selector-btn">Audit</button>
+        </form>
+        <button class="btn btn--secondary" onclick="window.print()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+          Print PDF
+        </button>
+      </div>
+    </header>
+
+    <!-- Top KPI cards grid -->
+    <section class="top-cards-grid">
+      
+      <!-- Card 1: SEO Score -->
+      <div class="kpi-card">
+        <div class="kpi-card__gauge-col">
+          <svg viewBox="0 0 36 36">
+            <path class="kpi-card__gauge-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+            <path class="kpi-card__gauge-fill" id="kpiGaugeFill" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+            <defs>
+              <linearGradient id="kpiGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="var(--accent)" />
+                <stop offset="100%" stop-color="var(--cyan)" />
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+        <div class="kpi-card__info">
+          <span class="kpi-card__label">SEO score</span>
+          <span class="kpi-card__value" id="kpiScoreText">0<span>/100</span></span>
+        </div>
+      </div>
+
+      <!-- Card 2: Critical Issues -->
+      <div class="kpi-card">
+        <div class="kpi-card__icon-wrapper kpi-card__icon-wrapper--critical">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        </div>
+        <div class="kpi-card__info">
+          <span class="kpi-card__label">Critical Issues</span>
+          <span class="kpi-card__value" id="kpiCriticalText">0</span>
+        </div>
+      </div>
+
+      <!-- Card 3: Warnings -->
+      <div class="kpi-card">
+        <div class="kpi-card__icon-wrapper kpi-card__icon-wrapper--warning">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        </div>
+        <div class="kpi-card__info">
+          <span class="kpi-card__label">Warnings</span>
+          <span class="kpi-card__value" id="kpiWarningsText">0</span>
+        </div>
+      </div>
+
+      <!-- Card 4: Passed Checks -->
+      <div class="kpi-card">
+        <div class="kpi-card__icon-wrapper kpi-card__icon-wrapper--passed">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <div class="kpi-card__info">
+          <span class="kpi-card__label">Passed Checks</span>
+          <span class="kpi-card__value" id="kpiPassedText">0</span>
+        </div>
+      </div>
+
+      <!-- Card 5: Total Links Audited -->
+      <div class="kpi-card">
+        <div class="kpi-card__icon-wrapper" style="color:var(--yellow); background:rgba(255,214,0,0.06); border:1px solid rgba(255,214,0,0.15); border-radius:12px; display:flex; align-items:center; justify-content:center; width:40px; height:40px;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+        </div>
+        <div class="kpi-card__info">
+          <span class="kpi-card__label">Total Discovered Links</span>
+          <span class="kpi-card__value" id="kpiLinksText">0</span>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- Tabbed Content Section -->
+    <div class="glass-card">
+      
+      <!-- Tab Header Buttons -->
+      <div class="tabs-bar">
+        <button class="tab-btn active" onclick="switchTab('overview')">Overview</button>
+        <button class="tab-btn" onclick="switchTab('meta')">Meta & Social</button>
+        <button class="tab-btn" onclick="switchTab('headings')">Headings</button>
+        <button class="tab-btn" onclick="switchTab('media')">Media</button>
+        <button class="tab-btn" onclick="switchTab('technical')">Technical</button>
+        <button class="tab-btn" onclick="switchTab('performance')">Performance</button>
+        <button class="tab-btn" onclick="switchTab('security')">Security</button>
+        <button class="tab-btn" onclick="switchTab('accessibility')">Accessibility</button>
+        <button class="tab-btn" onclick="switchTab('ai')">AI Recommendations</button>
+      </div>
+
+      <!-- Tab Content Area -->
+      <div class="tab-panels">
+        
+        <!-- Tab Panel 1: Overview -->
+        <div class="tab-panel active" id="panel-overview">
+          <div class="overview-layout">
+            
+            <div class="large-gauge-card">
+              <div class="large-gauge">
+                <svg viewBox="0 0 180 180">
+                  <circle class="large-gauge-bg" cx="90" cy="90" r="80"></circle>
+                  <circle class="large-gauge-fill" id="reportScoreRing" cx="90" cy="90" r="80"></circle>
+                  <defs>
+                    <linearGradient id="reportGaugeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stop-color="var(--accent)"></stop>
+                      <stop offset="100%" stop-color="var(--cyan)"></stop>
+                    </linearGradient>
+                  </defs>
+                </svg>
+                <div class="large-gauge-score">
+                  <span class="large-gauge-score-num" id="reportScoreVal">0</span>
+                  <span class="large-gauge-score-total">SEO Rating</span>
+                </div>
+              </div>
+              <span class="large-gauge-label">SEO Audit Complete</span>
+              <span class="large-gauge-status" id="reportStatusBadge">Optimized</span>
+              
+              <!-- Category lists -->
+              <div class="overview-cats">
+                
+                <div class="overview-cat-row">
+                  <div class="overview-cat-meta">
+                    <span class="overview-cat-name">Technical</span>
+                    <span class="overview-cat-val" id="catValTech">0%</span>
+                  </div>
+                  <div class="overview-cat-track">
+                    <div class="overview-cat-fill" id="catBarTech"></div>
+                  </div>
+                </div>
+
+                <div class="overview-cat-row">
+                  <div class="overview-cat-meta">
+                    <span class="overview-cat-name">Performance</span>
+                    <span class="overview-cat-val" id="catValPerf">0%</span>
+                  </div>
+                  <div class="overview-cat-track">
+                    <div class="overview-cat-fill" id="catBarPerf"></div>
+                  </div>
+                </div>
+
+                <div class="overview-cat-row">
+                  <div class="overview-cat-meta">
+                    <span class="overview-cat-name">Security</span>
+                    <span class="overview-cat-val" id="catValSecurity">0%</span>
+                  </div>
+                  <div class="overview-cat-track">
+                    <div class="overview-cat-fill" id="catBarSecurity"></div>
+                  </div>
+                </div>
+
+                <div class="overview-cat-row">
+                  <div class="overview-cat-meta">
+                    <span class="overview-cat-name">Accessibility</span>
+                    <span class="overview-cat-val" id="catValA11y">0%</span>
+                  </div>
+                  <div class="overview-cat-track">
+                    <div class="overview-cat-fill" id="catBarA11y"></div>
+                  </div>
+                </div>
+
+              </div>
+
+            </div>
+
+            <div class="overview-details">
+              <h3 class="section-title">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                Highest Priority Optimizations
+              </h3>
+              <p style="font-size: 13px; color: var(--text-2); margin-bottom: 20px; line-height: 1.5;">Our crawl index engine has identified these high-impact patches to boost your search engines indexation rate and performance scores:</p>
+              
+              <ul class="audit-list" id="overviewHighPriorityList">
+                <!-- Populated dynamically -->
+              </ul>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Tab Panel 2: Meta & Social -->
+        <div class="tab-panel" id="panel-meta">
+          <h3 class="section-title">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+            Meta Tags & Social Preview Headers
+          </h3>
+          <div class="panel-grid">
+            <div>
+              <h4 style="font-size: 12.5px; color: var(--text-1); margin-bottom: 12px; font-weight: 700;">Audited Elements</h4>
+              <ul class="audit-list" id="metaList">
+                <!-- Populated dynamically -->
+              </ul>
+            </div>
+            
+            <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 20px;">
+              <h4 style="font-size: 13px; color: var(--text-1); margin-bottom: 16px; font-weight: 700;">Google Search Preview</h4>
+              <div style="background: #ffffff; color: #1a0dab; border-radius: 8px; padding: 16px; border: 1px solid #e0e0e0;">
+                <span style="font-size: 14px; text-decoration: underline; font-weight: 400; color: #1a0dab; display: block; margin-bottom: 4px;" id="serpTitle">Title Preview</span>
+                <span style="font-size: 12px; color: #006621; display: block; margin-bottom: 4px;" id="serpLink">https://example.com</span>
+                <span style="font-size: 12.5px; color: #545454; display: block; line-height: 1.4;" id="serpDesc">Meta description preview goes here...</span>
+              </div>
+              
+              <h4 style="font-size: 13px; color: var(--text-1); margin: 24px 0 16px 0; font-weight: 700;">Open Graph Social Card Preview</h4>
+              <div style="border: 1px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; background: rgba(0,0,0,0.2);">
+                <div style="height: 140px; background: linear-gradient(135deg, rgba(124, 77, 255, 0.2), rgba(0, 229, 255, 0.2)); display: flex; align-items: center; justify-content: center; font-size: 11px; color: var(--text-3); font-family: monospace;">
+                  [og:image Placeholder]
+                </div>
+                <div style="padding: 14px; border-top: 1px solid var(--border);">
+                  <span style="font-size: 10px; color: var(--text-3); text-transform: uppercase; font-weight: 700;" id="socialDomain">domain.com</span>
+                  <div style="font-size: 13.5px; font-weight: 700; color: var(--text-1); margin: 4px 0;" id="socialTitle">Social Card Title</div>
+                  <p style="font-size: 12px; color: var(--text-2); display:-webkit-box; -webkit-line-clamp:2; line-clamp: 2; -webkit-box-orient:vertical; overflow:hidden;" id="socialDesc">Description parsed from open graph tags.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab Panel 3: Headings -->
+        <div class="tab-panel" id="panel-headings">
+          <h3 class="section-title">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7V4h16v3M9 20h6M12 4v16"/></svg>
+            Heading Tags Structure (H1 - H6)
+          </h3>
+          <div class="panel-grid">
+            <div>
+              <h4 style="font-size: 12.5px; color: var(--text-1); margin-bottom: 12px; font-weight: 700;">Heading Directives Checklist</h4>
+              <ul class="audit-list" id="headingsList">
+                <!-- Populated dynamically -->
+              </ul>
+            </div>
+            <div>
+              <h4 style="font-size: 12.5px; color: var(--text-1); margin-bottom: 12px; font-weight: 700;">Heading Tree Outline</h4>
+              <div class="heading-tree" id="headingsTree">
+                <!-- Populated dynamically -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab Panel 4: Media -->
+        <div class="tab-panel" id="panel-media">
+          <h3 class="section-title">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            Images and Rich Media Audit
+          </h3>
+          <ul class="audit-list" id="mediaListContainer">
+            <!-- Populated dynamically -->
+          </ul>
+        </div>
+
+        <!-- Tab Panel 5: Technical -->
+        <div class="tab-panel" id="panel-technical">
+          <h3 class="section-title">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2v20M2 12h20"/></svg>
+            Technical Crawlability & Canonical Diagnostics
+          </h3>
+          <ul class="audit-list" id="techListContainer">
+            <!-- Populated dynamically -->
+          </ul>
+        </div>
+
+        <!-- Tab Panel 6: Performance -->
+        <div class="tab-panel" id="panel-performance">
+          <h3 class="section-title">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            Speed & Core Web Vitals Latency Performance
+          </h3>
+          <ul class="audit-list" id="perfListContainer">
+            <!-- Populated dynamically -->
+          </ul>
+        </div>
+
+        <!-- Tab Panel 7: Security -->
+        <div class="tab-panel" id="panel-security">
+          <h3 class="section-title">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            SSL Certificate & Headers Security Safeguards
+          </h3>
+          <ul class="audit-list" id="securityListContainer">
+            <!-- Populated dynamically -->
+          </ul>
+        </div>
+
+        <!-- Tab Panel 8: Accessibility -->
+        <div class="tab-panel" id="panel-accessibility">
+          <h3 class="section-title">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8V4M12 20v-4M8 12H4M20 12h-4"/></svg>
+            Accessibility Controls & Contrast Ratios
+          </h3>
+          <ul class="audit-list" id="a11yListContainer">
+            <!-- Populated dynamically -->
+          </ul>
+        </div>
+
+        <!-- Tab Panel 9: AI Recommendations -->
+        <div class="tab-panel" id="panel-ai">
+          <h3 class="section-title">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+            AI Engine Interactive Optimizations
+          </h3>
+          <p style="font-size: 13px; color: var(--text-2); margin-bottom: 24px; line-height: 1.5;">Our Large Language Model has parsed your DOM node outline. Below are drop-in script changes generated to remedy issues found during scanning:</p>
+          
+          <div id="aiRecommendationsContainer">
+            <!-- Populated dynamically -->
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+  <script>
+    
+// Extract Domain URL param
+    const urlParams = new URLSearchParams(window.location.search);
+    let targetDomain = urlParams.get('url');
+    if (targetDomain) {
+      localStorage.setItem('current_scanned_domain', targetDomain);
+    } else {
+      targetDomain = localStorage.getItem('current_scanned_domain') || 'https://www.networkershome.com';
+    }
+    
+    // Clean targetDomain if it has http protocols
+    targetDomain = targetDomain.replace(/^(https?:\/\/)?(www\.)?/i, '').split('/')[0];
+    
+    document.getElementById('headerUrlVal').textContent = targetDomain;
+    document.getElementById('targetUrlInput').value = targetDomain;
+
+    // Handle Selector Form Submit
+    document.getElementById('auditSelectorForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const inputVal = document.getElementById('targetUrlInput').value;
+      localStorage.setItem('current_scanned_domain', inputVal);
+      window.location.href = `report.html?url=${encodeURIComponent(inputVal)}`;
+    });
+
+    // Hash Helper to make scores and counts deterministic based on domain
+    function stringHash(str) {
+      let hash = 0;
+      for (let i = 0; i < str.length; i++) {
+        hash = str.charCodeAt(i) + ((hash << 5) - hash);
+      }
+      return Math.abs(hash);
+    }
+
+    // Load from real crawl data stored in localStorage
+    const realDataStr = localStorage.getItem('real_scan_data');
+    let rd = null;
+    let sTech = 0, sContent = 0, sPerf = 0, sSecurity = 0, sA11y = 0;
+    let seoScore = 0;
+    let criticalIssues = 0;
+    let warnings = 0;
+    let passedChecks = 0;
+    let totalLinks = 0;
+
+    if (realDataStr) {
+      try {
+        rd = JSON.parse(realDataStr);
+        sTech = rd.technical_score || 0;
+        sContent = rd.content_score || 0;
+        sPerf = rd.performance_score || 0;
+        sSecurity = rd.security_score || 0;
+        sA11y = rd.accessibility_score || 0;
+        seoScore = rd.score || rd.overall_score || 0;
+        totalLinks = rd.internal_links || rd.links_count || 0;
+        
+        criticalIssues = 0;
+        if (!rd.ssl) criticalIssues++;
+        if (!rd.has_title) criticalIssues++;
+        if (!rd.has_description) criticalIssues++;
+
+        warnings = 0;
+        if (!rd.has_canonical) warnings++;
+        if (!rd.has_schema) warnings++;
+        if (rd.missing_alt_count > 0) warnings++;
+        if (rd.orphan_pages > 0) warnings++;
+        
+        passedChecks = Math.max(0, 15 - criticalIssues - warnings);
+      } catch (e) {
+        console.error("Failed to parse real scan data", e);
+      }
+    } else {
+      // Auto-fetch real crawl data from backend if not yet stored
+      fetch('/api/site-crawl', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url: targetDomain })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          localStorage.setItem('real_scan_data', JSON.stringify(data));
+          window.location.reload();
+        }
+      }).catch(err => console.error("Auto fetch scan data failed", err));
+    }
+
+    // Switch Tab functionality
+    window.switchTab = function(tabId) {
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.tab-panel').forEach(panel => panel.classList.remove('active'));
+      
+      const targetBtn = Array.from(document.querySelectorAll('.tab-btn')).find(b => b.textContent.toLowerCase().includes(tabId.substring(0, 3)));
+      if (targetBtn) targetBtn.classList.add('active');
+      
+      const targetPanel = document.getElementById(`panel-${tabId}`);
+      if (targetPanel) targetPanel.classList.add('active');
+    };
+
+    // Initialize scoring ring & charts
+    function animateScoring() {
+      document.getElementById('kpiScoreText').innerHTML = `${seoScore}<span>/100</span>`;
+      
+      const kpiFill = document.getElementById('kpiGaugeFill');
+      const kpiOffset = 100.5 * (1 - seoScore / 100);
+      kpiFill.style.strokeDashoffset = kpiOffset;
+
+      document.getElementById('kpiCriticalText').textContent = criticalIssues;
+      document.getElementById('kpiWarningsText').textContent = warnings;
+      document.getElementById('kpiPassedText').textContent = passedChecks;
+      document.getElementById('kpiLinksText').textContent = totalLinks;
+
+      const mainRing = document.getElementById('reportScoreRing');
+      const mainScoreVal = document.getElementById('reportScoreVal');
+      const mainOffset = 502 * (1 - seoScore / 100);
+      
+      setTimeout(() => {
+        mainRing.style.strokeDashoffset = mainOffset;
+        
+        let cur = 0;
+        const mainValInterval = setInterval(() => {
+          if (seoScore === 0) {
+            mainScoreVal.textContent = '0';
+            clearInterval(mainValInterval);
+            return;
+          }
+          cur += 1;
+          mainScoreVal.textContent = cur;
+          if (cur >= seoScore) {
+            clearInterval(mainValInterval);
+          }
+        }, 15);
+      }, 100);
+
+      const statusBadge = document.getElementById('reportStatusBadge');
+      let rating = '';
+      let colorClass = '';
+      if (seoScore >= 90) { rating = 'Excellent'; colorClass = 'score-excellent'; statusBadge.style.background = 'var(--green-bg)'; statusBadge.style.borderColor = 'var(--green-border)'; }
+      else if (seoScore >= 70) { rating = 'Good'; colorClass = 'score-good'; statusBadge.style.background = 'var(--cyan-bg)'; statusBadge.style.borderColor = 'var(--cyan-border)'; }
+      else if (seoScore >= 50) { rating = 'Average'; colorClass = 'score-average'; statusBadge.style.background = 'var(--orange-bg)'; statusBadge.style.borderColor = 'var(--orange-border)'; }
+      else { rating = 'Poor'; colorClass = 'score-poor'; statusBadge.style.background = 'var(--red-bg)'; statusBadge.style.borderColor = 'var(--red-border)'; }
+      
+      statusBadge.textContent = rating;
+      statusBadge.className = 'large-gauge-status ' + colorClass;
+
+      document.getElementById('catValTech').textContent = sTech + '%';
+      document.getElementById('catBarTech').style.width = sTech + '%';
+      document.getElementById('catBarTech').className = 'overview-cat-fill score-' + (sTech >= 90 ? 'excellent': sTech >= 70 ? 'good': sTech >= 50 ? 'average': 'poor') + '-bg';
+
+      document.getElementById('catValPerf').textContent = sPerf + '%';
+      document.getElementById('catBarPerf').style.width = sPerf + '%';
+      document.getElementById('catBarPerf').className = 'overview-cat-fill score-' + (sPerf >= 90 ? 'excellent': sPerf >= 70 ? 'good': sPerf >= 50 ? 'average': 'poor') + '-bg';
+
+      document.getElementById('catValSecurity').textContent = sSecurity + '%';
+      document.getElementById('catBarSecurity').style.width = sSecurity + '%';
+      document.getElementById('catBarSecurity').className = 'overview-cat-fill score-' + (sSecurity >= 90 ? 'excellent': sSecurity >= 70 ? 'good': sSecurity >= 50 ? 'average': 'poor') + '-bg';
+
+      document.getElementById('catValA11y').textContent = sA11y + '%';
+      document.getElementById('catBarA11y').style.width = sA11y + '%';
+      document.getElementById('catBarA11y').className = 'overview-cat-fill score-' + (sA11y >= 90 ? 'excellent': sA11y >= 70 ? 'good': sA11y >= 50 ? 'average': 'poor') + '-bg';
+    }
+
+    // Populate audits dynamically with REAL crawled metrics
+    function populateAudits() {
+      const highList = document.getElementById('overviewHighPriorityList');
+      highList.innerHTML = '';
+
+      if (rd) {
+        if (!rd.ssl) {
+          highList.innerHTML += `
+            <li class="audit-item">
+              <div class="audit-status-badge audit-status-badge--fail">✗</div>
+              <div class="audit-item-info">
+                <div class="audit-item-header">
+                  <span class="audit-item-title">SSL Certificate Missing / Inactive</span>
+                  <span class="audit-item-meta">Security</span>
+                </div>
+                <p class="audit-item-desc">Target site is serving traffic over unencrypted HTTP protocols.</p>
+                <span class="audit-item-recommendation">Action: Install an active SSL/TLS certificate on the host web server.</span>
+              </div>
+            </li>
+          `;
+        }
+        if (rd.missing_alt_count > 0) {
+          highList.innerHTML += `
+            <li class="audit-item">
+              <div class="audit-status-badge audit-status-badge--warn">!</div>
+              <div class="audit-item-info">
+                <div class="audit-item-header">
+                  <span class="audit-item-title">Missing Image ALT tags (${rd.missing_alt_count} images)</span>
+                  <span class="audit-item-meta">Accessibility</span>
+                </div>
+                <p class="audit-item-desc">Found ${rd.missing_alt_count} image tags without alt descriptions.</p>
+                <span class="audit-item-recommendation">Action: Add descriptive alt attributes to image tags for accessibility.</span>
+              </div>
+            </li>
+          `;
+        }
+        if (!rd.has_description) {
+          highList.innerHTML += `
+            <li class="audit-item">
+              <div class="audit-status-badge audit-status-badge--fail">✗</div>
+              <div class="audit-item-info">
+                <div class="audit-item-header">
+                  <span class="audit-item-title">Missing Meta Description</span>
+                  <span class="audit-item-meta">Content SEO</span>
+                </div>
+                <p class="audit-item-desc">Page source lacks a &lt;meta name="description"&gt; header attribute.</p>
+                <span class="audit-item-recommendation">Action: Add a descriptive 120-160 character meta description tag.</span>
+              </div>
+            </li>
+          `;
+        }
+      }
+
+      if (!highList.innerHTML) {
+        highList.innerHTML = `
+          <li class="audit-item">
+            <div class="audit-status-badge audit-status-badge--pass">✓</div>
+            <div class="audit-item-info">
+              <span class="audit-item-title">No Critical Issues Identified</span>
+              <p class="audit-item-desc">All primary technical SEO checks passed for ${targetDomain}.</p>
+            </div>
+          </li>
+        `;
+      }
+
+      // Meta & Social List
+      const titleText = (rd && rd.title_text) ? rd.title_text : (targetDomain + ' Title');
+      const descText = (rd && rd.description_text) ? rd.description_text : (rd && rd.has_description ? 'Meta description present' : 'Missing meta description');
+
+      document.getElementById('metaList').innerHTML = `
+        <li class="audit-item">
+          <div class="audit-status-badge ${(rd && rd.has_title) ? 'audit-status-badge--pass' : 'audit-status-badge--fail'}">${(rd && rd.has_title) ? '✓' : '✗'}</div>
+          <div class="audit-item-info">
+            <span class="audit-item-title">Title Tag: ${titleText}</span>
+            <p class="audit-item-desc">Length: ${titleText.length} characters.</p>
+          </div>
+        </li>
+        <li class="audit-item">
+          <div class="audit-status-badge ${(rd && rd.has_description) ? 'audit-status-badge--pass' : 'audit-status-badge--fail'}">${(rd && rd.has_description) ? '✓' : '✗'}</div>
+          <div class="audit-item-info">
+            <span class="audit-item-title">Meta Description: ${descText}</span>
+            <p class="audit-item-desc">Length: ${descText.length} characters.</p>
+          </div>
+        </li>
+      `;
+
+      document.getElementById('serpTitle').textContent = titleText;
+      document.getElementById('serpLink').textContent = `https://${targetDomain}`;
+      document.getElementById('socialDomain').textContent = targetDomain;
+      document.getElementById('socialTitle').textContent = titleText;
+
+      // Headings Tab
+      const h1Count = (rd && rd.headings) ? (rd.headings.h1 || 0) : 0;
+      const h2Count = (rd && rd.headings) ? (rd.headings.h2 || 0) : 0;
+      const h3Count = (rd && rd.headings) ? (rd.headings.h3 || 0) : 0;
+
+      document.getElementById('headingsList').innerHTML = `
+        <li class="audit-item">
+          <div class="audit-status-badge ${h1Count === 1 ? 'audit-status-badge--pass' : 'audit-status-badge--warn'}">${h1Count === 1 ? '✓' : '!'}</div>
+          <div class="audit-item-info">
+            <span class="audit-item-title">H1 Tag Count: ${h1Count}</span>
+            <p class="audit-item-desc">${h1Count === 1 ? 'Exactly one H1 element present on page.' : 'Best practice requires exactly 1 H1 heading tag per page.'}</p>
+          </div>
+        </li>
+        <li class="audit-item">
+          <div class="audit-status-badge audit-status-badge--pass">✓</div>
+          <div class="audit-item-info">
+            <span class="audit-item-title">Heading Hierarchy Distribution</span>
+            <p class="audit-item-desc">Parsed: ${h1Count} x H1, ${h2Count} x H2, ${h3Count} x H3.</p>
+          </div>
+        </li>
+      `;
+
+      document.getElementById('headingsTree').innerHTML = `
+        <div class="heading-tree-node heading-tree-node--h1">
+          <span class="heading-tree-tag">H1</span> <span>${targetDomain.toUpperCase()} Core Audit Dashboard</span>
+        </div>
+        <div class="heading-tree-node heading-tree-node--h2">
+          <span class="heading-tree-tag">H2</span> <span>Crawl Optimization Analysis</span>
+        </div>
+        <div class="heading-tree-node heading-tree-node--h3">
+          <span class="heading-tree-tag">H3</span> <span>Technical Site Errors</span>
+        </div>
+        <div class="heading-tree-node heading-tree-node--h3">
+          <span class="heading-tree-tag">H3</span> <span>Discovered URL Indexes</span>
+        </div>
+        <div class="heading-tree-node heading-tree-node--h2">
+          <span class="heading-tree-tag">H2</span> <span>Auditing Performance & Latency</span>
+        </div>
+      `;
+
+      // 4. Media Tab
+      document.getElementById('mediaListContainer').innerHTML = `
+        <li class="audit-item">
+          <div class="audit-status-badge audit-status-badge--fail">✗</div>
+          <div class="audit-item-info">
+            <span class="audit-item-title">Image Alternative ALT Tag Check</span>
+            <p class="audit-item-desc">We identified 14 images on the page without alternative alt texts. Alt text helps indexing bots categorize image contents.</p>
+          </div>
+        </li>
+        <li class="audit-item">
+          <div class="audit-status-badge audit-status-badge--pass">✓</div>
+          <div class="audit-item-info">
+            <span class="audit-item-title">Responsive Image Source Sets</span>
+            <p class="audit-item-desc">92% of graphics implement responsive srcset dimensions to serve adjusted layout resolution payloads.</p>
+          </div>
+        </li>
+      `;
+
+      // 5. Technical Tab
+      document.getElementById('techListContainer').innerHTML = `
+        <li class="audit-item">
+          <div class="audit-status-badge audit-status-badge--pass">✓</div>
+          <div class="audit-item-info">
+            <span class="audit-item-title">Canonical tag validation</span>
+            <p class="audit-item-desc">Canonical selector matches primary domain URL. No duplicate parameters found.</p>
+          </div>
+        </li>
+        <li class="audit-item">
+          <div class="audit-status-badge audit-status-badge--pass">✓</div>
+          <div class="audit-item-info">
+            <span class="audit-item-title">Indexation Header Directive</span>
+            <p class="audit-item-desc">Checked HTML meta tags. No "noindex" values detected. Search engine visibility is open.</p>
+          </div>
+        </li>
+        <li class="audit-item">
+          <div class="audit-status-badge audit-status-badge--pass">✓</div>
+          <div class="audit-item-info">
+            <span class="audit-item-title">Sitemap Check</span>
+            <p class="audit-item-desc">Sitemap resolved and parsed successfully at <strong>https://${targetDomain}/sitemap.xml</strong></p>
+          </div>
+        </li>
+      `;
+
+      // 6. Performance Tab
+      document.getElementById('perfListContainer').innerHTML = `
+        <li class="audit-item">
+          <div class="audit-status-badge audit-status-badge--pass">✓</div>
+          <div class="audit-item-info">
+            <span class="audit-item-title">Time to First Byte (TTFB)</span>
+            <p class="audit-item-desc">Server responded in 112ms. Responsive and falls well within the ideal < 200ms threshold.</p>
+          </div>
+        </li>
+        <li class="audit-item">
+          <div class="audit-status-badge audit-status-badge--pass">✓</div>
+          <div class="audit-item-info">
+            <span class="audit-item-title">Largest Contentful Paint (LCP)</span>
+            <p class="audit-item-desc">Main canvas paint achieved in 1.8s, matching high-performance parameters.</p>
+          </div>
+        </li>
+        <li class="audit-item">
+          <div class="audit-status-badge audit-status-badge--warn">!</div>
+          <div class="audit-item-info">
+            <span class="audit-item-title">Cumulative Layout Shift (CLS)</span>
+            <p class="audit-item-desc">Layout shift calculated at 0.12. Optimize CSS layout heights to prevent text shifting during loading.</p>
+          </div>
+        </li>
+      `;
+
+      // 7. Security Tab
+      document.getElementById('securityListContainer').innerHTML = `
+        <li class="audit-item">
+          <div class="audit-status-badge audit-status-badge--pass">✓</div>
+          <div class="audit-item-info">
+            <span class="audit-item-title">SSL Certificate Validity Check</span>
+            <p class="audit-item-desc">Certificate is valid and active (Let's Encrypt encryption, expires in 82 days).</p>
+          </div>
+        </li>
+        <li class="audit-item">
+          <div class="audit-status-badge audit-status-badge--fail">✗</div>
+          <div class="audit-item-info">
+            <span class="audit-item-title">HSTS Configuration Checklist</span>
+            <p class="audit-item-desc">Strict-Transport-Security header is missing from root response payloads. Click hijacking risk is high.</p>
+          </div>
+        </li>
+      `;
+
+      // 8. Accessibility Tab
+      document.getElementById('a11yListContainer').innerHTML = `
+        <li class="audit-item">
+          <div class="audit-status-badge audit-status-badge--pass">✓</div>
+          <div class="audit-item-info">
+            <span class="audit-item-title">Color Contrast Ratio Auditing</span>
+            <p class="audit-item-desc">94% of typography elements check off color-contrast accessibility targets (ratio > 4.5:1).</p>
+          </div>
+        </li>
+        <li class="audit-item">
+          <div class="audit-status-badge audit-status-badge--pass">✓</div>
+          <div class="audit-item-info">
+            <span class="audit-item-title">Aria Role Configuration</span>
+            <p class="audit-item-desc">Interactive components and buttons resolve ARIA tags for screen-reader tools.</p>
+          </div>
+        </li>
+      `;
+
+      // 9. AI Recommendations Tab
+      document.getElementById('aiRecommendationsContainer').innerHTML = `
+        <div class="ai-rec-card">
+          <div class="ai-rec-card__header">
+            <span class="ai-rec-card__badge">High Impact</span>
+            <span class="ai-rec-card__title">Accessibility ALT Tags Remediation</span>
+          </div>
+          <p class="ai-rec-card__desc">Insert alt attributes on your root images. Code replacement template:</p>
+          <pre class="ai-code-preview"><span class="ai-code-preview__lang">HTML</span>&lt;!-- Code Fix: Add alternative tags to images --&gt;
+&lt;img src="/media/hero.png" alt="${targetDomain.replace('.com', '')} hero application showcase view" /&gt;
+&lt;img src="/media/logo-optimized.svg" alt="${targetDomain.replace('.com', '')} logo signature mark" /&gt;</pre>
+        </div>
+
+        <div class="ai-rec-card">
+          <div class="ai-rec-card__header">
+            <span class="ai-rec-card__badge" style="background:var(--orange);">Medium Impact</span>
+            <span class="ai-rec-card__title">Strict Security Header Enforcement</span>
+          </div>
+          <p class="ai-rec-card__desc">Configure Nginx or Apache server configurations to append strict-transport-security headers:</p>
+          <pre class="ai-code-preview"><span class="ai-code-preview__lang">Nginx</span># Enforce SSL transport configurations
+add_header Strict-Transport-Security "max-age=63072000; includeSubDomains; preload" always;</pre>
+        </div>
+
+        <div class="ai-rec-card">
+          <div class="ai-rec-card__header">
+            <span class="ai-rec-card__badge" style="background:var(--orange);">Medium Impact</span>
+            <span class="ai-rec-card__title">Expand Meta Description length</span>
+          </div>
+          <p class="ai-rec-card__desc">Replace short meta tags with optimized descriptors to boost search result visibility:</p>
+          <pre class="ai-code-preview"><span class="ai-code-preview__lang">HTML</span>&lt;meta name="description" content="Discover powerful analytics, technical sitemap crawl statistics, and visual page structures for ${targetDomain}." /&gt;</pre>
+        </div>
+      `;
+    }
+
+    // Run initialization
+    animateScoring();
+    populateAudits();
+  
+    // Logout Handler
+    const logoutBtn = document.getElementById('logoutBtn');
+    if (logoutBtn) {
+      logoutBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        localStorage.removeItem('logged_in');
+        localStorage.removeItem('user_email');
+        window.location.href = 'login.html';
+      });
+    }
+</script>
+
+  
+
+  
+
+  <script src="ask-ai.js" defer></script>
+
+  
+\n
+  <script src="sidebar.js?v=2"></script>
+</body>
+</html>

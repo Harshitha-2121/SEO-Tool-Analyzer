@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script>
+    if (localStorage.getItem('logged_in') !== 'true') {
+      window.location.href = 'login.html';
+    }
+  </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI EEAT & Search Intent Analyzer | crawlX</title>
+  <meta name="description" content="Audit search intent metrics and measure Experience, Expertise, Authoritativeness, and Trustworthiness (EEAT) alignment for enterprise websites.">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <style>
+    /* ═══════════════════════════════════════
+       RESET & VARIABLES
+       ═══════════════════════════════════════ */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg-base: #09090b; --bg: #1A1A1A;
+      --bg-sidebar: #09090b;
+      --bg-topbar: rgba(9, 9, 11, 0.8);
+      --bg-card: rgba(20, 20, 25, 0.65);
+      --bg-card-hover: rgba(255, 255, 255, 0.04);
+      --bg-input: rgba(255, 255, 255, 0.03);
+      --border: rgba(255, 255, 255, 0.08);
+      --border-hover: rgba(255, 255, 255, 0.16);
+
+      --accent: #10b981;
+      --accent-light: #34d399;
+      --accent-glow: rgba(16, 185, 129, 0.25);
+      --cyan: #00e5ff;
+      --cyan-bg: rgba(0, 229, 255, 0.1);
+      --cyan-border: rgba(0, 229, 255, 0.2);
+      
+      --green: #00e676;
+      --green-bg: rgba(0, 230, 118, 0.1);
+      --green-border: rgba(0, 230, 118, 0.2);
+      
+      --orange: #ff9100;
+      --orange-bg: rgba(255, 145, 0, 0.1);
+      --orange-border: rgba(255, 145, 0, 0.2);
+      
+      --red: #ff5252;
+      --red-bg: rgba(255, 82, 82, 0.1);
+      --red-border: rgba(255, 82, 82, 0.2);
+      
+      --yellow: #ffd600;
+
+      --text-1: #f4f4f5;
+      --text-2: rgba(244, 244, 245, 0.7);
+      --text-3: rgba(244, 244, 245, 0.4);
+
+      
+      --topbar-h: 60px;
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --ease: cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg-base);
+      color: var(--text-1);
+      line-height: 1.6;
+      overflow: hidden;
+      height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ═══════════════════════════════════════
+       LAYOUT SHELL
+       ═══════════════════════════════════════ */
+    .app {
+      display: flex;
+      height: 100vh;
+    }
+
+    
+
+    
+
+    
+    
+
+    
+
+    
+    
+    
+
+    .main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      position: relative;
+    }
+
+    .topbar {
+      height: var(--topbar-h);
+      background: var(--bg-topbar);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 0 24px;
+      justify-content: space-between;
+      z-index: 90;
+    }
+
+    .topbar__title {
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .content-area {
+      flex: 1;
+      overflow-y: auto;
+      padding: 32px;
+    }
+
+    /* Page Header */
+    .analyzer-header {
+      margin-bottom: 32px;
+    }
+    .analyzer-header h1 {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .analyzer-header p {
+      color: var(--text-2);
+      font-size: 15px;
+    }
+
+    /* Search Input Section */
+    .input-section {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 24px;
+      margin-bottom: 32px;
+      display: flex;
+      gap: 16px;
+      align-items: flex-end;
+      flex-wrap: wrap;
+    }
+    .input-group {
+      flex: 1;
+      min-width: 300px;
+    }
+    .input-group label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-2);
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .input-group input {
+      width: 100%;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      color: var(--text-1);
+      padding: 12px 16px;
+      border-radius: var(--radius-sm);
+      font-family: inherit;
+      font-size: 14px;
+      transition: all 0.2s;
+    }
+    .input-group input:focus {
+      outline: none;
+      border-color: var(--accent);
+      background: rgba(108, 92, 231, 0.05);
+    }
+    .btn-analyze {
+      background: var(--accent);
+      color: var(--text-1); border: none;
+      padding: 12px 24px;
+      border-radius: var(--radius-sm);
+      font-family: inherit;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+      height: 45px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .btn-analyze:hover {
+      background: #5a4bcf;
+      box-shadow: 0 4px 12px var(--accent-glow);
+    }
+
+    /* Terminal Loading Overlay */
+    .loading-state {
+      display: none;
+      text-align: center;
+      padding: 48px 0;
+    }
+    .spinner {
+      width: 40px; height: 40px;
+      border: 3px solid rgba(255,255,255,0.1);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 16px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Results */
+    .results-section {
+      display: none;
+    }
+
+    /* EEAT Dials Grid */
+    .eeat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin-bottom: 32px;
+    }
+    .eeat-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      transition: all 0.3s var(--ease);
+    }
+    .eeat-card:hover {
+      border-color: var(--border-hover);
+      background: var(--bg-card-hover);
+    }
+    .eeat-card__dial {
+      position: relative;
+      width: 110px;
+      height: 110px;
+      margin-bottom: 12px;
+    }
+    .eeat-card__dial svg {
+      width: 100%;
+      height: 100%;
+      transform: rotate(-90deg);
+    }
+    .eeat-card__dial-bg {
+      fill: none;
+      stroke: rgba(255, 255, 255, 0.02);
+      stroke-width: 8;
+    }
+    .eeat-card__dial-fill {
+      fill: none;
+      stroke-width: 8;
+      stroke-linecap: round;
+      stroke-dasharray: 283;
+      stroke-dashoffset: 283;
+      transition: stroke-dashoffset 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .eeat-card__dial-val {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--text-1); }
+    .eeat-card__title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-2);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* Intent Distribution & Summary layout */
+    .intent-layout {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 24px;
+      margin-bottom: 32px;
+    }
+    @media (max-width: 768px) {
+      .intent-layout { grid-template-columns: 1fr; }
+    }
+
+    .distribution-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 24px;
+    }
+    .distribution-card h3 {
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+    .intent-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .intent-row:last-child { margin-bottom: 0; }
+    .intent-label {
+      width: 100px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-2);
+    }
+    .intent-bar-wrapper {
+      flex: 1;
+      height: 10px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      overflow: hidden;
+    }
+    .intent-bar-fill {
+      height: 100%;
+      border-radius: 4px;
+      width: 0%;
+      transition: width 0.8s var(--ease);
+    }
+    .intent-pct-val {
+      width: 36px;
+      text-align: right;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .summary-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .summary-card h3 {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .summary-card p {
+      font-size: 15px;
+      color: var(--text-2);
+    }
+
+    /* Tabs & Tables */
+    .tabs-container {
+      margin-top: 40px;
+      margin-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      gap: 24px;
+      overflow-x: auto;
+    }
+    .tab-btn {
+      background: none;
+      border: none;
+      color: var(--text-2);
+      font-size: 14px;
+      font-weight: 600;
+      padding: 12px 4px;
+      cursor: pointer;
+      position: relative;
+      transition: color 0.2s;
+      white-space: nowrap;
+    }
+    .tab-btn:hover {
+      color: var(--text-1);
+    }
+    .tab-btn.active {
+      color: var(--accent);
+    }
+    .tab-btn.active::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: var(--accent);
+    }
+    .tab-content {
+      display: none;
+      animation: fadeIn 0.3s ease-out;
+      margin-bottom: 32px;
+    }
+    .tab-content.active {
+      display: block;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+    }
+    .data-table th, .data-table td {
+      padding: 14px 18px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+    .data-table th {
+      font-size: 11px;
+      color: var(--text-2);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      background: var(--bg-card);
+    }
+    .data-table td {
+      font-size: 13.5px;
+    }
+    .data-table tr:last-child td { border-bottom: none; }
+
+    /* Intent Badges */
+    .intent-badge {
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+    .intent-info { background: var(--cyan-bg); color: var(--cyan); border: 1px solid var(--cyan-border); }
+    .intent-comm { background: rgba(162, 155, 254, 0.1); color: var(--accent); border: 1px solid rgba(162, 155, 254, 0.2); }
+    .intent-tran { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-border); }
+    .intent-nav { background: var(--orange-bg); color: var(--orange); border: 1px solid var(--orange-border); }
+
+    /* Recommendation Cards (Global Development Rule Compliant) */
+    .recs-header-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin-top: 48px;
+      margin-bottom: 20px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 10px;
+    }
+    .result-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 24px;
+      margin-bottom: 24px;
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 24px;
+      transition: all 0.2s;
+    }
+    .result-card:hover {
+      border-color: var(--border-hover);
+      background: var(--bg-card-hover);
+    }
+    .card-main {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .card-sidebar {
+      background: var(--bg-card);
+      padding: 20px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 14px;
+    }
+    .card-title {
+      font-size: 16.5px;
+      font-weight: 600;
+      color: var(--text-1); }
+    .confidence-badge {
+      font-size: 11.5px;
+      padding: 4px 10px;
+      border-radius: 100px;
+      font-weight: 600;
+    }
+    .confidence-high { background: var(--green-bg); border-color: var(--green-border); color: var(--green); }
+    .confidence-med { background: var(--orange-bg); border-color: var(--orange-border); color: var(--orange); }
+
+    .ai-summary-block {
+      background: rgba(108, 92, 231, 0.04);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--accent);
+      border-radius: var(--radius-sm);
+      padding: 16px;
+    }
+    .block-title {
+      font-size: 11px;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 6px;
+      letter-spacing: 0.5px;
+    }
+    
+    .qa-block {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .qa-block h4 {
+      font-size: 13px;
+      color: var(--text-2);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 2px;
+    }
+    .qa-block p {
+      font-size: 14px;
+      color: var(--text-1);
+    }
+
+    .metrics-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .metric-box {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 12px;
+    }
+    .metric-box:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+    .metric-label {
+      font-size: 11.5px;
+      color: var(--text-2);
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .metric-value {
+      font-size: 15px;
+      font-weight: 600;
+    }
+    .priority-high { color: var(--red); }
+    .priority-med { color: var(--orange); }
+  
+    /* Animated Glowing Search Bar */
+    .animated-glowing-search-wrapper {
+      position: relative;
+      border-radius: var(--radius-md);
+      padding: 1.5px;
+      background: var(--bg-card);
+      overflow: hidden;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      transition: all 0.3s ease;
+      width: 100%;
+    }
+
+    .animated-glowing-search-wrapper::before {
+      content: '';
+      position: absolute;
+      top: -100%; left: -100%;
+      width: 300%; height: 300%;
+      background: conic-gradient(from 0deg, transparent 0%, transparent 40%, var(--accent) 50%, var(--accent) 60%, transparent 100%);
+      animation: searchGlowSpin 4s linear infinite;
+      z-index: -2;
+      opacity: 0.15;
+      transition: opacity 0.3s ease;
+    }
+
+    .animated-glowing-search-wrapper:focus-within::before {
+      opacity: 1;
+      animation: searchGlowSpin 2s linear infinite;
+    }
+
+    .animated-glowing-search-wrapper::after {
+      content: '';
+      position: absolute;
+      inset: 1.5px;
+      background: var(--bg-card);
+      border-radius: calc(var(--radius-md) - 1.5px);
+      z-index: -1;
+    }
+
+    @keyframes searchGlowSpin {
+      100% { transform: rotate(360deg); }
+    }
+
+    .animated-glowing-search-input {
+      width: 100%;
+      padding: 14px 20px;
+      background: transparent;
+      border: none;
+      color: var(--text-1);
+      font-size: 14px;
+      outline: none;
+      z-index: 2;
+    }
+    .animated-glowing-search-input::placeholder {
+      color: var(--text-3);
+    }
+
+  </style>
+  
+</head>
+<body>
+  <div class="app">
+    
+    
+
+    <!-- Main Content -->
+    <main class="main">
+      <header class="topbar">
+        <div class="topbar__title">AI EEAT & Search Intent Analyzer</div>
+      </header>
+
+      <div class="content-area">
+        <div class="analyzer-header">
+          <h1>EEAT & Search Intent Intelligence</h1>
+          <p>Audit search intent mappings and diagnose Experience, Expertise, Authoritativeness, and Trustworthiness alignment.</p>
+        </div>
+
+        <div class="input-section">
+          <div class="input-group">
+            <label for="targetUrlInput">Domain or URL to Analyze</label>
+            <input type="url" id="targetUrlInput" placeholder="https://yoursite.com" required>
+          </div>
+          <button class="btn-analyze" id="btnAnalyze">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+            Analyze Site
+          </button>
+        </div>
+
+        <div class="loading-state" id="intentLoader">
+          <div class="spinner"></div>
+          <p style="font-weight:600; font-size:15px; margin-bottom:8px;">Running EEAT & Intent Semantic Scanner...</p>
+          <p id="loaderTask" style="color:var(--text-3); font-size:12.5px;">Crawling URLs and parsing sitemaps structure...</p>
+        </div>
+
+        <div id="errorAlert" style="display:none; background:var(--red-bg); border:1px solid var(--red-border); border-radius:var(--radius-md); padding:20px; margin-bottom:32px;">
+          <div style="display:flex; align-items:center; gap:12px; margin-bottom:12px;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="7.86 2 16.14 2 22 7.86 22 16.14 16.14 22 7.86 22 2 16.14 2 7.86 7.86 2"/>
+              <line x1="12" y1="8" x2="12" y2="12"/>
+              <line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+            <strong style="color: var(--text-1); font-size:15px;">Analysis Failed</strong>
+          </div>
+          <p id="errorText" style="color:var(--text-2); font-size:14px; margin-bottom:16px;">Unable to fetch website.</p>
+          <button class="btn-analyze" id="btnRetry" style="height:36px; padding:0 16px; font-size:13px; background: var(--bg-card); border:1px solid var(--border); color: var(--text-1); cursor:pointer;">
+            Retry Analysis
+          </button>
+        </div>
+
+        <div class="results-section" id="resultsWrapper">
+          
+          <!-- EEAT Dials Grid -->
+          <div class="eeat-grid">
+            
+            <!-- Experience -->
+            <div class="eeat-card">
+              <div class="eeat-card__dial">
+                <svg>
+                  <circle class="eeat-card__dial-bg" cx="55" cy="55" r="45"></circle>
+                  <circle class="eeat-card__dial-fill" id="fillExp" cx="55" cy="55" r="45" stroke="var(--cyan)"></circle>
+                </svg>
+                <div class="eeat-card__dial-val" id="valExp">0%</div>
+              </div>
+              <div class="eeat-card__title">Experience</div>
+            </div>
+
+            <!-- Expertise -->
+            <div class="eeat-card">
+              <div class="eeat-card__dial">
+                <svg>
+                  <circle class="eeat-card__dial-bg" cx="55" cy="55" r="45"></circle>
+                  <circle class="eeat-card__dial-fill" id="fillExt" cx="55" cy="55" r="45" stroke="var(--accent-light)"></circle>
+                </svg>
+                <div class="eeat-card__dial-val" id="valExt">0%</div>
+              </div>
+              <div class="eeat-card__title">Expertise</div>
+            </div>
+
+            <!-- Authority -->
+            <div class="eeat-card">
+              <div class="eeat-card__dial">
+                <svg>
+                  <circle class="eeat-card__dial-bg" cx="55" cy="55" r="45"></circle>
+                  <circle class="eeat-card__dial-fill" id="fillAut" cx="55" cy="55" r="45" stroke="var(--green)"></circle>
+                </svg>
+                <div class="eeat-card__dial-val" id="valAut">0%</div>
+              </div>
+              <div class="eeat-card__title">Authority</div>
+            </div>
+
+            <!-- Trust -->
+            <div class="eeat-card">
+              <div class="eeat-card__dial">
+                <svg>
+                  <circle class="eeat-card__dial-bg" cx="55" cy="55" r="45"></circle>
+                  <circle class="eeat-card__dial-fill" id="fillTru" cx="55" cy="55" r="45" stroke="var(--orange)"></circle>
+                </svg>
+                <div class="eeat-card__dial-val" id="valTru">0%</div>
+              </div>
+              <div class="eeat-card__title">Trust</div>
+            </div>
+
+          </div>
+
+          <!-- Intent layout -->
+          <div class="intent-layout">
+            
+            <!-- Progress bars -->
+            <div class="distribution-card">
+              <h3>Intent Profile</h3>
+              <div class="intent-row">
+                <span class="intent-label">Informational</span>
+                <div class="intent-bar-wrapper">
+                  <div class="intent-bar-fill" id="barInfo" style="background:var(--cyan);"></div>
+                </div>
+                <span class="intent-pct-val" id="lblInfo">0%</span>
+              </div>
+              <div class="intent-row">
+                <span class="intent-label">Commercial</span>
+                <div class="intent-bar-wrapper">
+                  <div class="intent-bar-fill" id="barComm" style="background:var(--accent-light);"></div>
+                </div>
+                <span class="intent-pct-val" id="lblComm">0%</span>
+              </div>
+              <div class="intent-row">
+                <span class="intent-label">Transactional</span>
+                <div class="intent-bar-wrapper">
+                  <div class="intent-bar-fill" id="barTran" style="background:var(--green);"></div>
+                </div>
+                <span class="intent-pct-val" id="lblTran">0%</span>
+              </div>
+              <div class="intent-row">
+                <span class="intent-label">Navigational</span>
+                <div class="intent-bar-wrapper">
+                  <div class="intent-bar-fill" id="barNav" style="background:var(--orange);"></div>
+                </div>
+                <span class="intent-pct-val" id="lblNav">0%</span>
+              </div>
+            </div>
+
+            <!-- AI narrative -->
+            <div class="summary-card">
+              <h3>Search Intent Focus Summary</h3>
+              <p id="aiClusterNarrative">Ggrounded semantic evaluation in progress...</p>
+            </div>
+
+          </div>
+
+          <!-- Tabs Container -->
+          <div class="tabs-container">
+            <button class="tab-btn active" data-tab="tab-eeat">EEAT Diagnostics</button>
+            <button class="tab-btn" data-tab="tab-intent">Intent Mapping</button>
+            <button class="tab-btn" data-tab="tab-gaps">Topic Clusters & Gaps</button>
+          </div>
+
+          <!-- Tab Content 1: EEAT Diagnostics -->
+          <div id="tab-eeat" class="tab-content active">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Page URL</th>
+                  <th>Experience</th>
+                  <th>Expertise</th>
+                  <th>Authority</th>
+                  <th>Trust</th>
+                  <th>Score Rank</th>
+                </tr>
+              </thead>
+              <tbody id="eeatTableBody">
+                <!-- JS Injected -->
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Tab Content 2: Intent Mapping -->
+          <div id="tab-intent" class="tab-content">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Page URL</th>
+                  <th>Search Intent</th>
+                  <th>Confidence</th>
+                  <th>Explanation</th>
+                  <th>Top Core Keywords</th>
+                </tr>
+              </thead>
+              <tbody id="intentMappingBody">
+                <!-- JS Injected -->
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Tab Content 3: Topic Clusters & Gaps -->
+          <div id="tab-gaps" class="tab-content">
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px; margin-bottom:24px;">
+              
+              <!-- Topic gaps -->
+              <div class="distribution-card" style="background: var(--bg-card);">
+                <h3 style="border-bottom:1px solid var(--border); padding-bottom:8px; margin-bottom:12px;">Missing Topics Gap Report</h3>
+                <table class="custom-table" style="width:100%; font-size:12.5px; border-collapse:collapse;">
+                  <thead>
+                    <tr style="text-align:left; color:var(--text-2);">
+                      <th style="padding:8px 0;">Gap Topic</th>
+                      <th style="padding:8px 0;">Intent Type</th>
+                      <th style="padding:8px 0; text-align:right;">Est Vol</th>
+                    </tr>
+                  </thead>
+                  <tbody id="missingTopicsBody">
+                    <!-- JS Injected -->
+                  </tbody>
+                </table>
+              </div>
+
+              <!-- Featured snippet opportunities -->
+              <div class="distribution-card" style="background: var(--bg-card);">
+                <h3 style="border-bottom:1px solid var(--border); padding-bottom:8px; margin-bottom:12px;">Featured Snippet Targets</h3>
+                <table class="custom-table" style="width:100%; font-size:12.5px; border-collapse:collapse;">
+                  <thead>
+                    <tr style="text-align:left; color:var(--text-2);">
+                      <th style="padding:8px 0;">Target Query</th>
+                      <th style="padding:8px 0;">Suggested Answer</th>
+                    </tr>
+                  </thead>
+                  <tbody id="featuredSnippetsBody">
+                    <!-- JS Injected -->
+                  </tbody>
+                </table>
+              </div>
+
+            </div>
+
+            <!-- Pillar recommendations -->
+            <div class="distribution-card" style="background: var(--bg-card);">
+              <h3 style="margin-bottom:16px;">Recommended Pillar & Topic Clusters</h3>
+              <div id="clustersContainer">
+                <!-- JS Injected -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Actionable EEAT Recommendations Plan -->
+          <div class="recs-header-title">EEAT & Intent Optimization Plan</div>
+          <div id="recommendationsList">
+            <!-- Recommendations Cards go here -->
+          </div>
+
+        </div>
+
+      </div>
+    </main>
+  </div>
+  <script src="intent-analyzer.js"></script>
+
+  <script src="sidebar.js?v=2"></script>
+</body>
+</html>

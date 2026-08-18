@@ -1,0 +1,9 @@
+node_modules/
+.convex/
+.env
+.env.local
+*.log
+__pycache__/
+scratch/
+test_links_result.json
+sidebar.js.bak

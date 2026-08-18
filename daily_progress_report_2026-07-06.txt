@@ -1,0 +1,176 @@
+================================================================================
+AUDITPRO / CRAWLX — DAILY PROGRESS REPORT
+Date: 2026-07-06
+Project: seo-audit-platform (Vite + TypeScript + Convex + Vanilla HTML)
+Workspace: /home/ubuntu/seo-audit-platform
+================================================================================
+
+SUMMARY
+-------
+Today's session focused on creating a single, persistent, global sidebar component
+for the multi-page Vite HTML application. The legacy design duplicated the sidebar
+markup and CSS in every HTML page (evidenced by the previous _patch_sidebars.py
+maintenance script). A new shared sidebar.js component was created to centralize
+all navigation UI, behavior, and theming.
+
+DELIVERABLES COMPLETED TODAY
+----------------------------
+
+1. GLOBAL SIDEBAR COMPONENT
+   File: seo-audit-platform/sidebar.js
+   - Single source of truth for all sidebar HTML, CSS, and behavior.
+   - Injects a fixed <aside id="sidebar"> once per page via vanilla JS.
+   - Injects shared CSS variables and layout rules once per page.
+   - Detects current page filename and marks the correct nav item as active.
+   - Supports desktop fixed width (280px), collapsed width (68px), and mobile
+     off-canvas drawer modes from the same component.
+   - Collapse/expand state is persisted in localStorage.
+   - Hover-expand behavior on collapsed desktop state.
+   - Mobile hamburger toggle and overlay close behavior.
+
+2. NAVIGATION STRUCTURE
+   - Dashboard
+   - Crawl & Audit: SEO Scanner, SEO Analyzer, Page Counter
+   - Intelligence: Competitor Engine, Content Gap, Intent Analyzer, Internal Links
+   - Technical: Technical SEO, AutoFix, Performance, Security & A11y
+   - AI Tools: AI Copilot, AI Roadmap, Digital Twin
+   - Analytics: Reports, History
+
+3. LAYOUT MODELS SUPPORTED
+   - Type A: <div class="app"> container with sidebar + main as flex children.
+   - Type B: <body> as flex container with sidebar + main margin-left offset.
+   - Main content offset is applied via CSS so the sidebar does not rebuild,
+     resize, or animate on navigation; only the active nav item changes.
+
+4. DESIGN / THEME SYSTEM
+   - CSS custom properties for colors, spacing, transitions, and widths.
+   - Dark premium theme with purple accent (#6c5ce7), glassmorphic touches,
+     consistent typography, hover/active states, and active indicator stripe.
+
+5. RESPONSIVE BEHAVIOR
+   - Desktop (>1024px): fixed 280px sidebar, optional collapse.
+   - Tablet (768px-1024px): auto-collapsed to 68px, hover expands.
+   - Mobile (<768px): hidden off-canvas drawer, hamburger toggle.
+
+6. USER FOOTER
+   - Reads user_email from localStorage for personalized initials/name.
+   - Sign Out button clears login state and redirects to login.html.
+
+7. CLEANUP
+   - The component removes stale sidebar scripts/styles by ID when it initializes:
+     sidebar-active-highlight-script, sidebar-active-script, sidebar-redesign-overrides.
+
+FEATURE SPOTLIGHT: COMPETITOR ENGINE (NEW)
+-----------------------------------------
+Files: seo-audit-platform/competitor-engine.html, competitor-engine.js
+   - Live multi-domain competitor audit form accepting a user URL and up to
+     several competitor URLs.
+   - Animated 5-step loader overlay (connecting, scraping, sitemap/schema
+     comparison, AI outranking engine, dashboard compilation).
+   - POSTs to backend endpoint /api/competitor-audit with a 3-minute timeout.
+   - Renders transparent "Honesty Banner" explaining that scores are on-page
+     structural estimates, NOT third-party Domain Authority / backlink / traffic.
+   - Visual deliverables rendered:
+     * On-Page SEO Score Comparison rings for user site vs each competitor
+     * Structural Authority Index bars
+     * On-Page Footprint Index bars
+     * Structure Gap Analysis (pages scanned, headings, internal links)
+     * Technical Audit checklist (title, meta, canonical, schema, SSL, alt tags,
+       headings, internal links)
+     * AI Outranking Battle Plan narrative (returned by backend / AI)
+   - Error handling with timeout detection and troubleshooting steps.
+
+FEATURE SPOTLIGHT: AI SEO COPILOT (NEW)
+----------------------------------------
+Files: seo-audit-platform/ai-copilot.html, ask-ai.js
+   - Full-page chat interface with persistent history panel.
+   - Powered by a local Ollama LLM via /api/ask-ai endpoint.
+   - Context modes: General SEO, Technical, Content, Competitor, Local SEO.
+   - Context URL input pre-filled from current_scanned_domain in localStorage.
+   - Quick-start cards for Core Web Vitals, Internal Linking, Schema Markup,
+     and Keyword Gap Analysis.
+   - Chat history saved to localStorage (max 20 conversations).
+   - Floating "Ask AI" drawer (ask-ai.js) available across pages, which:
+     * Injects a floating button on supported pages
+     * Opens a slide-in drawer from the right
+     * Sends user questions to /api/ask-ai with real_scan_data crawl context
+     * Falls back to a built-in rule-based conversational engine if the AI
+       endpoint is unreachable
+   - Rule-based engine covers greetings, LCP/CLS/TTFB definitions, sitemap
+     explanation, robots.txt, H1/heading checks, image alt tags, general SEO
+     score/status, and a default prompt to run a live audit.
+
+KNOWN ISSUES / NEXT STEPS
+-------------------------
+1. PAGE INTEGRATION
+   - The new sidebar.js is ready but not yet loaded by every HTML page.
+   - Next step: remove old duplicate sidebar markup from each HTML page and add
+     <script src="sidebar.js" defer></script> near the closing </body> tag.
+   - A helper script has been created: seo-audit-platform/_integrate_global_sidebar.py
+     It cleans old sidebar markup/CSS/JS and ensures every page loads the shared
+     sidebar.js. Pending execution due to current workspace terminal limitations.
+
+2. _patch_sidebars.py
+   - The old patching script can be retired or replaced with a script that only
+     injects the shared <script src="sidebar.js" defer></script> tag.
+
+3. PAGE-SPECIFIC STYLES
+   - Some pages may still have inline sidebar CSS that should be removed to avoid
+     conflicts with the new shared CSS variables.
+
+4. WORKSPACE / ENVIRONMENT NOTE
+   - Remote terminal commands execute but output and file side-effects are not
+     visible to the agent, so the integration script could not be run from here.
+   - The script is ready to run directly on the server:
+       cd /home/ubuntu/seo-audit-platform
+       python3 _integrate_global_sidebar.py
+   - After running, verify at least one page in a browser and check the console
+     for any duplicate sidebar errors.
+
+5. TESTING
+   - Verify navigation on every page (dashboard, scanner, analyzer, counter,
+     competitor-engine, content-gap-analyzer, intent-analyzer, internal-links,
+     technical, technical-autofix, performance, security-a11y, ai-copilot,
+     ai-roadmap, digital-twin, report, history).
+   - Verify collapse, hover-expand, and mobile drawer behavior.
+   - Verify active state updates when navigating between pages.
+   - Verify /api/competitor-audit returns successful results on Competitor Engine.
+   - Verify /api/ask-ai responds correctly in AI Copilot and floating drawer.
+
+SERVER STATUS (from earlier today)
+----------------------------------
+- Remote host ubuntu-04 (192.168.0.115, Tailscale 100.102.145.125) was
+  unreachable due to a userspace hang from memory exhaustion.
+- Server recovered without reboot; uptime remained ~7 days.
+- Memory at time of check: 7.4G / 7.8G used, only 411 MB available, swap: 0B.
+- Recommended pending actions:
+  * Add 4 GB swap file
+  * Reclaim stale .vscode-server / antigravity IDE server processes
+  * Verify free memory with `free -h`
+
+FILE TRANSFER (pending)
+------------------------
+- Local folder: /Users/apple/Desktop/AntiGravity AI SEO Platform
+- Target: /home/ubuntu/ on ubuntu-04
+- Recommended command:
+  scp -r "/Users/apple/Desktop/AntiGravity AI SEO Platform" ubuntu@192.168.0.115:/home/ubuntu/
+
+ACTIVE PREVIEW LINKS (Cloudflare Tunnel)
+----------------------------------------
+- Landing Page:               https://oak-ham-approximately-asn.trycloudflare.com
+- Main Dashboard:             https://oak-ham-approximately-asn.trycloudflare.com/dashboard.html
+- Website Scanner:            https://oak-ham-approximately-asn.trycloudflare.com/scanner.html
+- RedSEO Page Counter:        https://oak-ham-approximately-asn.trycloudflare.com/counter.html
+- SEO Report Page:            https://oak-ham-approximately-asn.trycloudflare.com/report.html
+- Technical SEO Analyzer:     https://oak-ham-approximately-asn.trycloudflare.com/technical.html
+- On-Page SEO Analyzer:       https://oak-ham-approximately-asn.trycloudflare.com/analyzer.html
+- Performance Analyzer:       https://oak-ham-approximately-asn.trycloudflare.com/performance.html
+- Security & A11y Audit:      https://oak-ham-approximately-asn.trycloudflare.com/security-a11y.html
+- AI Recommendations & Roadmap: https://oak-ham-approximately-asn.trycloudflare.com/ai-roadmap.html
+- Audit History & Exports:    https://oak-ham-approximately-asn.trycloudflare.com/history.html
+- Competitor Engine:          https://oak-ham-approximately-asn.trycloudflare.com/competitor-engine.html
+- AI Copilot:                 https://oak-ham-approximately-asn.trycloudflare.com/ai-copilot.html
+
+================================================================================
+Report compiled by Ollima (Kimi K2) on 2026-07-06.
+================================================================================

@@ -1,0 +1,2931 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>crawlX — Enterprise SEO Audit Platform</title>
+  <meta name="description" content="crawlX: Everything You Need for Technical SEO and 15 Powerful Tools. One Platform. crawlX is the leading enterprise SEO audit platform. Analyze websites, crawl pages, find SEO issues, and generate AI-powered reports instantly.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Bruno+Ace&family=DynaPuff:wdth,wght@86.3,400..700&display=swap" rel="stylesheet">
+  <style>
+    /* ─── Reset & Base ─── */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg-primary: #06060f;
+      --bg-secondary: #0c0c1d;
+      --bg-card: rgba(20, 20, 25, 0.65);
+      --glass-bg: rgba(255, 255, 255, 0.04);
+      --glass-border: rgba(255, 255, 255, 0.08);
+      --glass-hover: rgba(255, 255, 255, 0.07);
+      --accent-primary: #10b981;
+      --accent-secondary: #059669;
+      --accent-glow: rgba(16, 185, 129, 0.25);
+      --accent-green: #10b981;
+      --accent-green-glow: rgba(16, 185, 129, 0.25);
+      --accent-orange: #ff9100;
+      --accent-red: #ff5252;
+      --accent-cyan: #10b981;
+
+      --text-primary: #f4f4f5;
+      --text-secondary: rgba(244, 244, 245, 0.7);
+      --text-tertiary: rgba(244, 244, 245, 0.4);
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --radius-xl: 28px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.6;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ─── Ambient Background ─── */
+    .ambient-bg {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .ambient-orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(120px);
+      opacity: 0.5;
+    }
+
+    .ambient-orb--1 {
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(108, 92, 231, 0.3), transparent 70%);
+      top: -150px; left: -100px;
+      animation: orbFloat1 20s ease-in-out infinite;
+    }
+
+    .ambient-orb--2 {
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(0, 229, 255, 0.15), transparent 70%);
+      top: 40%; right: -150px;
+      animation: orbFloat2 25s ease-in-out infinite;
+    }
+
+    .ambient-orb--3 {
+      width: 450px; height: 450px;
+      background: radial-gradient(circle, rgba(108, 92, 231, 0.2), transparent 70%);
+      bottom: -100px; left: 30%;
+      animation: orbFloat3 22s ease-in-out infinite;
+    }
+
+    @keyframes orbFloat1 {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(80px, 60px) scale(1.1); }
+      66% { transform: translate(-40px, 30px) scale(0.95); }
+    }
+    @keyframes orbFloat2 {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(-60px, -40px) scale(1.05); }
+      66% { transform: translate(40px, 60px) scale(0.9); }
+    }
+    @keyframes orbFloat3 {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(60px, -40px) scale(1.1); }
+    }
+
+    /* ─── Grid Overlay ─── */
+    .grid-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+      background-size: 60px 60px;
+      mask-image: radial-gradient(ellipse 80% 60% at 50% 30%, black, transparent);
+    }
+
+    /* ─── Container ─── */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* ─── Navigation ─── */
+    .nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 1000;
+      padding: 0 24px;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .nav.scrolled {
+      background: rgba(6, 6, 15, 0.85);
+      backdrop-filter: blur(20px) saturate(1.4);
+      border-bottom: 1px solid var(--glass-border);
+    }
+
+    .nav__inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 72px;
+    }
+
+    .nav__logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: var(--text-primary);
+    }
+
+    .nav__logo-icon {
+      width: 36px; height: 36px;
+      display: block;
+    }
+
+    .nav__logo-text {
+      font-weight: 700;
+      font-size: 20px;
+      letter-spacing: -0.5px;
+    }
+
+    .nav__logo-text span {
+      background: linear-gradient(135deg, #8F00FF, #00D2FF);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .nav__links {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      list-style: none;
+    }
+
+    .nav__links a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      transition: color 0.3s;
+      position: relative;
+    }
+
+    .nav__links a::after {
+      content: '';
+      position: absolute;
+      bottom: -4px; left: 0;
+      width: 0; height: 2px;
+      background: var(--accent-primary);
+      border-radius: 2px;
+      transition: width 0.3s;
+    }
+
+    .nav__links a:hover { color: var(--text-primary); }
+    .nav__links a:hover::after { width: 100%; }
+
+    .nav__cta {
+      padding: 10px 22px;
+      background: linear-gradient(135deg, var(--accent-primary), #8b5cf6);
+      color: white;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-decoration: none;
+      letter-spacing: 0.2px;
+    }
+
+    .nav__cta:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 30px var(--accent-glow);
+    }
+
+    .nav__hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px;
+    }
+
+    .nav__hamburger span {
+      width: 24px; height: 2px;
+      background: var(--text-primary);
+      border-radius: 2px;
+      transition: all 0.3s;
+    }
+
+    /* ─── Hero Section ─── */
+    .hero {
+      position: relative;
+      z-index: 1;
+      padding: 160px 0 100px;
+      text-align: center;
+    }
+
+    .hero__badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 16px 6px 8px;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 100px;
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-bottom: 32px;
+      animation: fadeInUp 0.8s ease-out;
+    }
+
+    .hero__badge-dot {
+      width: 8px; height: 8px;
+      background: var(--accent-green);
+      border-radius: 50%;
+      box-shadow: 0 0 8px var(--accent-green-glow);
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.6; transform: scale(0.85); }
+    }
+
+    .hero__title {
+      font-size: clamp(40px, 6vw, 72px);
+      font-weight: 800;
+      line-height: 1.05;
+      letter-spacing: -2px;
+      margin-bottom: 24px;
+      animation: fadeInUp 0.8s ease-out 0.1s both;
+    }
+
+    .hero__title-gradient {
+      color: var(--text-1);
+      background-clip: text;
+    }
+
+    .hero__subtitle {
+      max-width: 600px;
+      margin: 0 auto 48px;
+      font-size: 17px;
+      color: var(--text-secondary);
+      line-height: 1.7;
+      font-weight: 400;
+      animation: fadeInUp 0.8s ease-out 0.2s both;
+    }
+
+    /* ─── Scanner Input ─── */
+    .scanner {
+      max-width: 600px;
+      margin: 0 auto 32px;
+      animation: fadeInUp 0.8s ease-out 0.3s both;
+    }
+
+    .scanner__input-group {
+      display: flex;
+      align-items: center;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 16px;
+      padding: 6px;
+      transition: all 0.3s;
+    }
+
+    .scanner__input-group:focus-within {
+      border-color: var(--accent-primary);
+      box-shadow: 0 0 0 4px rgba(108, 92, 231, 0.1), 0 8px 40px rgba(108, 92, 231, 0.15);
+    }
+
+    .scanner__icon {
+      padding: 0 16px;
+      color: var(--text-tertiary);
+      flex-shrink: 0;
+    }
+
+    .scanner__input {
+      flex: 1;
+      background: none;
+      border: none;
+      outline: none;
+      color: var(--text-primary);
+      font-size: 15px;
+      font-family: inherit;
+      padding: 14px 0;
+    }
+
+    .scanner__input::placeholder {
+      color: var(--text-tertiary);
+    }
+
+    .scanner__btn {
+      padding: 14px 28px;
+      background: linear-gradient(135deg, var(--accent-primary), #8b5cf6);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.3s;
+      font-family: inherit;
+    }
+
+    .scanner__btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 30px var(--accent-glow);
+    }
+
+    .scanner__hint {
+      margin-top: 12px;
+      font-size: 13px;
+      color: var(--text-tertiary);
+      animation: fadeInUp 0.8s ease-out 0.4s both;
+    }
+
+    /* ─── SEO Score Widget ─── */
+    .score-widget {
+      max-width: 480px;
+      margin: 60px auto 0;
+      animation: fadeInUp 0.8s ease-out 0.5s both;
+    }
+
+    .score-widget__card {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-lg);
+      padding: 36px;
+      backdrop-filter: blur(20px);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .score-widget__card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--accent-secondary), transparent);
+      opacity: 0.5;
+    }
+
+    .score-widget__header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 28px;
+    }
+
+    .score-widget__title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .score-widget__live {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--accent-green);
+      font-weight: 500;
+    }
+
+    .score-widget__live-dot {
+      width: 6px; height: 6px;
+      background: var(--accent-green);
+      border-radius: 50%;
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+
+    .score-widget__body {
+      display: flex;
+      align-items: center;
+      gap: 36px;
+    }
+
+    .score-ring {
+      position: relative;
+      width: 140px; height: 140px;
+      flex-shrink: 0;
+    }
+
+    .score-ring svg {
+      transform: rotate(-90deg);
+      width: 140px; height: 140px;
+    }
+
+    .score-ring__bg {
+      fill: none;
+      stroke: rgba(255, 255, 255, 0.06);
+      stroke-width: 8;
+    }
+
+    .score-ring__fill {
+      fill: none;
+      stroke: url(#scoreGradient);
+      stroke-width: 8;
+      stroke-linecap: round;
+      stroke-dasharray: 377;
+      stroke-dashoffset: 377;
+      transition: stroke-dashoffset 2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .score-ring__fill.animate {
+      stroke-dashoffset: 60;
+    }
+
+    .score-ring__value {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .score-ring__number {
+      font-size: 40px;
+      font-weight: 800;
+      letter-spacing: -1px;
+      line-height: 1;
+      background: linear-gradient(135deg, var(--accent-green), var(--accent-cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .score-ring__label {
+      font-size: 11px;
+      color: var(--text-tertiary);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-top: 4px;
+    }
+
+    .score-details {
+      flex: 1;
+    }
+
+    .score-detail {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 0;
+    }
+
+    .score-detail:not(:last-child) {
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+
+    .score-detail__label {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    .score-detail__value {
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .score-detail__value--good { color: var(--accent-green); }
+    .score-detail__value--warning { color: var(--accent-orange); }
+    .score-detail__value--bad { color: var(--accent-red); }
+
+    /* ─── Statistics Section ─── */
+    .stats {
+      position: relative;
+      z-index: 1;
+      padding: 100px 0;
+    }
+
+    .stats__grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+    }
+
+    .stat-card {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-md);
+      padding: 32px 28px;
+      text-align: center;
+      backdrop-filter: blur(10px);
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+      opacity: 0;
+      transform: translateY(30px);
+    }
+
+    .stat-card.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(108, 92, 231, 0.05), transparent);
+      opacity: 0;
+      transition: opacity 0.4s;
+    }
+
+    .stat-card:hover::before { opacity: 1; }
+
+    .stat-card:hover {
+      border-color: rgba(108, 92, 231, 0.25);
+      transform: translateY(-4px);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+
+    .stat-card__icon {
+      width: 48px; height: 48px;
+      margin: 0 auto 20px;
+      background: linear-gradient(135deg, var(--accent-primary), var(--accent-cyan));
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+    }
+
+    .stat-card__number {
+      font-size: 38px;
+      font-weight: 800;
+      letter-spacing: -1px;
+      line-height: 1;
+      margin-bottom: 6px;
+      background: linear-gradient(135deg, var(--text-primary), var(--accent-secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .stat-card__label {
+      font-size: 14px;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    /* ─── Features Section ─── */
+    .features {
+      position: relative;
+      z-index: 1;
+      padding: 80px 0 120px;
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 64px;
+    }
+
+    .section-header__label {
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--accent-secondary);
+      margin-bottom: 16px;
+    }
+
+    .section-header__title {
+      font-size: clamp(28px, 4vw, 42px);
+      font-weight: 800;
+      letter-spacing: -1px;
+      margin-bottom: 16px;
+    }
+
+    .section-header__desc {
+      max-width: 540px;
+      margin: 0 auto;
+      color: var(--text-secondary);
+      font-size: 16px;
+    }
+
+    .features__grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .feature-card {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-lg);
+      padding: 36px;
+      backdrop-filter: blur(10px);
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+      opacity: 1;
+      transform: none;
+    }
+
+
+    .feature-card.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .feature-card::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--glass-border), transparent);
+    }
+
+    .feature-card:hover {
+      border-color: rgba(108, 92, 231, 0.2);
+      transform: translateY(-6px);
+      box-shadow: 0 24px 64px rgba(0, 0, 0, 0.25);
+      background: var(--glass-hover);
+    }
+
+    .feature-card__icon {
+      width: 52px; height: 52px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 24px;
+      position: relative;
+      color: white;
+      font-size: 22px;
+    }
+
+    .feature-card__icon--purple { background: linear-gradient(135deg, #6c5ce7, #a29bfe); }
+    .feature-card__icon--cyan { background: linear-gradient(135deg, #00b4d8, #00e5ff); }
+    .feature-card__icon--green { background: linear-gradient(135deg, #00c853, #69f0ae); }
+    .feature-card__icon--orange { background: linear-gradient(135deg, #ff9100, #ffca28); }
+    .feature-card__icon--pink { background: linear-gradient(135deg, #e91e63, #f48fb1); }
+    .feature-card__icon--blue { background: linear-gradient(135deg, #2979ff, #82b1ff); }
+
+    .feature-card__title {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      letter-spacing: -0.3px;
+    }
+
+    .feature-card__desc {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.7;
+    }
+
+    /* ─── CTA Section ─── */
+    .cta-section {
+      position: relative;
+      z-index: 1;
+      padding: 80px 0 120px;
+    }
+
+    .cta-card {
+      background: linear-gradient(135deg, rgba(108, 92, 231, 0.15), rgba(0, 229, 255, 0.05));
+      border: 1px solid rgba(108, 92, 231, 0.2);
+      border-radius: var(--radius-xl);
+      padding: 72px 48px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      backdrop-filter: blur(20px);
+    }
+
+    .cta-card::before {
+      content: '';
+      position: absolute;
+      top: -100px; right: -100px;
+      width: 300px; height: 300px;
+      background: radial-gradient(circle, rgba(108, 92, 231, 0.2), transparent 70%);
+      border-radius: 50%;
+      filter: blur(60px);
+    }
+
+    .cta-card::after {
+      content: '';
+      position: absolute;
+      bottom: -100px; left: -50px;
+      width: 250px; height: 250px;
+      background: radial-gradient(circle, rgba(0, 229, 255, 0.1), transparent 70%);
+      border-radius: 50%;
+      filter: blur(60px);
+    }
+
+    .cta-card__title {
+      font-size: clamp(28px, 4vw, 40px);
+      font-weight: 800;
+      letter-spacing: -1px;
+      margin-bottom: 16px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .cta-card__desc {
+      max-width: 500px;
+      margin: 0 auto 36px;
+      color: var(--text-secondary);
+      font-size: 16px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .cta-card__btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 16px 36px;
+      background: linear-gradient(135deg, var(--accent-primary), #8b5cf6);
+      color: white;
+      border: none;
+      border-radius: 14px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-family: inherit;
+      letter-spacing: -0.2px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .cta-card__btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 40px var(--accent-glow);
+    }
+
+    .cta-card__btn svg {
+      transition: transform 0.3s;
+    }
+
+    .cta-card__btn:hover svg {
+      transform: translateX(3px);
+    }
+
+    /* ─── Footer ─── */
+    .footer {
+      position: relative;
+      z-index: 1;
+      border-top: 1px solid var(--glass-border);
+      padding: 48px 0;
+    }
+
+    .footer__inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .footer__copy {
+      font-size: 13px;
+      color: var(--text-tertiary);
+    }
+
+    .footer__links {
+      display: flex;
+      gap: 24px;
+      list-style: none;
+    }
+
+    .footer__links a {
+      font-size: 13px;
+      color: var(--text-tertiary);
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+
+    .footer__links a:hover { color: var(--text-secondary); }
+
+    /* ─── Animations ─── */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes shimmer {
+      0% { background-position: -200% center; }
+      100% { background-position: 200% center; }
+    }
+
+    /* ─── Tools Showcase Section ─── */
+    .tools-showcase {
+      position: relative;
+      z-index: 1;
+      padding: 100px 0 120px;
+    }
+
+    .tools-showcase__grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 16px;
+    }
+
+    .tool-card {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-md);
+      padding: 28px 22px;
+      backdrop-filter: blur(10px);
+      transition: all 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+      cursor: default;
+      opacity: 1;
+      transform: none;
+    }
+
+
+    .tool-card.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Top border gradient sweep on hover */
+    .tool-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent-primary), var(--accent-cyan), var(--accent-primary));
+      background-size: 200% 100%;
+      opacity: 0;
+      transition: opacity 0.4s;
+    }
+
+    .tool-card:hover::before {
+      opacity: 1;
+      animation: borderSweep 2s linear infinite;
+    }
+
+    @keyframes borderSweep {
+      0% { background-position: 0% center; }
+      100% { background-position: 200% center; }
+    }
+
+    /* Corner glow on hover */
+    .tool-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(350px circle at var(--mouse-x, 0px) var(--mouse-y, 0px), rgba(16, 185, 129, 0.12), transparent 50%);
+      opacity: 0;
+      transition: opacity 0.3s;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .tool-card:hover::after {
+      opacity: 1;
+    }
+
+    .tool-card:hover {
+      border-color: rgba(16, 185, 129, 0.4);
+      transform: translateY(-6px);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35), 0 0 30px rgba(16, 185, 129, 0.15);
+      background: var(--glass-hover);
+    }
+
+
+    /* Icon container */
+    .tool-card__icon {
+      width: 46px; height: 46px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 18px;
+      color: white;
+      transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.4s;
+      position: relative;
+    }
+
+    .tool-card:hover .tool-card__icon {
+      transform: scale(1.1);
+    }
+
+    /* Color variants */
+    .tool-card__icon--violet    { background: linear-gradient(135deg, #7c3aed, #a78bfa); }
+    .tool-card__icon--sky       { background: linear-gradient(135deg, #0284c7, #38bdf8); }
+    .tool-card__icon--emerald   { background: linear-gradient(135deg, #059669, #34d399); }
+    .tool-card__icon--amber     { background: linear-gradient(135deg, #d97706, #fbbf24); }
+    .tool-card__icon--rose      { background: linear-gradient(135deg, #e11d48, #fb7185); }
+    .tool-card__icon--indigo    { background: linear-gradient(135deg, #4f46e5, #818cf8); }
+    .tool-card__icon--teal      { background: linear-gradient(135deg, #0d9488, #2dd4bf); }
+    .tool-card__icon--fuchsia   { background: linear-gradient(135deg, #c026d3, #e879f9); }
+    .tool-card__icon--lime      { background: linear-gradient(135deg, #65a30d, #34d399); }
+    .tool-card__icon--cyan-deep { background: linear-gradient(135deg, #0891b2, #22d3ee); }
+    .tool-card__icon--red       { background: linear-gradient(135deg, #dc2626, #f87171); }
+    .tool-card__icon--blue-deep { background: linear-gradient(135deg, #1d4ed8, #60a5fa); }
+    .tool-card__icon--orange    { background: linear-gradient(135deg, #ea580c, #fb923c); }
+    .tool-card__icon--slate     { background: linear-gradient(135deg, #475569, #94a3b8); }
+    .tool-card__icon--purple    { background: linear-gradient(135deg, #9333ea, #c084fc); }
+
+    /* Glow variants for hover */
+    .tool-card[data-glow="violet"]:hover::after  { background: radial-gradient(circle, rgba(124,58,237,0.25), transparent 70%); }
+    .tool-card[data-glow="sky"]:hover::after      { background: radial-gradient(circle, rgba(56,189,248,0.25), transparent 70%); }
+    .tool-card[data-glow="emerald"]:hover::after  { background: radial-gradient(circle, rgba(52,211,153,0.25), transparent 70%); }
+    .tool-card[data-glow="amber"]:hover::after    { background: radial-gradient(circle, rgba(251,191,36,0.2), transparent 70%); }
+    .tool-card[data-glow="rose"]:hover::after     { background: radial-gradient(circle, rgba(251,113,133,0.25), transparent 70%); }
+    .tool-card[data-glow="indigo"]:hover::after   { background: radial-gradient(circle, rgba(129,140,248,0.25), transparent 70%); }
+    .tool-card[data-glow="teal"]:hover::after     { background: radial-gradient(circle, rgba(45,212,191,0.25), transparent 70%); }
+    .tool-card[data-glow="fuchsia"]:hover::after  { background: radial-gradient(circle, rgba(232,121,249,0.25), transparent 70%); }
+    .tool-card[data-glow="lime"]:hover::after     { background: radial-gradient(circle, rgba(163,230,53,0.2), transparent 70%); }
+    .tool-card[data-glow="cyan-deep"]:hover::after { background: radial-gradient(circle, rgba(34,211,238,0.25), transparent 70%); }
+    .tool-card[data-glow="red"]:hover::after      { background: radial-gradient(circle, rgba(248,113,113,0.25), transparent 70%); }
+    .tool-card[data-glow="blue-deep"]:hover::after { background: radial-gradient(circle, rgba(96,165,250,0.25), transparent 70%); }
+    .tool-card[data-glow="orange"]:hover::after   { background: radial-gradient(circle, rgba(251,146,60,0.25), transparent 70%); }
+    .tool-card[data-glow="slate"]:hover::after    { background: radial-gradient(circle, rgba(148,163,184,0.2), transparent 70%); }
+    .tool-card[data-glow="purple"]:hover::after   { background: radial-gradient(circle, rgba(192,132,252,0.25), transparent 70%); }
+
+    .tool-card__title {
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      letter-spacing: -0.2px;
+      line-height: 1.3;
+    }
+
+    .tool-card__desc {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.65;
+      margin-bottom: 16px;
+    }
+
+    .tool-card__meta {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .tool-card__count {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 10px;
+      background: var(--bg-card);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 100px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-tertiary);
+      transition: all 0.3s;
+    }
+
+    .tool-card:hover .tool-card__count {
+      border-color: rgba(108, 92, 231, 0.2);
+      color: var(--accent-secondary);
+      background: rgba(108, 92, 231, 0.08);
+    }
+
+    .tool-card__count svg {
+      width: 12px; height: 12px;
+      opacity: 0.5;
+    }
+
+    /* ─── Responsive ─── */
+    @media (max-width: 1200px) {
+      .tools-showcase__grid { grid-template-columns: repeat(4, 1fr); }
+    }
+
+    @media (max-width: 1024px) {
+      .features__grid { grid-template-columns: repeat(2, 1fr); }
+      .stats__grid { grid-template-columns: repeat(2, 1fr); }
+      .tools-showcase__grid { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    @media (max-width: 768px) {
+      .nav__links { display: none; }
+      .nav__hamburger { display: flex; }
+
+      .nav__links.open {
+        display: flex;
+        flex-direction: column;
+        position: absolute;
+        top: 72px; left: 0; right: 0;
+        background: rgba(6, 6, 15, 0.95);
+        backdrop-filter: blur(20px);
+        padding: 24px;
+        border-bottom: 1px solid var(--glass-border);
+        gap: 20px;
+      }
+
+      .hero { padding: 130px 0 60px; }
+      .hero__title { letter-spacing: -1px; }
+
+      .scanner__input-group {
+        flex-direction: column;
+        gap: 0;
+      }
+
+      .scanner__input {
+        padding: 14px 16px;
+        width: 100%;
+        text-align: center;
+      }
+
+      .scanner__icon { display: none; }
+
+      .scanner__btn {
+        width: 100%;
+        border-radius: 10px;
+      }
+
+      .score-widget__body {
+        flex-direction: column;
+        gap: 24px;
+      }
+
+      .stats__grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+      .stat-card { padding: 24px 20px; }
+      .stat-card__number { font-size: 30px; }
+
+      .features__grid { grid-template-columns: 1fr; }
+
+      .tools-showcase__grid { grid-template-columns: repeat(2, 1fr); }
+
+      .cta-card { padding: 48px 24px; }
+
+      .footer__inner { flex-direction: column; gap: 16px; text-align: center; }
+    }
+
+    @media (max-width: 480px) {
+      .stats__grid { grid-template-columns: 1fr 1fr; }
+      .tools-showcase__grid { grid-template-columns: 1fr; }
+    }
+
+    /* ─── Scanning animation ─── */
+    .scanning .scanner__btn {
+      pointer-events: none;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .scanning .scanner__btn::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      animation: shimmer 1.5s infinite;
+      background-size: 200% 100%;
+    }
+
+    /* ─── Trusted-by ticker ─── */
+    .trusted {
+      position: relative;
+      z-index: 1;
+      padding: 0 0 40px;
+      text-align: center;
+    }
+
+    .trusted__label {
+      font-size: 12px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--text-tertiary);
+      margin-bottom: 28px;
+    }
+
+    .trusted__logos-wrapper {
+      overflow: hidden;
+      width: 100%;
+      mask-image: linear-gradient(to right, transparent, #000 15%, #000 85%, transparent);
+      -webkit-mask-image: linear-gradient(to right, transparent, #000 15%, #000 85%, transparent);
+      margin: 0 auto;
+      max-width: 900px;
+      display: flex;
+      justify-content: flex-start;
+    }
+
+    .trusted__logos-track {
+      display: flex;
+      gap: 72px;
+      width: max-content;
+      animation: marquee 20s linear infinite;
+      padding: 10px 0;
+    }
+
+    @keyframes marquee {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+
+    .trusted__logo {
+      font-size: 18px;
+      font-weight: 700;
+      color: rgba(255,255,255,0.12);
+      letter-spacing: -0.5px;
+      user-select: none;
+    }
+  
+    /* ─── crawlX Customized Styles ─── */
+    .crawlx-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+    .crawlx-logo-icon {
+      width: 44px;
+      height: 44px;
+    }
+    .crawlx-logo-text {
+      font-weight: 400;
+      font-size: 24px;
+      color: var(--text-1); letter-spacing: -0.5px;
+      font-family: 'Bruno Ace', sans-serif;
+    }
+    .crawlx-logo-text span {
+      color: #10b981;
+    }
+
+    
+    .nav__cta-purple {
+      padding: 10px 24px;
+      background: linear-gradient(135deg, var(--accent-primary), var(--accent-cyan));
+      color: white;
+      border: none;
+      border-radius: 50px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-decoration: none;
+      box-shadow: 0 4px 15px rgba(0, 229, 255, 0.2);
+    }
+    
+    .nav__cta-purple:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 24px rgba(0, 229, 255, 0.35);
+    }
+
+    .hero-crawlx {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 50px;
+      align-items: center;
+      padding: 140px 0 100px;
+      text-align: left;
+      position: relative;
+      z-index: 1;
+    }
+
+    @media (max-width: 991px) {
+      .hero-crawlx {
+        grid-template-columns: 1fr;
+        text-align: center;
+        padding-top: 100px;
+      }
+    }
+    
+    .hero__search-box {
+      display: flex;
+      gap: 10px;
+      background: var(--bg-card);
+      border: 1px solid var(--glass-border);
+      padding: 6px;
+      border-radius: 50px;
+      margin-top: 30px;
+      max-width: 540px;
+      backdrop-filter: blur(10px);
+      transition: all 0.3s;
+    }
+    .hero__search-box:focus-within {
+      border-color: var(--accent-primary);
+      box-shadow: 0 0 15px rgba(108, 92, 231, 0.2);
+    }
+    
+    /* SEO Score Widget inside Mock Window */
+    .score-widget {
+      padding: 24px;
+      background: var(--bg-card);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-lg);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .score-circle {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      border: 8px solid rgba(0, 230, 118, 0.1);
+      border-top-color: var(--accent-green);
+      border-right-color: var(--accent-green);
+      margin: 0 auto 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--accent-green);
+      position: relative;
+      animation: spinBorder 2s ease-out;
+    }
+    @keyframes spinBorder {
+      from { transform: rotate(-90deg); }
+      to { transform: rotate(0deg); }
+    }
+
+    .hero__left {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .hero__tagline-red {
+      color: #e81c24;
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      margin-bottom: 16px;
+      text-transform: uppercase;
+    }
+
+    .hero__title-red {
+      font-size: 56px;
+      font-weight: 800;
+      line-height: 1.1;
+      color: var(--text-1); margin-bottom: 24px;
+      letter-spacing: -1px;
+    }
+
+    @media (max-width: 576px) {
+      .hero__title-red {
+        font-size: 40px;
+      }
+    }
+
+    .hero__subtitle-red {
+      font-size: 16px;
+      color: rgba(240, 240, 245, 0.6);
+      margin-bottom: 36px;
+      max-width: 540px;
+      line-height: 1.6;
+    }
+
+    @media (max-width: 991px) {
+      .hero__subtitle-red {
+        margin-left: auto;
+        margin-right: auto;
+      }
+    }
+
+    .hero__btns {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    @media (max-width: 991px) {
+      .hero__btns {
+        justify-content: center;
+      }
+    }
+
+    .btn-explore {
+      background: #e81c24;
+      color: var(--text-1); padding: 14px 28px;
+      border-radius: 50px;
+      font-weight: 700;
+      font-size: 15px;
+      text-decoration: none;
+      transition: all 0.3s;
+    }
+
+    .btn-explore:hover {
+      background: #ff2d55;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(232, 28, 36, 0.4);
+    }
+
+    .btn-talk {
+      background: var(--bg-card);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--text-1); padding: 14px 28px;
+      border-radius: 50px;
+      font-weight: 700;
+      font-size: 15px;
+      text-decoration: none;
+      transition: all 0.3s;
+    }
+
+    .btn-talk:hover {
+      background: var(--bg-card);
+      border-color: rgba(255, 255, 255, 0.2);
+      transform: translateY(-2px);
+    }
+
+    .btn-search-shortcut {
+      background: var(--bg-card);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: rgba(255, 255, 255, 0.4);
+      padding: 12px 18px;
+      border-radius: 50px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 500;
+      transition: all 0.3s;
+    }
+
+    .btn-search-shortcut:hover {
+      background: var(--bg-card);
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    /* ─── Browser Window Mockup ─── */
+    .mock-window {
+      background: rgba(10, 10, 15, 0.65);
+      backdrop-filter: blur(25px);
+      -webkit-backdrop-filter: blur(25px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6);
+      overflow: hidden;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    .mock-header {
+      background: var(--bg-card);
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .mock-dots {
+      display: flex;
+      gap: 6px;
+      margin-right: 20px;
+    }
+
+    .mock-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+    .mock-dot--red { background: #ff5f56; }
+    .mock-dot--yellow { background: #ffbd2e; }
+    .mock-dot--green { background: #27c93f; }
+
+    .mock-address {
+      flex: 1;
+      background: var(--bg-card);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.4);
+      text-align: center;
+      max-width: 320px;
+      margin: 0 auto;
+    }
+
+    .mock-body {
+      padding: 24px;
+    }
+
+    .mock-search-bar {
+      background: var(--bg-card);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 10px;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .mock-search-input {
+      color: var(--text-1); font-size: 14px;
+      font-weight: 500;
+    }
+
+    /* AI Overview Box */
+    .ai-box {
+      background: rgba(232, 28, 36, 0.02);
+      border: 1px solid rgba(232, 28, 36, 0.15);
+      border-radius: 14px;
+      padding: 20px;
+      margin-bottom: 24px;
+      box-shadow: 0 0 20px rgba(232, 28, 36, 0.05);
+    }
+
+    .ai-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .ai-sparkle {
+      color: #e81c24;
+    }
+
+    .ai-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-1); letter-spacing: 0.5px;
+    }
+
+    .ai-badge {
+      font-size: 9px;
+      font-weight: 800;
+      background: var(--bg-card);
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    .ai-desc {
+      font-size: 13px;
+      line-height: 1.6;
+      color: rgba(255, 255, 255, 0.85);
+      margin-bottom: 16px;
+    }
+
+    .ai-sources {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .source-label {
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.4);
+      margin-right: 4px;
+    }
+
+    .source-pill {
+      background: var(--bg-card);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.7);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .dot-src {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+    }
+    .dot-src--red { background: #e81c24; }
+    .dot-src--orange { background: #ff9100; }
+    .dot-src--blue { background: #0088cc; }
+
+    /* Results */
+    .result-item {
+      margin-bottom: 20px;
+    }
+
+    .result-url {
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.35);
+      margin-bottom: 4px;
+    }
+
+    .result-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #6c5ce7;
+      text-decoration: none;
+      margin-bottom: 6px;
+      display: inline-block;
+    }
+    
+    .result-title:hover {
+      text-decoration: underline;
+    }
+
+    .result-snippet {
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.5);
+      line-height: 1.5;
+    }
+
+    /* Floating Ask AI Button */
+    .ask-ai-floating {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background: rgba(10, 10, 15, 0.8);
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 50px;
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--text-1); font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      z-index: 1001;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      transition: all 0.3s;
+      text-decoration: none;
+    }
+
+    .ask-ai-floating:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 36px rgba(232, 28, 36, 0.2);
+      border-color: rgba(232, 28, 36, 0.3);
+    }
+
+    .glow-orb-red {
+      width: 8px;
+      height: 8px;
+      background: #e81c24;
+      border-radius: 50%;
+      box-shadow: 0 0 12px #e81c24;
+      animation: pulse-red 2s infinite;
+    }
+
+    @keyframes pulse-red {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.3); opacity: 0.5; }
+    }
+    
+    /* ─── Kokonut UI Background Circles Hero Styles ─── */
+    .hero-container-circles {
+      position: relative;
+      width: 100%;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      overflow: hidden;
+      padding: 120px 24px 80px;
+      z-index: 1;
+      background: var(--bg-primary);
+    }
+
+    .animated-grid {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      opacity: 0.15;
+      background-image: repeating-linear-gradient(100deg, #64748b 0%, #64748b 1px, transparent 1px, transparent 4%);
+      mask-image: radial-gradient(ellipse at center, transparent 20%, black 80%);
+      -webkit-mask-image: radial-gradient(ellipse at center, transparent 20%, black 80%);
+      animation: gridShift 40s linear infinite;
+    }
+
+    @keyframes gridShift {
+      from { background-position: 0% 0%; }
+      to { background-position: 100% 100%; }
+    }
+
+    .circles-wrapper {
+      position: absolute;
+      width: 600px;
+      height: 600px;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .circle-layer {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      border: 2px solid rgba(108, 92, 231, 0.4);
+      background: radial-gradient(circle at center, rgba(108, 92, 231, 0.08) 0%, transparent 70%);
+      mix-blend-mode: screen;
+    }
+
+    .circle-layer--1 {
+      animation: rotateScale1 8s ease-in-out infinite;
+      border-color: rgba(108, 92, 231, 0.4);
+    }
+    .circle-layer--2 {
+      inset: 40px;
+      animation: rotateScale2 10s ease-in-out infinite;
+      border-color: rgba(0, 229, 255, 0.3);
+      background: radial-gradient(circle at center, rgba(12, 12, 29, 0.6) 0%, transparent 75%);
+    }
+    .circle-layer--3 {
+      inset: 80px;
+      animation: rotateScale3 12s ease-in-out infinite;
+      border-color: rgba(108, 92, 231, 0.35);
+      background: radial-gradient(circle, rgba(12, 12, 29, 0.92) 0%, rgba(6, 6, 15, 0.8) 80%);
+      box-shadow: 0 0 40px rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
+    }
+
+    @keyframes rotateScale1 {
+      0%, 100% { transform: rotate(0deg) scale(1); opacity: 0.6; }
+      50% { transform: rotate(180deg) scale(1.05); opacity: 0.9; }
+    }
+    @keyframes rotateScale2 {
+      0%, 100% { transform: rotate(0deg) scale(1); opacity: 0.5; }
+      50% { transform: rotate(-180deg) scale(1.08); opacity: 0.8; }
+    }
+    @keyframes rotateScale3 {
+      0%, 100% { transform: rotate(0deg) scale(1); opacity: 0.4; }
+      50% { transform: rotate(180deg) scale(1.12); opacity: 0.7; }
+    }
+
+    .glow-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background: radial-gradient(ellipse at center, rgba(15, 118, 110, 0.15) 0%, transparent 75%),
+                  radial-gradient(ellipse at center, rgba(45, 212, 191, 0.08) 0%, transparent 60%);
+      filter: blur(80px);
+    }
+
+    .hero-content-center {
+      position: relative;
+      z-index: 2;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    
+    /* Animated Glowing Search Bar */
+    .animated-glowing-search-wrapper {
+      position: relative;
+      border-radius: var(--radius-md);
+      padding: 1.5px;
+      background: var(--bg-card);
+      overflow: hidden;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      transition: all 0.3s ease;
+      width: 100%;
+    }
+
+    .animated-glowing-search-wrapper::before {
+      content: '';
+      position: absolute;
+      top: -100%; left: -100%;
+      width: 300%; height: 300%;
+      background: conic-gradient(from 0deg, transparent 0%, transparent 40%, var(--accent) 50%, var(--accent) 60%, transparent 100%);
+      animation: searchGlowSpin 4s linear infinite;
+      z-index: -2;
+      opacity: 0.15;
+      transition: opacity 0.3s ease;
+    }
+
+    .animated-glowing-search-wrapper:focus-within::before {
+      opacity: 1;
+      animation: searchGlowSpin 2s linear infinite;
+    }
+
+    .animated-glowing-search-wrapper::after {
+      content: '';
+      position: absolute;
+      inset: 1.5px;
+      background: var(--bg-card);
+      border-radius: calc(var(--radius-md) - 1.5px);
+      z-index: -1;
+    }
+
+    @keyframes searchGlowSpin {
+      100% { transform: rotate(360deg); }
+    }
+
+    .animated-glowing-search-input {
+      width: 100%;
+      padding: 14px 20px;
+      background: transparent;
+      border: none;
+      color: var(--text-1);
+      font-size: 14px;
+      outline: none;
+      z-index: 2;
+    }
+    .animated-glowing-search-input::placeholder {
+      color: var(--text-3);
+    }
+
+  </style>
+
+  <style id="sidebar-redesign-overrides">
+    :root {
+      --sidebar-w-new: 300px;
+      --sidebar-collapsed-w-new: 76px;
+    }
+    .sidebar {
+      width: var(--sidebar-w-new) !important;
+      background: rgba(10, 11, 20, 0.95) !important;
+      border-right: 1px solid rgba(255, 255, 255, 0.08) !important;
+      backdrop-filter: blur(20px) !important;
+      padding: 24px 16px !important;
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 20px !important;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+      overflow-y: auto !important;
+    }
+    .sidebar.collapsed {
+      width: var(--sidebar-collapsed-w-new) !important;
+    }
+    
+    body:not(:has(.app)) .main {
+      margin-left: var(--sidebar-w-new) !important;
+      transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    }
+    body:not(:has(.app)) .sidebar.collapsed + .main {
+      margin-left: var(--sidebar-collapsed-w-new) !important;
+    }
+    
+    .sidebar__brand {
+      padding: 12px 12px 12px 20px !important;
+      margin-bottom: 10px !important;
+      display: flex !important;
+      align-items: center !important;
+      gap: 12px !important;
+      border-bottom: none !important;
+    }
+    .brand-logo {
+      width: 32px !important;
+      height: 32px !important;
+      flex-shrink: 0 !important;
+    }
+    .brand-name {
+      font-size: 20px !important;
+      font-weight: 800 !important;
+      color: #fff !important;
+    }
+    
+    .sidebar__nav {
+      padding: 0 !important;
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 6px !important;
+    }
+    .sidebar__label {
+      font-size: 11px !important;
+      font-weight: 700 !important;
+      text-transform: uppercase !important;
+      letter-spacing: 1.5px !important;
+      color: rgba(240, 240, 245, 0.4) !important;
+      margin: 16px 12px 6px 12px !important;
+      padding: 0 !important;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+      padding-bottom: 6px !important;
+      white-space: nowrap !important;
+    }
+    .sidebar__item {
+      display: flex !important;
+      align-items: center !important;
+      gap: 16px !important;
+      padding: 12px 16px !important;
+      color: rgba(240, 240, 245, 0.6) !important;
+      text-decoration: none !important;
+      border-radius: 12px !important;
+      font-size: 14px !important;
+      font-weight: 500 !important;
+      transition: all 0.25s ease !important;
+      white-space: nowrap !important;
+      background: transparent !important;
+      border: none !important;
+    }
+    .sidebar__item::before {
+      display: none !important;
+    }
+    .sidebar__item:hover {
+      background: rgba(255, 255, 255, 0.06) !important;
+      color: #fff !important;
+      transform: translateX(4px) !important;
+    }
+    .sidebar__item.active {
+      background: rgba(124, 77, 255, 0.15) !important;
+      color: #fff !important;
+      font-weight: 600 !important;
+      box-shadow: inset 0 0 0 1px rgba(124, 77, 255, 0.3), 0 4px 20px rgba(124, 77, 255, 0.1) !important;
+    }
+    .sidebar__item-icon {
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      width: 22px !important;
+      height: 22px !important;
+      color: rgba(240, 240, 245, 0.5) !important;
+      transition: color 0.2s !important;
+      opacity: 1 !important;
+    }
+    .sidebar__item:hover .sidebar__item-icon,
+    .sidebar__item.active .sidebar__item-icon {
+      color: #b47cff !important;
+    }
+    
+    .sidebar__toggle {
+      position: absolute !important;
+      right: 12px !important;
+      top: 24px !important;
+      width: 28px !important;
+      height: 28px !important;
+      border-radius: 50% !important;
+      background: rgba(18, 20, 32, 0.8) !important;
+      border: 1px solid rgba(255,255,255,0.08) !important;
+      color: rgba(240, 240, 245, 0.6) !important;
+      cursor: pointer !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      z-index: 10 !important;
+      transition: transform 0.3s !important;
+    }
+    .sidebar.collapsed .sidebar__toggle {
+      transform: rotate(180deg) !important;
+      right: 22px !important;
+    }
+    .sidebar.collapsed .sidebar__item-text,
+    .sidebar.collapsed .sidebar__label,
+    .sidebar.collapsed .brand-name {
+      display: none !important;
+    }
+    
+    /* Layout styling fixes to adjust for wider sidebar */
+    @media (min-width: 993px) {
+      body:not(:has(.app)) .main {
+        margin-left: var(--sidebar-w-new) !important;
+      }
+    }
+    
+    /* ─── Light Mode Theme ─── */
+    :root.light-mode {
+      --bg-primary: #f5f6fb;
+      --bg-secondary: #ffffff;
+      --bg-card: rgba(20, 20, 25, 0.65);
+      --glass-bg: rgba(255, 255, 255, 0.7);
+      --glass-border: rgba(0, 0, 0, 0.08);
+      --glass-hover: rgba(0, 0, 0, 0.04);
+      --text-primary: #f4f4f5;
+      --text-secondary: rgba(244, 244, 245, 0.7);
+      --text-tertiary: rgba(244, 244, 245, 0.4);
+      --accent-primary: #10b981;
+      --accent-secondary: #059669;
+      --accent-glow: rgba(16, 185, 129, 0.25);
+    }
+    
+    .light-mode .nav {
+      background: rgba(245, 246, 251, 0.8) !important;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    }
+    .light-mode .nav__links a {
+      color: rgba(11, 13, 23, 0.8) !important;
+    }
+    .light-mode .nav__links a:hover {
+      color: #000 !important;
+    }
+    .light-mode .crawlx-logo-text {
+      color: #0b0d17 !important;
+    }
+    .light-mode .crawlx-logo-icon img {
+      filter: invert(1) brightness(0.2);
+    }
+    .light-mode .hero__title {
+      background: linear-gradient(180deg, #0b0d17 40%, rgba(11, 13, 23, 0.7) 100%) !important;
+      -webkit-background-clip: text !important;
+      -webkit-text-fill-color: transparent !important;
+    }
+    .light-mode .hero-container-circles {
+      background: radial-gradient(circle at center, #ffffff 0%, #f5f6fb 100%) !important;
+    }
+    .light-mode .circles-wrapper .circle-layer {
+      border-color: rgba(0, 0, 0, 0.05) !important;
+    }
+    .light-mode .hero__search-box {
+      background: #ffffff !important;
+      border: 1px solid rgba(0, 0, 0, 0.1) !important;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05) !important;
+    }
+    .light-mode .hero__search-box input {
+      color: #000 !important;
+    }
+    .light-mode .hero__search-box input::placeholder {
+      color: rgba(0, 0, 0, 0.4) !important;
+    }
+    .light-mode .trusted {
+      border-top: 1px solid rgba(0, 0, 0, 0.06);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+      background: #ffffff !important;
+    }
+    .light-mode .trusted__logo {
+      color: rgba(0, 0, 0, 0.4) !important;
+    }
+    .light-mode .stat-card,
+    .light-mode .feature-card,
+    .light-mode .tool-card {
+      background: #ffffff !important;
+      border: 1px solid rgba(0, 0, 0, 0.06) !important;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02) !important;
+    }
+    .light-mode .stat-card__number {
+      color: #0b0d17 !important;
+    }
+    .light-mode .section-header__title {
+      color: #0b0d17 !important;
+    }
+    .light-mode .feature-card__title,
+    .light-mode .tool-card__title {
+      color: #0b0d17 !important;
+    }
+    .light-mode .feature-card__desc,
+    .light-mode .tool-card__desc {
+      color: rgba(11, 13, 23, 0.7) !important;
+    }
+
+    /* ─── Switch Style ─── */
+    .theme-switch {
+      --toggle-size: 11px;
+      --container-width: 5.625em;
+      --container-height: 2.5em;
+      --container-radius: 6.25em;
+      --container-light-bg: #3D7EAE;
+      --container-night-bg: #1D1F2C;
+      --circle-container-diameter: 3.375em;
+      --sun-moon-diameter: 2.125em;
+      --sun-bg: #ECCA2F;
+      --moon-bg: #C4C9D1;
+      --spot-color: #959DB1;
+      --circle-container-offset: calc((var(--circle-container-diameter) - var(--container-height)) / 2 * -1);
+      --stars-color: var(--text-1); --clouds-color: #F3FDFF;
+      --back-clouds-color: #AACADF;
+      --transition: .5s cubic-bezier(0, -0.02, 0.4, 1.25);
+      --circle-transition: .3s cubic-bezier(0, -0.02, 0.35, 1.17);
+      display: inline-block;
+      vertical-align: middle;
+    }
+
+    .theme-switch, .theme-switch *, .theme-switch *::before, .theme-switch *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-size: var(--toggle-size);
+    }
+
+    .theme-switch__container {
+      width: var(--container-width);
+      height: var(--container-height);
+      background-color: var(--container-light-bg);
+      border-radius: var(--container-radius);
+      overflow: hidden;
+      cursor: pointer;
+      box-shadow: 0em -0.062em 0.062em rgba(0, 0, 0, 0.25), 0em 0.062em 0.125em rgba(255, 255, 255, 0.94);
+      transition: var(--transition);
+      position: relative;
+      display: block;
+    }
+
+    .theme-switch__container::before {
+      content: "";
+      position: absolute;
+      z-index: 1;
+      inset: 0;
+      box-shadow: 0em 0.05em 0.187em rgba(0, 0, 0, 0.25) inset, 0em 0.05em 0.187em rgba(0, 0, 0, 0.25) inset;
+      border-radius: var(--container-radius)
+    }
+
+    .theme-switch__checkbox {
+      display: none !important;
+    }
+
+    .theme-switch__circle-container {
+      width: var(--circle-container-diameter);
+      height: var(--circle-container-diameter);
+      background: var(--bg-card-hover);
+      position: absolute;
+      left: var(--circle-container-offset);
+      top: var(--circle-container-offset);
+      border-radius: var(--container-radius);
+      box-shadow: inset 0 0 0 3.375em rgba(255, 255, 255, 0.1), inset 0 0 0 3.375em rgba(255, 255, 255, 0.1), 0 0 0 0.625em rgba(255, 255, 255, 0.1), 0 0 0 1.25em rgba(255, 255, 255, 0.1);
+      display: flex;
+      transition: var(--circle-transition);
+      pointer-events: none;
+    }
+
+    .theme-switch__sun-moon-container {
+      pointer-events: auto;
+      position: relative;
+      z-index: 2;
+      width: var(--sun-moon-diameter);
+      height: var(--sun-moon-diameter);
+      margin: auto;
+      border-radius: var(--container-radius);
+      background-color: var(--sun-bg);
+      box-shadow: 0.062em 0.062em 0.062em 0em rgba(254, 255, 239, 0.61) inset, 0em -0.062em 0.062em 0em #a1872a inset;
+      filter: drop-shadow(0.062em 0.125em 0.125em rgba(0, 0, 0, 0.25)) drop-shadow(0em 0.062em 0.125em rgba(0, 0, 0, 0.25));
+      overflow: hidden;
+      transition: var(--transition);
+    }
+
+    .theme-switch__moon {
+      transform: translateX(100%);
+      width: 100%;
+      height: 100%;
+      background-color: var(--moon-bg);
+      border-radius: inherit;
+      box-shadow: 0.062em 0.062em 0.062em 0em rgba(254, 255, 239, 0.61) inset, 0em -0.062em 0.062em 0em #969696 inset;
+      transition: var(--transition);
+      position: relative;
+    }
+
+    .theme-switch__spot {
+      position: absolute;
+      top: 0.75em;
+      left: 0.312em;
+      width: 0.75em;
+      height: 0.75em;
+      border-radius: var(--container-radius);
+      background-color: var(--spot-color);
+      box-shadow: 0em 0.0312em 0.062em rgba(0, 0, 0, 0.25) inset;
+    }
+
+    .theme-switch__spot:nth-of-type(2) {
+      width: 0.375em;
+      height: 0.375em;
+      top: 0.937em;
+      left: 1.375em;
+    }
+
+    .theme-switch__spot:nth-last-of-type(3) {
+      width: 0.25em;
+      height: 0.25em;
+      top: 0.312em;
+      left: 0.812em;
+    }
+
+    .theme-switch__clouds {
+      width: 1.25em;
+      height: 1.25em;
+      background-color: var(--clouds-color);
+      border-radius: var(--container-radius);
+      position: absolute;
+      bottom: -0.625em;
+      left: 0.312em;
+      box-shadow: 0.937em 0.312em var(--clouds-color), -0.312em -0.312em var(--back-clouds-color), 1.437em 0.375em var(--clouds-color), 0.5em -0.125em var(--back-clouds-color), 2.187em 0 var(--clouds-color), 1.25em -0.062em var(--back-clouds-color), 2.937em 0.312em var(--clouds-color), 2em -0.312em var(--back-clouds-color), 3.625em -0.062em var(--clouds-color), 2.625em 0em var(--back-clouds-color), 4.5em -0.312em var(--clouds-color), 3.375em -0.437em var(--back-clouds-color), 4.625em -1.75em 0 0.437em var(--clouds-color), 4em -0.625em var(--back-clouds-color), 4.125em -2.125em 0 0.437em var(--clouds-color);
+      transition: 0.5s cubic-bezier(0, -0.02, 0.4, 1.25);
+    }
+
+    .theme-switch__stars-container {
+      position: absolute;
+      color: var(--stars-color);
+      top: -100%;
+      left: 0.312em;
+      width: 2.75em;
+      height: auto;
+      transition: var(--transition);
+    }
+
+    .theme-switch__checkbox:checked + .theme-switch__container {
+      background-color: var(--container-night-bg);
+    }
+
+    .theme-switch__checkbox:checked + .theme-switch__container .theme-switch__circle-container {
+      left: calc(100% - var(--circle-container-offset) - var(--circle-container-diameter));
+    }
+
+    .theme-switch__checkbox:checked + .theme-switch__container .theme-switch__circle-container:hover {
+      left: calc(100% - var(--circle-container-offset) - var(--circle-container-diameter) - 0.187em)
+    }
+
+    .theme-switch__circle-container:hover {
+      left: calc(var(--circle-container-offset) + 0.187em);
+    }
+
+    .theme-switch__checkbox:checked + .theme-switch__container .theme-switch__moon {
+      transform: translate(0);
+    }
+
+    .theme-switch__checkbox:checked + .theme-switch__container .theme-switch__clouds {
+      bottom: -4.062em;
+    }
+
+    .theme-switch__checkbox:checked + .theme-switch__container .theme-switch__stars-container {
+      top: 50%;
+      transform: translateY(-50%);
+    }
+  </style>
+\n</head>
+<body>
+
+  <!-- Ambient Background -->
+  <div class="ambient-bg">
+    <div class="ambient-orb ambient-orb--1"></div>
+    <div class="ambient-orb ambient-orb--2"></div>
+    <div class="ambient-orb ambient-orb--3"></div>
+  </div>
+  <div class="grid-overlay"></div>
+
+  <nav class="nav" id="nav">
+    <div class="nav__inner">
+      <a href="#" class="crawlx-logo">
+        <div class="crawlx-logo-icon">
+          <img src="logo_tree.png" alt="RADIX Logo" style="width: 100%; height: 100%; object-fit: contain;" />
+        </div>
+        <div class="crawlx-logo-text">RADI<span>X</span></div>
+      </a>
+
+
+      <ul class="nav__links" id="navLinks">
+        <li><a href="#features">Features</a></li>
+        <li><a href="#tools">SEO Tools</a></li>
+        <li><a href="#stats">Results</a></li>
+        <li id="nav-dashboard-link" style="display:none;"><a href="dashboard.html">Dashboard</a></li>
+        <li id="nav-logout-link" style="display:none;"><a href="#" id="navLogoutBtn">Logout</a></li>
+        <li style="display: flex; align-items: center; justify-content: center; margin-right: 12px;">
+          <label class="theme-switch">
+            <input type="checkbox" class="theme-switch__checkbox" id="themeSwitchCheckbox" />
+            <div class="theme-switch__container">
+              <div class="theme-switch__clouds"></div>
+              <div class="theme-switch__stars-container">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 144 55" fill="none" style="width: 100%; height: auto;">
+                  <path fill-rule="evenodd" clip-rule="evenodd" d="M135.831 3.00688C135.055 3.85027 134.111 4.29946 133 4.35447C134.111 4.40947 135.055 4.85867 135.831 5.71123C136.607 6.55462 136.996 7.56303 136.996 8.72727C136.996 7.95722 137.172 7.25134 137.525 6.59129C137.886 5.93124 138.372 5.39954 138.98 5.00535C139.598 4.60199 140.268 4.39114 141 4.35447C139.88 4.2903 138.936 3.85027 138.16 3.00688C137.384 2.16348 136.996 1.16425 136.996 0C136.996 1.16425 136.607 2.16348 135.831 3.00688ZM31 23.3545C32.1114 23.2995 33.0551 22.8503 33.8313 22.0069C34.6075 21.1635 34.9956 20.1642 34.9956 19C34.9956 20.1642 35.3837 21.1635 36.1599 22.0069C36.9361 22.8503 37.8798 23.2903 39 23.3545C38.2679 23.3911 37.5976 23.602 36.9802 24.0053C36.3716 24.3995 35.8864 24.9312 35.5248 25.5913C35.172 26.2513 34.9956 26.9572 34.9956 27.7273C34.9956 26.563 34.6075 25.5546 33.8313 24.7112C33.0551 23.8587 32.1114 23.4095 31 23.3545ZM0 36.3545C1.11136 36.2995 2.05513 35.8503 2.83131 35.0069C3.6075 34.1635 3.99559 33.1642 3.99559 32C3.99559 33.1642 4.38368 34.1635 5.15987 35.0069C5.93605 35.8503 6.87982 36.2903 8 36.3545C7.26792 36.3911 6.59757 36.602 5.98015 37.0053C5.37155 37.3995 4.88644 37.9312 4.52481 38.5913C4.172 39.2513 3.99559 39.9572 3.99559 40.7273C3.99559 39.563 3.6075 38.5546 2.83131 37.7112C2.05513 36.8587 1.11136 36.4095 0 36.3545ZM56.8313 24.0069C56.0551 24.8503 55.1114 25.2995 54 25.3545C55.1114 25.4095 56.0551 25.8587 56.8313 26.7112C57.6075 27.5546 57.9956 28.563 57.9956 29.7273C57.9956 28.9572 58.172 28.2513 58.5248 27.5913C58.8864 26.9312 59.3716 26.3995 59.9802 26.0053C60.5976 25.602 61.2679 25.3911 62 25.3545C60.8798 25.2903 59.9361 24.8503 59.1599 24.0069C58.3837 23.1635 57.9956 22.1642 57.9956 21C57.9956 22.1642 57.6075 23.1635 56.8313 24.0069ZM81 25.3545C82.1114 25.2995 83.0551 24.8503 83.8313 24.0069C84.6075 23.1635 84.9956 22.1642 84.9956 21C84.9956 22.1642 85.3837 23.1635 86.1599 24.0069C86.9361 24.8503 87.8798 25.2903 89 25.3545C88.2679 25.3911 87.5976 25.602 86.9802 26.0053C86.3716 26.3995 85.8864 26.9312 85.5248 27.5913C85.172 28.2513 84.9956 28.9572 84.9956 29.7273C84.9956 28.563 84.6075 27.5546 83.8313 26.7112C83.0551 25.8587 82.1114 25.4095 81 25.3545ZM136 36.3545C137.111 36.2995 138.055 35.8503 138.831 35.0069C139.607 34.1635 139.996 33.1642 139.996 32C139.996 33.1642 140.384 34.1635 141.16 35.0069C141.936 35.8503 142.88 36.2903 144 36.3545C143.268 36.3911 142.598 36.602 141.98 37.0053C141.372 37.3995 140.886 37.9312 140.525 38.5913C140.172 39.2513 139.996 39.9572 139.996 40.7273C139.996 39.563 139.607 38.5546 138.831 37.7112C138.055 36.8587 137.111 36.4095 136 36.3545ZM101.831 49.0069C101.055 49.8503 100.111 50.2995 99 50.3545C100.111 50.4095 101.055 50.8587 101.831 51.7112C102.607 52.5546 102.996 53.563 102.996 54.7273C102.996 53.9572 103.172 53.2513 103.525 52.5913C103.886 51.9312 104.372 51.3995 104.98 51.0053C105.598 50.602 106.268 50.3911 107 50.3545C105.88 50.2903 104.936 49.8503 104.16 49.0069C103.384 48.1635 102.996 47.1642 102.996 46C102.996 47.1642 102.607 48.1635 101.831 49.0069Z" fill="currentColor" />
+                </svg>
+              </div>
+              <div class="theme-switch__circle-container">
+                <div class="theme-switch__sun-moon-container">
+                  <div class="theme-switch__moon">
+                    <div class="theme-switch__spot"></div>
+                    <div class="theme-switch__spot"></div>
+                    <div class="theme-switch__spot"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </label>
+        </li>
+        <li><a href="login.html" class="nav__cta-purple" id="navCtaBtn">Get Started</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <!-- Hero Section -->
+  <!-- Concentric Background Circles Hero Section -->
+  <section class="hero-container-circles">
+    <div class="animated-grid"></div>
+    <div class="glow-overlay"></div>
+    
+    <div class="circles-wrapper">
+      <div class="circle-layer circle-layer--1"></div>
+      <div class="circle-layer circle-layer--2"></div>
+      <div class="circle-layer circle-layer--3"></div>
+    </div>
+    
+    <div class="hero-content-center">
+      <span class="hero__tagline" style="letter-spacing: 2px; font-weight:700; color:var(--accent-cyan); text-transform: uppercase; font-size:13px;">AI-POWERED AUDIT ENGINE</span>
+      <h1 class="hero__title" style="font-size: clamp(36px, 6vw, 68px); font-weight: 800; line-height: 1.1; margin-top: 16px; margin-bottom: 24px; color: var(--text-1);">
+        Enterprise SEO Audit & sitemaps Crawler
+      </h1>
+      <p class="hero__subtitle" style="font-size: clamp(16px, 2.5vw, 19px); color: var(--text-secondary); max-width: 680px; margin: 0 auto 36px; line-height: 1.6;">
+        Instantly scan websites, auto-discover sitemaps, verify URL index status, and diagnose errors using local LLM roadmaps.
+      </p>
+      
+      <div style="margin: 0 auto; display: flex; justify-content: center; gap: 16px;">
+        <a href="scanner.html" class="nav__cta-purple" style="padding: 16px 40px; font-size: 16px; font-weight: 700; text-decoration: none; border-radius: 12px; box-shadow: 0 10px 30px var(--accent-glow);">Find the Root</a>
+      </div>
+    </div>
+  </section>
+
+  
+  <!-- Floating Ask AI widget -->
+  <a href="login.html" class="ask-ai-floating">
+    <span class="glow-orb-red"></span>
+    <span>Ask AI</span>
+  </a>
+
+  <!-- Trusted By -->
+  <section class="trusted">
+    <div class="container">
+      <p class="trusted__label">Trusted by leading teams worldwide</p>
+      <div class="trusted__logos-wrapper">
+        <div class="trusted__logos-track">
+          <span class="trusted__logo">Shopify</span>
+          <span class="trusted__logo">Stripe</span>
+          <span class="trusted__logo">HubSpot</span>
+          <span class="trusted__logo">Vercel</span>
+          <span class="trusted__logo">Notion</span>
+          <span class="trusted__logo">Figma</span>
+          <!-- Duplicate set for infinite loop -->
+          <span class="trusted__logo">Shopify</span>
+          <span class="trusted__logo">Stripe</span>
+          <span class="trusted__logo">HubSpot</span>
+          <span class="trusted__logo">Vercel</span>
+          <span class="trusted__logo">Notion</span>
+          <span class="trusted__logo">Figma</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Statistics Section -->
+  <section class="stats" id="stats">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-header__label">Platform at Scale</span>
+        <h2 class="section-header__title">Trusted by 50,000+ SEO Professionals</h2>
+        <p class="section-header__desc">Our platform processes billions of data points daily to deliver actionable insights.</p>
+      </div>
+
+      <div class="stats__grid">
+        <div class="stat-card" data-delay="0">
+          <div class="stat-card__icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          </div>
+          <div class="stat-card__number" data-target="284500" data-suffix="+">0</div>
+          <div class="stat-card__label">Websites Analyzed</div>
+        </div>
+
+        <div class="stat-card" data-delay="100">
+          <div class="stat-card__icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+          </div>
+          <div class="stat-card__number" data-target="3200000" data-suffix="+">0</div>
+          <div class="stat-card__label">Pages Crawled</div>
+        </div>
+
+        <div class="stat-card" data-delay="200">
+          <div class="stat-card__icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          </div>
+          <div class="stat-card__number" data-target="12800000" data-suffix="+">0</div>
+          <div class="stat-card__label">SEO Issues Found</div>
+        </div>
+
+        <div class="stat-card" data-delay="300">
+          <div class="stat-card__icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a4 4 0 0 1 4 4c0 1.95-1.4 3.58-3.25 3.93L12 22"/><path d="M12 2a4 4 0 0 0-4 4c0 1.95 1.4 3.58 3.25 3.93"/><path d="M8.56 13.68C5.05 15.08 3 17.2 3 19.5 3 22 7.03 24 12 24s9-2 9-4.5c0-2.3-2.05-4.42-5.56-5.82"/></svg>
+          </div>
+          <div class="stat-card__number" data-target="96400" data-suffix="+">0</div>
+          <div class="stat-card__label">AI Reports Generated</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features & Tools Container Box -->
+  <div class="features-tools-box" style="margin: 80px auto; padding: 60px 40px; background: var(--bg-card); border: 1px solid rgba(16, 185, 129, 0.15); border-radius: 28px; box-shadow: 0 30px 60px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05); backdrop-filter: blur(16px); max-width: 1320px; width: 95%; position: relative;">
+    <section class="features" id="features">
+
+    <div class="container">
+      <div class="section-header">
+        <span class="section-header__label">Powerful Capabilities</span>
+        <h2 class="section-header__title">Everything You Need for Technical SEO</h2>
+        <p class="section-header__desc">From deep crawls to AI insights, our platform covers every aspect of modern search optimization.</p>
+      </div>
+
+            <div class="features__grid" style="grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 30px;">
+        <!-- Card 1 -->
+        <div class="feature-card">
+          <div class="feature-card__icon feature-card__icon--purple">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+          </div>
+          <h3 class="feature-card__title">Technical SEO Audit</h3>
+          <p class="feature-card__desc">Deep diagnostics of status codes, canonicals, redirect chains, and indexing configurations.</p>
+          <div style="font-size: 12px; color: var(--accent-cyan); font-weight: 700; margin-top: 15px; font-family: 'Fira Code';">32 audits</div>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="feature-card">
+          <div class="feature-card__icon feature-card__icon--cyan">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </div>
+          <h3 class="feature-card__title">Website Crawler</h3>
+          <p class="feature-card__desc">Multi-threaded link crawler that maps site architecture, crawl depth, and broken links.</p>
+          <div style="font-size: 12px; color: var(--accent-cyan); font-weight: 700; margin-top: 15px; font-family: 'Fira Code';">18 metrics</div>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="feature-card">
+          <div class="feature-card__icon feature-card__icon--green">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          </div>
+          <h3 class="feature-card__title">On-Page SEO Analysis</h3>
+          <p class="feature-card__desc">Real-time checking of content structures, keyword density, and semantic schema tags.</p>
+          <div style="font-size: 12px; color: var(--accent-cyan); font-weight: 700; margin-top: 15px; font-family: 'Fira Code';">24 checks</div>
+        </div>
+
+        <!-- Card 4 -->
+        <div class="feature-card">
+          <div class="feature-card__icon feature-card__icon--orange">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          </div>
+          <h3 class="feature-card__title">Page Speed Analysis</h3>
+          <p class="feature-card__desc">Performance audits of load speed, server response, and render blocking assets.</p>
+          <div style="font-size: 12px; color: var(--accent-cyan); font-weight: 700; margin-top: 15px; font-family: 'Fira Code';">15 metrics</div>
+        </div>
+
+        <!-- Card 5 -->
+        <div class="feature-card">
+          <div class="feature-card__icon feature-card__icon--pink">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+          </div>
+          <h3 class="feature-card__title">Mobile SEO Audit</h3>
+          <p class="feature-card__desc">Checks viewport configurations, touch targets, and mobile responsiveness parameters.</p>
+          <div style="font-size: 12px; color: var(--accent-cyan); font-weight: 700; margin-top: 15px; font-family: 'Fira Code';">10 audits</div>
+        </div>
+
+        <!-- Card 6 -->
+        <div class="feature-card">
+          <div class="feature-card__icon feature-card__icon--blue">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/></svg>
+          </div>
+          <h3 class="feature-card__title">Broken Link Checker</h3>
+          <p class="feature-card__desc">Automatically identifies 404 links, invalid redirects, and broken anchors across pages.</p>
+          <div style="font-size: 12px; color: var(--accent-cyan); font-weight: 700; margin-top: 15px; font-family: 'Fira Code';">12 checks</div>
+        </div>
+
+        <!-- Card 7 -->
+        <div class="feature-card">
+          <div class="feature-card__icon feature-card__icon--purple">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12h6M12 9v6"/></svg>
+          </div>
+          <h3 class="feature-card__title">Sitemap Analyzer</h3>
+          <p class="feature-card__desc">Validates sitemap index files, nested structures, and XML format rules.</p>
+          <div style="font-size: 12px; color: var(--accent-cyan); font-weight: 700; margin-top: 15px; font-family: 'Fira Code';">8 audits</div>
+        </div>
+
+        <!-- Card 8 -->
+        <div class="feature-card">
+          <div class="feature-card__icon feature-card__icon--cyan">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
+          </div>
+          <h3 class="feature-card__title">Robots.txt Checker</h3>
+          <p class="feature-card__desc">Scans robots.txt directives, user-agent rules, and sitemap references.</p>
+          <div style="font-size: 12px; color: var(--accent-cyan); font-weight: 700; margin-top: 15px; font-family: 'Fira Code';">6 checks</div>
+        </div>
+
+        <!-- Card 9 -->
+        <div class="feature-card">
+          <div class="feature-card__icon feature-card__icon--green">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/></svg>
+          </div>
+          <h3 class="feature-card__title">Meta Tag Analyzer</h3>
+          <p class="feature-card__desc">Audits description tags, viewport directives, and open graph social media markup.</p>
+          <div style="font-size: 12px; color: var(--accent-cyan); font-weight: 700; margin-top: 15px; font-family: 'Fira Code';">14 audits</div>
+        </div>
+
+        <!-- Card 10 -->
+        <div class="feature-card">
+          <div class="feature-card__icon feature-card__icon--orange">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="20" y2="15"/></svg>
+          </div>
+          <h3 class="feature-card__title">Heading Analyzer</h3>
+          <p class="feature-card__desc">Verifies heading hierarchy, H1 counts, and header structural order across content.</p>
+          <div style="font-size: 12px; color: var(--accent-cyan); font-weight: 700; margin-top: 15px; font-family: 'Fira Code';">10 checks</div>
+        </div>
+
+        <!-- Card 11 -->
+        <div class="feature-card">
+          <div class="feature-card__icon feature-card__icon--pink">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          </div>
+          <h3 class="feature-card__title">Image SEO Analyzer</h3>
+          <p class="feature-card__desc">Scans for missing alt texts, oversized files, and image filenames optimization.</p>
+          <div style="font-size: 12px; color: var(--accent-cyan); font-weight: 700; margin-top: 15px; font-family: 'Fira Code';">16 audits</div>
+        </div>
+
+        <!-- Card 12 -->
+        <div class="feature-card">
+          <div class="feature-card__icon feature-card__icon--blue">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+          </div>
+          <h3 class="feature-card__title">Content SEO Analysis</h3>
+          <p class="feature-card__desc">Validates text-to-HTML ratio, word counts, and readability scores.</p>
+          <div style="font-size: 12px; color: var(--accent-cyan); font-weight: 700; margin-top: 15px; font-family: 'Fira Code';">12 checks</div>
+        </div>
+
+        <!-- Card 13 -->
+        <div class="feature-card">
+          <div class="feature-card__icon feature-card__icon--purple">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 22 22 22"/></svg>
+          </div>
+          <h3 class="feature-card__title">Core Web Vitals</h3>
+          <p class="feature-card__desc">Monitors LCP, FID, and CLS parameters with actionable speed diagnostic tips.</p>
+          <div style="font-size: 12px; color: var(--accent-cyan); font-weight: 700; margin-top: 15px; font-family: 'Fira Code';">8 metrics</div>
+        </div>
+
+        <!-- Card 14 -->
+        <div class="feature-card">
+          <div class="feature-card__icon feature-card__icon--cyan">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          </div>
+          <h3 class="feature-card__title">Security SEO Audit</h3>
+          <p class="feature-card__desc">Checks SSL certificate status, HTTPS mixed content, and response header vulnerabilities.</p>
+          <div style="font-size: 12px; color: var(--accent-cyan); font-weight: 700; margin-top: 15px; font-family: 'Fira Code';">10 checks</div>
+        </div>
+
+        <!-- Card 15 -->
+        <div class="feature-card">
+          <div class="feature-card__icon feature-card__icon--green">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
+          </div>
+          <h3 class="feature-card__title">AI Report Generator</h3>
+          <p class="feature-card__desc">Generates custom local Ollama Llama-3 audit roadmaps and PDF summaries.</p>
+          <div style="font-size: 12px; color: var(--accent-cyan); font-weight: 700; margin-top: 15px; font-family: 'Fira Code';">5 modules</div>
+        </div>
+      </div></section>
+
+  <!-- Tools Showcase Section -->
+  <section class="tools-showcase" id="tools">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-header__label">Complete SEO Toolkit</span>
+        <h2 class="section-header__title">15 Powerful Tools. One Platform.</h2>
+        <p class="section-header__desc">Every tool you need to audit, optimize, and monitor your website's search performance — all working together seamlessly.</p>
+      </div>
+
+      <div class="tools-showcase__grid">
+
+        <!-- 1. Technical SEO Audit -->
+        <div class="tool-card" data-glow="violet">
+          <div class="tool-card__icon tool-card__icon--violet">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <h3 class="tool-card__title">Technical SEO Audit</h3>
+          <p class="tool-card__desc">Comprehensive technical analysis covering crawlability, indexability, site architecture, and server configuration.</p>
+          <div class="tool-card__meta">
+            <span class="tool-card__count"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>140+ Checks</span>
+          </div>
+        </div>
+
+        <!-- 2. Website Crawler -->
+        <div class="tool-card" data-glow="sky">
+          <div class="tool-card__icon tool-card__icon--sky">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          </div>
+          <h3 class="tool-card__title">Website Crawler</h3>
+          <p class="tool-card__desc">High-speed parallel crawler with JS rendering. Crawl up to 10M pages per project with configurable depth and filters.</p>
+          <div class="tool-card__meta">
+            <span class="tool-card__count"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>10M Pages</span>
+          </div>
+        </div>
+
+        <!-- 3. On-Page SEO Analysis -->
+        <div class="tool-card" data-glow="emerald">
+          <div class="tool-card__icon tool-card__icon--emerald">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          </div>
+          <h3 class="tool-card__title">On-Page SEO Analysis</h3>
+          <p class="tool-card__desc">Analyze title tags, meta descriptions, keyword density, content quality, and internal linking structure page by page.</p>
+          <div class="tool-card__meta">
+            <span class="tool-card__count"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>85+ Metrics</span>
+          </div>
+        </div>
+
+        <!-- 4. Page Speed Analysis -->
+        <div class="tool-card" data-glow="amber">
+          <div class="tool-card__icon tool-card__icon--amber">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          </div>
+          <h3 class="tool-card__title">Page Speed Analysis</h3>
+          <p class="tool-card__desc">Measure load times, TTFB, render-blocking resources, and get actionable optimization recommendations for every page.</p>
+          <div class="tool-card__meta">
+            <span class="tool-card__count"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>60+ Signals</span>
+          </div>
+        </div>
+
+        <!-- 5. Mobile SEO Audit -->
+        <div class="tool-card" data-glow="rose">
+          <div class="tool-card__icon tool-card__icon--rose">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+          </div>
+          <h3 class="tool-card__title">Mobile SEO Audit</h3>
+          <p class="tool-card__desc">Test mobile-friendliness, responsive design, viewport configuration, tap target sizing, and mobile page speed.</p>
+          <div class="tool-card__meta">
+            <span class="tool-card__count"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>45+ Tests</span>
+          </div>
+        </div>
+
+        <!-- 6. Broken Link Checker -->
+        <div class="tool-card" data-glow="indigo">
+          <div class="tool-card__icon tool-card__icon--indigo">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+          </div>
+          <h3 class="tool-card__title">Broken Link Checker</h3>
+          <p class="tool-card__desc">Find all broken internal and external links, redirect chains, redirect loops, and orphaned pages across your site.</p>
+          <div class="tool-card__meta">
+            <span class="tool-card__count"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>All Status Codes</span>
+          </div>
+        </div>
+
+        <!-- 7. Sitemap Analyzer -->
+        <div class="tool-card" data-glow="teal">
+          <div class="tool-card__icon tool-card__icon--teal">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          </div>
+          <h3 class="tool-card__title">Sitemap Analyzer</h3>
+          <p class="tool-card__desc">Validate XML sitemaps, detect missing pages, check last-modified dates, and compare sitemap URLs against crawled pages.</p>
+          <div class="tool-card__meta">
+            <span class="tool-card__count"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>30+ Validations</span>
+          </div>
+        </div>
+
+        <!-- 8. Robots.txt Checker -->
+        <div class="tool-card" data-glow="fuchsia">
+          <div class="tool-card__icon tool-card__icon--fuchsia">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          </div>
+          <h3 class="tool-card__title">Robots.txt Checker</h3>
+          <p class="tool-card__desc">Parse and validate robots.txt rules, test URL blocking, check crawl-delay directives, and detect configuration errors.</p>
+          <div class="tool-card__meta">
+            <span class="tool-card__count"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>20+ Rules</span>
+          </div>
+        </div>
+
+        <!-- 9. Meta Tag Analyzer -->
+        <div class="tool-card" data-glow="lime">
+          <div class="tool-card__icon tool-card__icon--lime">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+          </div>
+          <h3 class="tool-card__title">Meta Tag Analyzer</h3>
+          <p class="tool-card__desc">Audit meta titles, descriptions, Open Graph tags, Twitter cards, canonical tags, and hreflang implementations.</p>
+          <div class="tool-card__meta">
+            <span class="tool-card__count"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>50+ Tag Types</span>
+          </div>
+        </div>
+
+        <!-- 10. Heading Analyzer -->
+        <div class="tool-card" data-glow="cyan-deep">
+          <div class="tool-card__icon tool-card__icon--cyan-deep">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2v20"/><path d="M18 2v20"/><path d="M6 12h12"/></svg>
+          </div>
+          <h3 class="tool-card__title">Heading Analyzer</h3>
+          <p class="tool-card__desc">Validate heading hierarchy (H1–H6), detect missing or duplicate H1 tags, and analyze heading keyword relevance.</p>
+          <div class="tool-card__meta">
+            <span class="tool-card__count"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>H1–H6 Depth</span>
+          </div>
+        </div>
+
+        <!-- 11. Image SEO Analyzer -->
+        <div class="tool-card" data-glow="red">
+          <div class="tool-card__icon tool-card__icon--red">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          </div>
+          <h3 class="tool-card__title">Image SEO Analyzer</h3>
+          <p class="tool-card__desc">Check alt text, image file sizes, lazy loading, WebP/AVIF usage, and responsive image implementation across your site.</p>
+          <div class="tool-card__meta">
+            <span class="tool-card__count"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>35+ Checks</span>
+          </div>
+        </div>
+
+        <!-- 12. Content SEO Analysis -->
+        <div class="tool-card" data-glow="blue-deep">
+          <div class="tool-card__icon tool-card__icon--blue-deep">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          </div>
+          <h3 class="tool-card__title">Content SEO Analysis</h3>
+          <p class="tool-card__desc">Evaluate content quality, readability scores, keyword usage, thin content detection, and duplicate content identification.</p>
+          <div class="tool-card__meta">
+            <span class="tool-card__count"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>70+ Factors</span>
+          </div>
+        </div>
+
+        <!-- 13. Core Web Vitals -->
+        <div class="tool-card" data-glow="orange">
+          <div class="tool-card__icon tool-card__icon--orange">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+          </div>
+          <h3 class="tool-card__title">Core Web Vitals</h3>
+          <p class="tool-card__desc">Monitor LCP, INP, and CLS metrics with field and lab data. Get page-level diagnostics aligned with Google rankings.</p>
+          <div class="tool-card__meta">
+            <span class="tool-card__count"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>3 Core Metrics</span>
+          </div>
+        </div>
+
+        <!-- 14. Security SEO Audit -->
+        <div class="tool-card" data-glow="slate">
+          <div class="tool-card__icon tool-card__icon--slate">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+          </div>
+          <h3 class="tool-card__title">Security SEO Audit</h3>
+          <p class="tool-card__desc">Verify HTTPS migration, SSL certificates, mixed content, security headers, and HSTS implementation across your domain.</p>
+          <div class="tool-card__meta">
+            <span class="tool-card__count"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>25+ Security Checks</span>
+          </div>
+        </div>
+
+        <!-- 15. AI Report Generator -->
+        <div class="tool-card" data-glow="purple">
+          <div class="tool-card__icon tool-card__icon--purple">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a4 4 0 0 1 4 4c0 1.95-1.4 3.58-3.25 3.93L12 22"/><path d="M12 2a4 4 0 0 0-4 4c0 1.95 1.4 3.58 3.25 3.93"/><path d="M8.56 13.68C5.05 15.08 3 17.2 3 19.5 3 22 7.03 24 12 24s9-2 9-4.5c0-2.3-2.05-4.42-5.56-5.82"/></svg>
+          </div>
+          <h3 class="tool-card__title">AI Report Generator</h3>
+          <p class="tool-card__desc">Generate white-label audit reports with AI-written summaries, priority rankings, and step-by-step fix instructions.</p>
+          <div class="tool-card__meta">
+            <span class="tool-card__count"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>GPT-4 Powered</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+  </div>
+
+  <!-- CTA Section -->
+
+  <section class="cta-section" id="cta">
+    <div class="container">
+      <div class="cta-card">
+        <h2 class="cta-card__title">Ready to Audit Your Website?</h2>
+        <p class="cta-card__desc">Join 50,000+ SEO professionals using crawlX to find and fix critical issues. Start your free audit today.</p>
+        <button class="cta-card__btn" onclick="window.location.href='scanner.html';">
+          Start Free SEO Audit
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer__inner">
+        <p class="footer__copy">&copy; 2026 crawlX. All rights reserved.</p>
+        <ul class="footer__links">
+          <li><a href="#">Privacy</a></li>
+          <li><a href="#">Terms</a></li>
+          <li><a href="#">Documentation</a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // ─── Nav scroll effect ───
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 40);
+    });
+
+    // ─── Hamburger menu ───
+    const hamburger = document.getElementById('hamburger');
+    const navLinks = document.getElementById('navLinks');
+    hamburger.addEventListener('click', () => {
+      navLinks.classList.toggle('open');
+    });
+
+    // ─── Number formatter ───
+    function formatNumber(num) {
+      if (num >= 1000000) return (num / 1000000).toFixed(1).replace('.0', '') + 'M';
+      if (num >= 1000) return (num / 1000).toFixed(1).replace('.0', '') + 'K';
+      return num.toLocaleString();
+    }
+
+    // ─── Counter animation ───
+    function animateCounter(el) {
+      const target = parseInt(el.dataset.target);
+      const suffix = el.dataset.suffix || '';
+      const duration = 2000;
+      const startTime = performance.now();
+
+      function update(currentTime) {
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 4);
+        const current = Math.round(eased * target);
+        el.textContent = formatNumber(current) + suffix;
+        if (progress < 1) requestAnimationFrame(update);
+      }
+      requestAnimationFrame(update);
+    }
+
+    // ─── Intersection Observer for animations ───
+    const observerOptions = { threshold: 0.2, rootMargin: '0px 0px -50px 0px' };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const el = entry.target;
+          const delay = parseInt(el.dataset.delay) || 0;
+
+          setTimeout(() => {
+            el.classList.add('visible');
+
+            // Animate counters in stat cards
+            const counter = el.querySelector('.stat-card__number');
+            if (counter && counter.dataset.target) {
+              animateCounter(counter);
+            }
+          }, delay);
+
+          observer.unobserve(el);
+        }
+      });
+    }, observerOptions);
+
+    // Observe stat cards
+    document.querySelectorAll('.stat-card').forEach((card, i) => {
+      card.dataset.delay = i * 120;
+      observer.observe(card);
+    });
+
+    // Observe feature cards
+    document.querySelectorAll('.feature-card').forEach((card, i) => {
+      card.dataset.delay = i * 100;
+      observer.observe(card);
+    });
+
+    // Observe tool cards
+    document.querySelectorAll('.tool-card').forEach((card, i) => {
+      card.dataset.delay = i * 70;
+      observer.observe(card);
+    });
+
+    // ─── Score ring animation ───
+    const scoreObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          animateScore();
+          scoreObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.3 });
+
+    const scoreWidget = document.getElementById('scoreWidget');
+    if (scoreWidget) {
+      scoreObserver.observe(scoreWidget);
+    }
+
+    function animateScore() {
+      const ring = document.getElementById('scoreRing');
+      const numberEl = document.getElementById('scoreNumber');
+      const targetScore = 84;
+      const circumference = 2 * Math.PI * 60; // 377
+      const offset = circumference - (targetScore / 100) * circumference;
+
+      ring.style.strokeDasharray = circumference;
+      ring.style.strokeDashoffset = circumference;
+
+      // Trigger animation after a tick
+      requestAnimationFrame(() => {
+        ring.style.transition = 'stroke-dashoffset 2s cubic-bezier(0.4, 0, 0.2, 1)';
+        ring.style.strokeDashoffset = offset;
+      });
+
+      // Animate number
+      const duration = 2000;
+      const startTime = performance.now();
+
+      function updateNumber(currentTime) {
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 4);
+        numberEl.textContent = Math.round(eased * targetScore);
+        if (progress < 1) requestAnimationFrame(updateNumber);
+      }
+      requestAnimationFrame(updateNumber);
+
+      // Fill in detail scores with staggered timing
+      setTimeout(() => { document.getElementById('perfScore').textContent = '92 / 100'; }, 600);
+      setTimeout(() => { document.getElementById('a11yScore').textContent = '88 / 100'; }, 800);
+      setTimeout(() => {
+        document.getElementById('bpScore').textContent = '74 / 100';
+      }, 1000);
+      setTimeout(() => { document.getElementById('metaScore').textContent = '90 / 100'; }, 1200);
+      setTimeout(() => {
+        document.getElementById('cwvScore').textContent = '76 / 100';
+      }, 1400);
+    }
+
+    // ─── Scanner redirection ───
+    function startScan() {
+      const input = document.getElementById('scannerInput');
+      if (!input) return;
+      const url = input.value.trim();
+
+      if (!url) {
+        input.setAttribute('placeholder', 'Please enter a URL to audit…');
+        input.focus();
+        return;
+      }
+
+      // Save to localStorage so it is remembered globally across pages
+      localStorage.setItem('current_scanned_domain', url);
+
+      // Redirect to the scanner page with URL parameter
+      window.location.href = `scanner.html?url=${encodeURIComponent(url)}`;
+    }
+
+    // Allow Enter key to trigger scan
+    const scannerInput = document.getElementById('scannerInput');
+    if (scannerInput) {
+      scannerInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') startScan();
+      });
+    }
+  </script>
+
+  
+
+  <script src="ask-ai.js" defer></script>
+
+  <script id="sidebar-active-highlight-script">
+    document.addEventListener("DOMContentLoaded", () => {
+      const currentPath = window.location.pathname.split("/").pop() || "dashboard.html";
+      const items = document.querySelectorAll(".sidebar__item");
+      items.forEach(item => {
+        const itemHref = item.getAttribute("href");
+        if (itemHref && (currentPath === itemHref || currentPath.startsWith(itemHref.split('.')[0]))) {
+          item.classList.add("active");
+        } else {
+          item.classList.remove("active");
+        }
+      });
+      
+      const sidebar = document.getElementById('sidebar');
+      const sidebarToggle = document.getElementById('sidebarToggle');
+      if (sidebarToggle && sidebar) {
+        sidebarToggle.addEventListener('click', () => {
+          sidebar.classList.toggle('collapsed');
+        });
+      }
+    });
+  </script>
+
+  <script>
+    (function() {
+      const checkbox = document.getElementById('themeSwitchCheckbox');
+      const root = document.documentElement;
+      
+      // Load initial state
+      const savedTheme = localStorage.getItem('theme');
+      if (savedTheme === 'light') {
+        root.classList.add('light-mode');
+        document.body.classList.add('light-mode');
+        if (checkbox) checkbox.checked = false; // unchecked = Light
+      } else {
+        root.classList.remove('light-mode');
+        document.body.classList.remove('light-mode');
+        if (checkbox) checkbox.checked = true; // checked = Dark
+      }
+      
+      if (checkbox) {
+        checkbox.addEventListener('change', function() {
+          if (checkbox.checked) {
+            root.classList.remove('light-mode');
+            document.body.classList.remove('light-mode');
+            localStorage.setItem('theme', 'dark');
+          } else {
+            root.classList.add('light-mode');
+            document.body.classList.add('light-mode');
+            localStorage.setItem('theme', 'light');
+          }
+        });
+      }
+    })();
+  </script>
+
+  <script>
+    // Spotlight Hover Tracking Effect
+    document.querySelectorAll('.tool-card, .feature-card').forEach(card => {
+      card.addEventListener('mousemove', e => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        card.style.setProperty('--mouse-x', `${x}px`);
+        card.style.setProperty('--mouse-y', `${y}px`);
+      });
+    });
+  </script>
+</body>
+</html>

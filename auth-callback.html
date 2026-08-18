@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Signing you in — crawlX</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { background:#06060f; display:flex; align-items:center; justify-content:center; min-height:100vh; font-family:'Inter',sans-serif; color:#f0f2ff; }
+    .box { text-align:center; }
+    .spinner { width:48px; height:48px; border:3px solid rgba(124,77,255,0.2); border-top-color:#7c4dff; border-radius:50%; animation:spin 0.8s linear infinite; margin:0 auto 20px; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+    h2 { font-size:18px; font-weight:700; color:#b388ff; }
+    p  { font-size:13px; color:rgba(240,242,255,0.4); margin-top:8px; }
+    .error { color:#ff8a80; background:rgba(255,82,82,0.1); border:1px solid rgba(255,82,82,0.2); border-radius:12px; padding:16px 20px; margin-top:20px; max-width:360px; }
+  
+    /* Animated Glowing Search Bar */
+    .animated-glowing-search-wrapper {
+      position: relative;
+      border-radius: var(--radius-md);
+      padding: 1.5px;
+      background: var(--bg-card);
+      overflow: hidden;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      transition: all 0.3s ease;
+      width: 100%;
+    }
+
+    .animated-glowing-search-wrapper::before {
+      content: '';
+      position: absolute;
+      top: -100%; left: -100%;
+      width: 300%; height: 300%;
+      background: conic-gradient(from 0deg, transparent 0%, transparent 40%, var(--accent) 50%, var(--accent) 60%, transparent 100%);
+      animation: searchGlowSpin 4s linear infinite;
+      z-index: -2;
+      opacity: 0.15;
+      transition: opacity 0.3s ease;
+    }
+
+    .animated-glowing-search-wrapper:focus-within::before {
+      opacity: 1;
+      animation: searchGlowSpin 2s linear infinite;
+    }
+
+    .animated-glowing-search-wrapper::after {
+      content: '';
+      position: absolute;
+      inset: 1.5px;
+      background: var(--bg-card);
+      border-radius: calc(var(--radius-md) - 1.5px);
+      z-index: -1;
+    }
+
+    @keyframes searchGlowSpin {
+      100% { transform: rotate(360deg); }
+    }
+
+    .animated-glowing-search-input {
+      width: 100%;
+      padding: 14px 20px;
+      background: transparent;
+      border: none;
+      color: var(--text-1);
+      font-size: 14px;
+      outline: none;
+      z-index: 2;
+    }
+    .animated-glowing-search-input::placeholder {
+      color: var(--text-3);
+    }
+
+  </style>
+</head>
+<body>
+  <div class="box" id="box">
+    <div class="spinner"></div>
+    <h2>Signing you in&hellip;</h2>
+    <p>Please wait a moment</p>
+  </div>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const token  = params.get('token');
+    const name   = params.get('name')  || '';
+    const email  = params.get('email') || '';
+    const error  = params.get('error') || '';
+
+    if (error) {
+      document.getElementById('box').innerHTML =
+        `<div class="error"><strong>Sign-in failed</strong><br>${error}</div>
+         <p style="margin-top:16px"><a href="/login.html" style="color:#b388ff">Back to Sign In</a></p>`;
+    } else if (token) {
+      localStorage.setItem('crawlx_token', token);
+      localStorage.setItem('logged_in',    'true');
+      localStorage.setItem('user_name',    decodeURIComponent(name));
+      localStorage.setItem('user_email',   decodeURIComponent(email));
+      window.location.replace('dashboard.html');
+    } else {
+      window.location.replace('login.html');
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,2391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script>
+    if (localStorage.getItem('logged_in') !== 'true') {
+      window.location.href = 'login.html';
+    }
+  </script>
+  
+  
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard — crawlX</title>
+  <meta name="description" content="crawlX enterprise SEO dashboard. Monitor audits, crawl jobs, SEO issues, and AI reports in real-time.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <style>
+    /* ═══════════════════════════════════════
+       RESET & VARIABLES
+       ═══════════════════════════════════════ */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      /* Surfaces - Dark Mode Default */
+      --bg-base: #09090b;
+      --bg-sidebar: #09090b;
+      --bg-topbar: rgba(9, 9, 11, 0.8);
+      --bg-card: rgba(20, 20, 25, 0.65);
+      --bg-card-hover: rgba(255, 255, 255, 0.04);
+      --bg-input: rgba(255, 255, 255, 0.03);
+      --bg-badge: rgba(16, 185, 129, 0.15);
+
+      /* Borders */
+      --border: rgba(255, 255, 255, 0.08);
+      --border-hover: rgba(255, 255, 255, 0.16);
+      --border-active: rgba(16, 185, 129, 0.4);
+
+      /* Accents */
+      --accent: #10b981;
+      --accent-light: #34d399;
+      --accent-glow: rgba(16, 185, 129, 0.25);
+      --green: #00e676;
+      --green-bg: rgba(0, 230, 118, 0.1);
+      --green-border: rgba(0, 230, 118, 0.2);
+      --orange: #ff9100;
+      --orange-bg: rgba(255, 145, 0, 0.1);
+      --orange-border: rgba(255, 145, 0, 0.2);
+      --red: #ff5252;
+      --red-bg: rgba(255, 82, 82, 0.1);
+      --red-border: rgba(255, 82, 82, 0.2);
+      --cyan: #00e5ff;
+      --cyan-bg: rgba(0, 229, 255, 0.1);
+      --cyan-border: rgba(0, 229, 255, 0.2);
+      --yellow: #ffca28;
+
+      /* Text */
+      --text-1: #f4f4f5;
+      --text-2: rgba(244, 244, 245, 0.7);
+      --text-3: rgba(244, 244, 245, 0.4);
+
+      /* Layout */
+      
+      --sidebar-collapsed-w: 68px;
+      --topbar-h: 60px;
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+
+      /* Transitions */
+      --ease: cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg-base);
+      color: var(--text-1);
+      line-height: 1.6;
+      overflow: hidden;
+      height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ═══════════════════════════════════════
+       LAYOUT SHELL
+       ═══════════════════════════════════════ */
+    .app {
+      display: flex;
+      height: 100vh;
+    }
+
+    /* ═══════════════════════════════════════
+       SIDEBAR
+       ═══════════════════════════════════════ */
+    
+
+    
+
+    /* Logo */
+    
+
+    
+
+    
+
+    
+
+    /* Sidebar sections */
+    
+
+    
+
+    
+
+    /* Nav items */
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    /* Sidebar footer */
+    
+
+    /* Collapse toggle */
+    
+
+    
+
+    
+
+    /* ═══════════════════════════════════════
+       MAIN AREA
+       ═══════════════════════════════════════ */
+    .main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      overflow: hidden;
+    }
+
+    /* ═══════════════════════════════════════
+       TOP NAVBAR
+       ═══════════════════════════════════════ */
+    .topbar {
+      display: none !important;
+      height: var(--topbar-h);
+      background: var(--bg-topbar);
+      backdrop-filter: blur(16px) saturate(1.3);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 0 24px;
+      gap: 16px;
+      flex-shrink: 0;
+      z-index: 50;
+    }
+
+    /* Workspace selector */
+    .workspace {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.2s;
+      color: var(--text-1);
+    }
+
+    .workspace:hover {
+      border-color: var(--border-hover);
+      background: var(--bg-card-hover);
+    }
+
+    .workspace__dot {
+      width: 8px; height: 8px;
+      background: var(--green);
+      border-radius: 50%;
+      box-shadow: 0 0 6px rgba(0, 230, 118, 0.4);
+    }
+
+    .workspace__name {
+      font-size: 13px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .workspace__chevron {
+      color: var(--text-3);
+      margin-left: 4px;
+    }
+
+    /* Search */
+    .topbar__search {
+      flex: 1;
+      max-width: 420px;
+      position: relative;
+    }
+
+    .topbar__search-input {
+      width: 100%;
+      padding: 8px 14px 8px 36px;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text-1);
+      font-size: 13px;
+      font-family: inherit;
+      outline: none;
+      transition: all 0.2s;
+    }
+
+    .topbar__search-input::placeholder { color: var(--text-3); }
+
+    .topbar__search-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.1);
+    }
+
+    .topbar__search-icon {
+      position: absolute;
+      left: 12px; top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-3);
+      pointer-events: none;
+    }
+
+    .topbar__search-shortcut {
+      position: absolute;
+      right: 10px; top: 50%;
+      transform: translateY(-50%);
+      padding: 2px 6px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      font-size: 10px;
+      color: var(--text-3);
+      font-family: inherit;
+      pointer-events: none;
+    }
+
+    /* Spacer */
+    .topbar__spacer { flex: 1; }
+
+    /* Topbar actions */
+    .topbar__actions {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .topbar__btn {
+      width: 36px; height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: var(--radius-sm);
+      background: transparent;
+      border: none;
+      color: var(--text-2);
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+    }
+
+    .topbar__btn:hover {
+      background: var(--bg-card);
+      color: var(--text-1);
+    }
+
+    .topbar__btn-dot {
+      position: absolute;
+      top: 6px; right: 6px;
+      width: 7px; height: 7px;
+      background: var(--red);
+      border-radius: 50%;
+      border: 2px solid var(--bg-sidebar);
+    }
+
+    /* Profile */
+    .topbar__profile {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 4px 10px 4px 4px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-left: 8px;
+    }
+
+    .topbar__profile:hover {
+      background: var(--bg-card);
+    }
+
+    .topbar__avatar {
+      width: 32px; height: 32px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, var(--accent), #e91e63);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 13px;
+      color: white;
+      flex-shrink: 0;
+    }
+
+    .topbar__user-info {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.2;
+    }
+
+    .topbar__user-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-1);
+    }
+
+    .topbar__user-role {
+      font-size: 11px;
+      color: var(--text-3);
+    }
+
+    /* ═══════════════════════════════════════
+       CONTENT AREA
+       ═══════════════════════════════════════ */
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 28px;
+    }
+
+    .page-header--centered {
+      justify-content: center;
+      text-align: center;
+      margin-top: 0;
+      margin-bottom: 32px;
+    }
+
+    .page-header__center {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      max-width: 600px;
+    }
+
+    .page-header__title {
+      font-size: 26px;
+      font-weight: 800;
+      letter-spacing: -1px;
+      margin-bottom: 4px;
+    }
+
+    .page-header__subtitle {
+      font-size: 14px;
+      color: var(--text-2);
+      margin-bottom: 24px;
+      min-height: 20px;
+    }
+
+    .text-type__cursor {
+      display: inline-block;
+      margin-left: 2px;
+      opacity: 1;
+      animation: blinkCursor 0.8s infinite;
+      color: var(--text-2);
+    }
+    
+    .text-type__cursor--hidden {
+      display: none;
+    }
+    
+    @keyframes blinkCursor {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+
+    .audit-search-bar {
+      display: flex;
+      gap: 12px;
+      width: 100%;
+      max-width: 500px;
+    }
+
+    .audit-search-bar__input-wrapper {
+      position: relative;
+      flex: 1;
+      display: flex;
+      align-items: center;
+    }
+
+    .audit-search-icon {
+      position: absolute;
+      left: 14px;
+      color: var(--text-3);
+    }
+
+    .audit-search-input {
+      width: 100%;
+      padding: 12px 16px 12px 42px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+      background: var(--bg-input);
+      color: var(--text-1);
+      font-size: 14px;
+      transition: all 0.2s;
+      outline: none;
+    }
+
+    .audit-search-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.2);
+    }
+
+    .audit-search-btn {
+      padding: 0 24px;
+    }
+
+    .page-actions-bottom {
+      display: flex;
+      justify-content: flex-end;
+      padding-top: 12px;
+      margin-top: 24px;
+      margin-bottom: 30px;
+    }
+
+    .content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 24px;
+    }
+
+    .content::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .content::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .content::-webkit-scrollbar-thumb {
+      background: var(--bg-card);
+      border-radius: 3px;
+    }
+
+    .content::-webkit-scrollbar-thumb:hover {
+      background: var(--bg-card-hover);
+    }
+
+
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 9px 18px;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: 1px solid transparent;
+      white-space: nowrap;
+    }
+
+    .btn--primary {
+      background: linear-gradient(135deg, var(--accent), #8b5cf6);
+      color: white;
+      border: none;
+    }
+
+    .btn--primary:hover {
+      box-shadow: 0 6px 20px var(--accent-glow);
+      transform: translateY(-1px);
+    }
+
+    .btn--secondary {
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      color: var(--text-1);
+    }
+
+    .btn--secondary:hover {
+      border-color: var(--border-hover);
+      background: var(--bg-card-hover);
+    }
+
+    /* ═══════════════════════════════════════
+       KPI CARDS
+       ═══════════════════════════════════════ */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .kpi {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 22px;
+      transition: all 0.3s var(--ease);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Glowing Effect */
+    .kpi::before, .chart-card::before, .card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: radial-gradient(
+        500px circle at var(--mouse-x, 0) var(--mouse-y, 0),
+        color-mix(in srgb, var(--text-1) 8%, transparent),
+        transparent 40%
+      );
+      z-index: 0;
+      opacity: 0;
+      transition: opacity 0.3s;
+      pointer-events: none;
+    }
+    .kpi:hover::before, .chart-card:hover::before, .card:hover::before {
+      opacity: 1;
+    }
+
+    .kpi:hover {
+      border-color: var(--border-hover);
+      background: var(--bg-card-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+    }
+
+    .kpi__header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    .kpi__icon {
+      width: 38px; height: 38px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+    }
+
+    .kpi__icon--purple,
+    .kpi__icon--green,
+    .kpi__icon--orange,
+    .kpi__icon--cyan,
+    .kpi__icon--rose,
+    .kpi__icon--indigo,
+    .kpi__icon--teal,
+    .kpi__icon--amber {
+      background: var(--bg-card-hover);
+      color: var(--text-1);
+      border: 1px solid var(--border);
+    }
+
+    .kpi__trend {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 6px;
+    }
+
+    .kpi__trend--up {
+      color: var(--green);
+      background: var(--green-bg);
+    }
+
+    .kpi__trend--down {
+      color: var(--red);
+      background: var(--red-bg);
+    }
+
+    .kpi__value {
+      font-size: 30px;
+      font-weight: 800;
+      letter-spacing: -1px;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    .kpi__label {
+      font-size: 13px;
+      color: var(--text-2);
+      font-weight: 500;
+    }
+
+    /* Sparkline */
+    .kpi__sparkline {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 40px;
+      opacity: 0.12;
+    }
+
+    /* ═══════════════════════════════════════
+       CHART CARDS
+       ═══════════════════════════════════════ */
+    .chart-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .chart-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      position: relative;
+      animation: fadeIn 0.5s var(--ease) both;
+    }
+
+    .chart-card__header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .chart-card__title {
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: -0.2px;
+    }
+
+    .chart-card__tabs {
+      display: flex;
+      gap: 2px;
+      background: var(--bg-card);
+      border-radius: 6px;
+      padding: 2px;
+    }
+
+    .chart-card__tab {
+      padding: 4px 10px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-3);
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: none;
+      background: none;
+      font-family: inherit;
+    }
+
+    .chart-card__tab:hover { color: var(--text-2); }
+    .chart-card__tab.active {
+      background: var(--bg-badge);
+      color: var(--accent);
+    }
+
+    .chart-card__body {
+      padding: 16px 20px;
+      position: relative;
+    }
+
+    .chart-card__canvas {
+      width: 100%;
+      height: 200px;
+      display: block;
+    }
+
+    .chart-card__legend {
+      display: flex;
+      gap: 16px;
+      padding: 12px 20px;
+      border-top: 1px solid var(--border);
+    }
+
+    .chart-legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: var(--text-2);
+      font-weight: 500;
+    }
+
+    .chart-legend-dot {
+      width: 8px; height: 8px;
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+
+    /* ═══════════════════════════════════════
+       DASHBOARD GRID
+       ═══════════════════════════════════════ */
+    .dash-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .dash-grid--3 {
+      grid-template-columns: 2fr 1fr;
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .card__header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 22px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .card__title {
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: -0.2px;
+    }
+
+    .card__action {
+      font-size: 12px;
+      color: var(--accent);
+      cursor: pointer;
+      font-weight: 500;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .card__action:hover { color: var(--accent); }
+
+    .card__body {
+      padding: 20px 22px;
+    }
+
+    /* ═══════════════════════════════════════
+       AUDIT PROGRESS
+       ═══════════════════════════════════════ */
+    .audit-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .audit-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .audit-item__icon {
+      width: 36px; height: 36px;
+      min-width: 36px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .audit-item__icon--green  { background: var(--green-bg);  color: var(--green); }
+    .audit-item__icon--orange { background: var(--orange-bg); color: var(--orange); }
+    .audit-item__icon--cyan   { background: var(--cyan-bg);   color: var(--cyan); }
+    .audit-item__icon--red    { background: var(--red-bg);    color: var(--red); }
+
+    .audit-item__info { flex: 1; min-width: 0; }
+
+    .audit-item__name {
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 6px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .audit-item__bar {
+      height: 4px;
+      background: var(--bg-card);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .audit-item__fill {
+      height: 100%;
+      border-radius: 2px;
+      transition: width 1.5s var(--ease);
+    }
+
+    .audit-item__fill--green  { background: linear-gradient(90deg, var(--green), #69f0ae); }
+    .audit-item__fill--orange { background: linear-gradient(90deg, var(--orange), var(--yellow)); }
+    .audit-item__fill--cyan   { background: linear-gradient(90deg, var(--cyan), #80d8ff); }
+    .audit-item__fill--red    { background: linear-gradient(90deg, var(--red), #ff8a80); }
+
+    .audit-item__pct {
+      font-size: 13px;
+      font-weight: 700;
+      min-width: 42px;
+      text-align: right;
+    }
+
+    /* ═══════════════════════════════════════
+       ISSUES BREAKDOWN
+       ═══════════════════════════════════════ */
+    .issues-breakdown {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .issue-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 14px;
+      background: var(--bg-card);
+      border-radius: var(--radius-sm);
+      transition: background 0.2s;
+    }
+
+    .issue-row:hover {
+      background: var(--bg-card);
+    }
+
+    .issue-row__dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .issue-row__dot--critical { background: var(--red); }
+    .issue-row__dot--warning  { background: var(--orange); }
+    .issue-row__dot--info     { background: var(--cyan); }
+    .issue-row__dot--passed   { background: var(--green); }
+
+    .issue-row__label {
+      flex: 1;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-2);
+    }
+
+    .issue-row__count {
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .issue-row__bar-wrap {
+      width: 80px;
+      height: 4px;
+      background: var(--bg-card);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .issue-row__bar {
+      height: 100%;
+      border-radius: 2px;
+    }
+
+    .issue-row__bar--critical { background: var(--red); }
+    .issue-row__bar--warning  { background: var(--orange); }
+    .issue-row__bar--info     { background: var(--cyan); }
+    .issue-row__bar--passed   { background: var(--green); }
+
+    /* ═══════════════════════════════════════
+       TABLE
+       ═══════════════════════════════════════ */
+    .table-wrap {
+      overflow-x: auto;
+    }
+
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .table th {
+      text-align: left;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-3);
+      padding: 10px 16px;
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+
+    .table td {
+      padding: 12px 16px;
+      font-size: 13px;
+      border-bottom: 1px solid rgba(255,255,255,0.02);
+      color: var(--text-2);
+      white-space: nowrap;
+    }
+
+    .table tr:hover td {
+      background: var(--bg-card);
+    }
+
+    .table__url {
+      color: var(--text-1);
+      font-weight: 500;
+      max-width: 260px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .table__status {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 10px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .table__status--done     { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-border); }
+    .table__status--running  { background: var(--cyan-bg); color: var(--cyan); border: 1px solid var(--cyan-border); }
+    .table__status--queued   { background: var(--orange-bg); color: var(--orange); border: 1px solid var(--orange-border); }
+    .table__status--failed   { background: var(--red-bg); color: var(--red); border: 1px solid var(--red-border); }
+
+    .table__status-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    .table__score {
+      font-weight: 700;
+    }
+
+    .table__score--good { color: var(--green); }
+    .table__score--ok   { color: var(--orange); }
+    .table__score--bad  { color: var(--red); }
+
+    /* ═══════════════════════════════════════
+       ACTIVITY FEED
+       ═══════════════════════════════════════ */
+    .activity-feed {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .activity-item {
+      display: flex;
+      gap: 12px;
+      padding: 12px 0;
+      position: relative;
+    }
+
+    .activity-item:not(:last-child) {
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+    }
+
+    .activity-item__icon {
+      width: 32px; height: 32px;
+      min-width: 32px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+    }
+
+    .activity-item__icon--audit   { background: var(--bg-badge); color: var(--accent); }
+    .activity-item__icon--crawl   { background: var(--cyan-bg); color: var(--cyan); }
+    .activity-item__icon--report  { background: var(--green-bg); color: var(--green); }
+    .activity-item__icon--alert   { background: var(--orange-bg); color: var(--orange); }
+
+    .activity-item__content { flex: 1; min-width: 0; }
+
+    .activity-item__text {
+      font-size: 13px;
+      color: var(--text-2);
+      line-height: 1.5;
+    }
+
+    .activity-item__text strong {
+      color: var(--text-1);
+      font-weight: 600;
+    }
+
+    .activity-item__time {
+      font-size: 11px;
+      color: var(--text-3);
+      margin-top: 2px;
+    }
+
+    /* ═══════════════════════════════════════
+       RESPONSIVE
+       ═══════════════════════════════════════ */
+    @media (max-width: 1280px) {
+      .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+      .chart-row { grid-template-columns: 1fr; }
+      .dash-grid { grid-template-columns: 1fr; }
+      .dash-grid--3 { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 768px) {
+      
+
+      
+
+      .content { padding: 20px 16px; }
+      .kpi-grid { grid-template-columns: 1fr; }
+
+      .topbar__profile .topbar__user-info { display: none; }
+      .workspace__name { display: none; }
+
+      .page-header { flex-direction: column; gap: 16px; }
+    }
+
+    /* Mobile toggle */
+    .mobile-toggle {
+      display: none;
+      width: 36px; height: 36px;
+      align-items: center;
+      justify-content: center;
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text-2);
+      cursor: pointer;
+    }
+
+    @media (max-width: 768px) {
+      .mobile-toggle { display: flex; }
+      
+    }
+
+    /* Mobile overlay */
+    
+
+    
+
+    /* ═══════════════════════════════════════
+       ANIMATIONS
+       ═══════════════════════════════════════ */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .kpi, .card {
+      animation: fadeIn 0.5s var(--ease) both;
+    }
+
+    .kpi:nth-child(1) { animation-delay: 0s; }
+    .kpi:nth-child(2) { animation-delay: 0.04s; }
+    .kpi:nth-child(3) { animation-delay: 0.08s; }
+    .kpi:nth-child(4) { animation-delay: 0.12s; }
+    .kpi:nth-child(5) { animation-delay: 0.16s; }
+    .kpi:nth-child(6) { animation-delay: 0.20s; }
+    .kpi:nth-child(7) { animation-delay: 0.24s; }
+    .kpi:nth-child(8) { animation-delay: 0.28s; }
+  
+    /* Animated Glowing Search Bar */
+    .animated-glowing-search-wrapper {
+      position: relative;
+      border-radius: var(--radius-md);
+      padding: 1.5px;
+      background: var(--bg-card);
+      overflow: hidden;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      transition: all 0.3s ease;
+      width: 100%;
+    }
+
+    .animated-glowing-search-wrapper::before {
+      content: '';
+      position: absolute;
+      top: -100%; left: -100%;
+      width: 300%; height: 300%;
+      background: conic-gradient(from 0deg, transparent 0%, transparent 40%, var(--accent) 50%, var(--accent) 60%, transparent 100%);
+      animation: searchGlowSpin 4s linear infinite;
+      z-index: -2;
+      opacity: 0.15;
+      transition: opacity 0.3s ease;
+    }
+
+    .animated-glowing-search-wrapper:focus-within::before {
+      opacity: 1;
+      animation: searchGlowSpin 2s linear infinite;
+    }
+
+    .animated-glowing-search-wrapper::after {
+      content: '';
+      position: absolute;
+      inset: 1.5px;
+      background: var(--bg-card);
+      border-radius: calc(var(--radius-md) - 1.5px);
+      z-index: -1;
+    }
+
+    @keyframes searchGlowSpin {
+      100% { transform: rotate(360deg); }
+    }
+
+    .animated-glowing-search-input {
+      width: 100%;
+      padding: 14px 20px;
+      background: transparent;
+      border: none;
+      color: var(--text-1);
+      font-size: 14px;
+      outline: none;
+      z-index: 2;
+    }
+    .animated-glowing-search-input::placeholder {
+      color: var(--text-3);
+    }
+
+  
+    /* MAGIC BENTO CSS */
+    .kpi {
+      --glow-x: 50%;
+      --glow-y: 50%;
+      --glow-intensity: 0;
+      --glow-radius: 200px;
+      --glow-color: 16, 185, 129;
+    }
+    
+    .kpi.magic-bento-card--border-glow::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      padding: 2px;
+      background: radial-gradient(
+        var(--glow-radius) circle at var(--glow-x) var(--glow-y),
+        rgba(var(--glow-color), calc(var(--glow-intensity) * 0.8)) 0%,
+        rgba(var(--glow-color), calc(var(--glow-intensity) * 0.4)) 30%,
+        transparent 60%
+      );
+      border-radius: inherit;
+      -webkit-mask:
+        linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask:
+        linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0);
+      mask-composite: exclude;
+      pointer-events: none;
+      opacity: 1;
+      transition: opacity 0.3s ease;
+      z-index: 10;
+    }
+
+    .kpi.magic-bento-card--border-glow:hover {
+      box-shadow:
+        0 4px 20px rgba(var(--glow-color), 0.1),
+        0 0 30px rgba(var(--glow-color), 0.15);
+    }
+
+    .global-spotlight {
+      mix-blend-mode: screen;
+      will-change: transform, opacity;
+      z-index: 200 !important;
+      pointer-events: none;
+    }
+    
+    .particle {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 100;
+    }
+    .particle::before {
+      content: '';
+      position: absolute;
+      top: -2px; left: -2px; right: -2px; bottom: -2px;
+      background: rgba(var(--glow-color), 0.2);
+      border-radius: 50%;
+      z-index: -1;
+    }
+    
+  </style>
+
+  
+\n</head>
+<body>
+  <div class="app">
+
+    <!-- Sidebar overlay (mobile) -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- ═══════ SIDEBAR ═══════ -->
+      
+
+    <!-- ═══════ MAIN ═══════ -->
+    <div class="main">
+
+
+
+      <!-- Content Area -->
+      <div class="content">
+
+        <!-- Page Header -->
+        <div class="page-header page-header--centered">
+          <div class="page-header__center">
+            <h1 class="page-header__title">Dashboard</h1>
+            <p class="page-header__subtitle">
+              <span id="textTypeContent"></span><span id="textTypeCursor" class="text-type__cursor">|</span>
+            </p>
+            <div class="audit-search-bar">
+              <div class="animated-glowing-search-wrapper"><input  type="text" id="auditUrlInput" placeholder="Enter URL to audit (e.g., example.com)..."  class="animated-glowing-search-input"></div>
+              <button class="btn btn--primary audit-search-btn" id="btnNewAudit" onclick="startScan(document.getElementById('auditUrlInput').value)">
+                Audit
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- KPI Cards (8 widgets) -->
+        <div class="kpi-grid">
+          <!-- 1. Total SEO Audits -->
+          <div class="kpi magic-bento-card--border-glow">
+            <div class="kpi__header">
+              <div class="kpi__icon kpi__icon--purple">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              </div>
+              <span class="kpi__trend kpi__trend--up">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>
+                +18.2%
+              </span>
+            </div>
+            <div class="kpi__value" id="kpiAuditsVal">3,842</div>
+            <div class="kpi__label">Total SEO Audits</div>
+            <svg class="kpi__sparkline" viewBox="0 0 200 40" preserveAspectRatio="none"><path d="M0,35 Q25,30 40,28 T80,22 T120,15 T160,18 T200,8" fill="none" stroke="#6c5ce7" stroke-width="2"/><path d="M0,35 Q25,30 40,28 T80,22 T120,15 T160,18 T200,8 L200,40 L0,40Z" fill="url(#sparkPurple)" opacity="0.3"/><defs><linearGradient id="sparkPurple" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#6c5ce7"/><stop offset="100%" stop-color="transparent"/></linearGradient></defs></svg>
+          </div>
+
+          <!-- 2. Open Scan Jobs -->
+          <div class="kpi magic-bento-card--border-glow">
+            <div class="kpi__header">
+              <div class="kpi__icon kpi__icon--cyan">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+              </div>
+              <span class="kpi__trend kpi__trend--up">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>
+                +4
+              </span>
+            </div>
+            <div class="kpi__value" id="kpiJobsVal">12</div>
+            <div class="kpi__label">Open Scan Jobs</div>
+            <svg class="kpi__sparkline" viewBox="0 0 200 40" preserveAspectRatio="none"><path d="M0,20 Q30,25 60,18 T120,22 T180,15 T200,18" fill="none" stroke="#00e5ff" stroke-width="2"/><path d="M0,20 Q30,25 60,18 T120,22 T180,15 T200,18 L200,40 L0,40Z" fill="url(#sparkCyan)" opacity="0.3"/><defs><linearGradient id="sparkCyan" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#00e5ff"/><stop offset="100%" stop-color="transparent"/></linearGradient></defs></svg>
+          </div>
+
+          <!-- 3. Team Members -->
+          <div class="kpi magic-bento-card--border-glow">
+            <div class="kpi__header">
+              <div class="kpi__icon kpi__icon--indigo">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              </div>
+              <span class="kpi__trend kpi__trend--up">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>
+                +2
+              </span>
+            </div>
+            <div class="kpi__value" id="kpiTeamVal">24</div>
+            <div class="kpi__label">Team Members</div>
+            <svg class="kpi__sparkline" viewBox="0 0 200 40" preserveAspectRatio="none"><path d="M0,30 Q40,28 80,26 T140,22 T200,18" fill="none" stroke="#3949ab" stroke-width="2"/><path d="M0,30 Q40,28 80,26 T140,22 T200,18 L200,40 L0,40Z" fill="url(#sparkIndigo)" opacity="0.3"/><defs><linearGradient id="sparkIndigo" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#3949ab"/><stop offset="100%" stop-color="transparent"/></linearGradient></defs></svg>
+          </div>
+
+          <!-- 4. Total Files -->
+          <div class="kpi magic-bento-card--border-glow">
+            <div class="kpi__header">
+              <div class="kpi__icon kpi__icon--amber">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+              </div>
+              <span class="kpi__trend kpi__trend--up">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>
+                +31
+              </span>
+            </div>
+            <div class="kpi__value" id="kpiFilesVal">1,247</div>
+            <div class="kpi__label">Total Files</div>
+            <svg class="kpi__sparkline" viewBox="0 0 200 40" preserveAspectRatio="none"><path d="M0,32 Q30,28 60,25 T130,18 T200,10" fill="none" stroke="#ff8f00" stroke-width="2"/><path d="M0,32 Q30,28 60,25 T130,18 T200,10 L200,40 L0,40Z" fill="url(#sparkAmber)" opacity="0.3"/><defs><linearGradient id="sparkAmber" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#ff8f00"/><stop offset="100%" stop-color="transparent"/></linearGradient></defs></svg>
+          </div>
+
+          <!-- 5. Websites Scanned -->
+          <div class="kpi magic-bento-card--border-glow">
+            <div class="kpi__header">
+              <div class="kpi__icon kpi__icon--green">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+              </div>
+              <span class="kpi__trend kpi__trend--up">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>
+                +12.5%
+              </span>
+            </div>
+            <div class="kpi__value" id="kpiScannedVal">1,284</div>
+            <div class="kpi__label">Websites Scanned</div>
+            <svg class="kpi__sparkline" viewBox="0 0 200 40" preserveAspectRatio="none"><path d="M0,35 Q30,28 60,22 T120,15 T200,6" fill="none" stroke="#00e676" stroke-width="2"/><path d="M0,35 Q30,28 60,22 T120,15 T200,6 L200,40 L0,40Z" fill="url(#sparkGreen)" opacity="0.3"/><defs><linearGradient id="sparkGreen" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#00e676"/><stop offset="100%" stop-color="transparent"/></linearGradient></defs></svg>
+          </div>
+
+          <!-- 6. Total Pages Crawled -->
+          <div class="kpi magic-bento-card--border-glow">
+            <div class="kpi__header">
+              <div class="kpi__icon kpi__icon--teal">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+              </div>
+              <span class="kpi__trend kpi__trend--up">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>
+                +8.3%
+              </span>
+            </div>
+            <div class="kpi__value" id="kpiPagesVal">2.4M</div>
+            <div class="kpi__label">Total Pages Crawled</div>
+            <svg class="kpi__sparkline" viewBox="0 0 200 40" preserveAspectRatio="none"><path d="M0,32 Q30,28 50,20 T100,25 T150,12 T200,5" fill="none" stroke="#00897b" stroke-width="2"/><path d="M0,32 Q30,28 50,20 T100,25 T150,12 T200,5 L200,40 L0,40Z" fill="url(#sparkTeal)" opacity="0.3"/><defs><linearGradient id="sparkTeal" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#00897b"/><stop offset="100%" stop-color="transparent"/></linearGradient></defs></svg>
+          </div>
+
+          <!-- 7. Average SEO Score -->
+          <div class="kpi magic-bento-card--border-glow">
+            <div class="kpi__header">
+              <div class="kpi__icon kpi__icon--orange">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>
+              </div>
+              <span class="kpi__trend kpi__trend--up">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>
+                +3.1
+              </span>
+            </div>
+            <div class="kpi__value" id="kpiScoreVal">78.4</div>
+            <div class="kpi__label">Average SEO Score</div>
+            <svg class="kpi__sparkline" viewBox="0 0 200 40" preserveAspectRatio="none"><path d="M0,28 Q25,25 50,22 T100,18 T150,14 T200,10" fill="none" stroke="#ff9100" stroke-width="2"/><path d="M0,28 Q25,25 50,22 T100,18 T150,14 T200,10 L200,40 L0,40Z" fill="url(#sparkOrange)" opacity="0.3"/><defs><linearGradient id="sparkOrange" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#ff9100"/><stop offset="100%" stop-color="transparent"/></linearGradient></defs></svg>
+          </div>
+
+          <!-- 8. AI Recommendations Generated -->
+          <div class="kpi magic-bento-card--border-glow">
+            <div class="kpi__header">
+              <div class="kpi__icon kpi__icon--rose">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a4 4 0 0 1 4 4c0 1.95-1.4 3.58-3.25 3.93L12 22"/><path d="M12 2a4 4 0 0 0-4 4c0 1.95 1.4 3.58 3.25 3.93"/></svg>
+              </div>
+              <span class="kpi__trend kpi__trend--up">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>
+                +24.1%
+              </span>
+            </div>
+            <div class="kpi__value" id="kpiAiVal">6,148</div>
+            <div class="kpi__label">AI Recommendations</div>
+            <svg class="kpi__sparkline" viewBox="0 0 200 40" preserveAspectRatio="none"><path d="M0,38 Q40,30 80,25 T140,15 T200,3" fill="none" stroke="#e91e63" stroke-width="2"/><path d="M0,38 Q40,30 80,25 T140,15 T200,3 L200,40 L0,40Z" fill="url(#sparkRose)" opacity="0.3"/><defs><linearGradient id="sparkRose" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#e91e63"/><stop offset="100%" stop-color="transparent"/></linearGradient></defs></svg>
+          </div>
+        </div>
+
+        <!-- Charts Row -->
+        <div class="chart-row">
+
+          <!-- 1. SEO Health Trend -->
+          <div class="chart-card" style="animation-delay: 0.32s">
+            <div class="chart-card__header">
+              <h2 class="chart-card__title">SEO Health Trend</h2>
+              <div class="chart-card__tabs">
+                <button class="chart-card__tab active">7D</button>
+                <button class="chart-card__tab">30D</button>
+                <button class="chart-card__tab">90D</button>
+              </div>
+            </div>
+            <div class="chart-card__body">
+              <canvas class="chart-card__canvas" id="chartHealth"></canvas>
+            </div>
+            <div class="chart-card__legend">
+              <span class="chart-legend-item"><span class="chart-legend-dot" style="background:#6c5ce7"></span>SEO Score</span>
+              <span class="chart-legend-item"><span class="chart-legend-dot" style="background:#00e676"></span>Performance</span>
+            </div>
+          </div>
+
+          <!-- 2. Audit Activity -->
+          <div class="chart-card" style="animation-delay: 0.38s">
+            <div class="chart-card__header">
+              <h2 class="chart-card__title">Audit Activity</h2>
+              <div class="chart-card__tabs">
+                <button class="chart-card__tab active">Week</button>
+                <button class="chart-card__tab">Month</button>
+              </div>
+            </div>
+            <div class="chart-card__body">
+              <canvas class="chart-card__canvas" id="chartActivity"></canvas>
+            </div>
+            <div class="chart-card__legend">
+              <span class="chart-legend-item"><span class="chart-legend-dot" style="background:#00e5ff"></span>Completed</span>
+              <span class="chart-legend-item"><span class="chart-legend-dot" style="background:rgba(0,229,255,0.25)"></span>Scheduled</span>
+            </div>
+          </div>
+
+          <!-- 3. Website Performance Trend -->
+          <div class="chart-card" style="animation-delay: 0.44s">
+            <div class="chart-card__header">
+              <h2 class="chart-card__title">Performance Trend</h2>
+              <div class="chart-card__tabs">
+                <button class="chart-card__tab active">7D</button>
+                <button class="chart-card__tab">30D</button>
+              </div>
+            </div>
+            <div class="chart-card__body">
+              <canvas class="chart-card__canvas" id="chartPerformance"></canvas>
+            </div>
+            <div class="chart-card__legend">
+              <span class="chart-legend-item"><span class="chart-legend-dot" style="background:#ff9100"></span>LCP (s)</span>
+              <span class="chart-legend-item"><span class="chart-legend-dot" style="background:#00e676"></span>CLS</span>
+              <span class="chart-legend-item"><span class="chart-legend-dot" style="background:#a29bfe"></span>INP (ms)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Middle row -->
+        <div class="dash-grid dash-grid--3">
+
+          <!-- Recent Crawls Table -->
+          <div class="card" style="animation-delay: 0.24s">
+            <div class="card__header">
+              <h2 class="card__title">Recent Crawls</h2>
+              <a href="#" class="card__action">View All →</a>
+            </div>
+            <div class="card__body" style="padding:0">
+              <div class="table-wrap">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th>Website</th>
+                      <th>Pages</th>
+                      <th>Issues</th>
+                      <th>Score</th>
+                      <th>Status</th>
+                      <th>Date</th>
+                    </tr>
+                  </thead>
+                  <tbody id="recentCrawlsTableBody">
+                    <tr>
+                      <td colspan="6" style="text-align:center;padding:24px;color:var(--text-3);">No website analyses available yet. Start your first website scan to populate the dashboard.</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- Issues Breakdown -->
+          <div class="card" style="animation-delay: 0.30s">
+            <div class="card__header">
+              <h2 class="card__title">Issues Breakdown</h2>
+              <a href="#" class="card__action">Details →</a>
+            </div>
+            <div class="card__body">
+              <div class="issues-breakdown" id="issuesBreakdownPanel" style="color:var(--text-3);text-align:center;padding:24px;font-size:13.5px;">
+                No website analyses available yet.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bottom row -->
+        <div class="dash-grid">
+
+          <!-- Active Audits -->
+          <div class="card" style="animation-delay: 0.36s">
+            <div class="card__header">
+              <h2 class="card__title">Audit Progress</h2>
+              <a href="#" class="card__action">Manage →</a>
+            </div>
+            <div class="card__body">
+              <div class="audit-list" id="progressListPanel" style="color:var(--text-3);text-align:center;padding:24px;font-size:13.5px;">
+                No scan history found.
+              </div>
+            </div>
+          </div>
+
+          <!-- Activity Feed -->
+          <div class="card" style="animation-delay: 0.42s">
+            <div class="card__header">
+              <h2 class="card__title">Recent Activity</h2>
+              <a href="#" class="card__action">All Activity →</a>
+            </div>
+            <div class="card__body">
+              <div class="activity-feed" id="activityFeedPanel" style="color:var(--text-3);text-align:center;padding:24px;font-size:13.5px;">
+                No latest activity found. Start your first website scan to populate the dashboard.
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="page-actions-bottom">
+          <button class="btn btn--secondary">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Export
+          </button>
+        </div>
+
+      </div><!-- /content -->
+    </div><!-- /main -->
+  </div><!-- /app -->
+
+  <script>
+    // ─── Sidebar Collapse ───
+// ─── Mobile sidebar ───
+    const mobileToggle = document.getElementById('mobileToggle');
+    const overlay = document.getElementById('sidebarOverlay');
+
+    if (mobileToggle) {
+      mobileToggle.addEventListener('click', () => {
+        if (typeof sidebar !== 'undefined' && sidebar) sidebar.classList.add('mobile-open');
+        if (overlay) overlay.classList.add('visible');
+      });
+    }
+
+    if (overlay) {
+      overlay.addEventListener('click', () => {
+        if (typeof sidebar !== 'undefined' && sidebar) sidebar.classList.remove('mobile-open');
+        overlay.classList.remove('visible');
+      });
+    }
+
+
+    // Redundant sidebar nav active state handler removed (handled by sidebar.js)
+
+    function startScan(url) {
+      if (!url) {
+        const input = document.getElementById('auditUrlInput');
+        if (input) url = input.value.trim();
+      }
+      if (!url) {
+        const input = document.getElementById('auditUrlInput');
+        if (input) {
+          input.setAttribute('placeholder', 'Please enter a URL to audit…');
+          input.focus();
+        }
+        return;
+      }
+      localStorage.setItem('current_scanned_domain', url);
+      window.location.href = `scanner.html?url=${encodeURIComponent(url)}`;
+    }
+
+    // Allow Enter key to trigger scan
+    const auditInput = document.getElementById('auditUrlInput');
+    if (auditInput) {
+      auditInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') startScan();
+      });
+    }
+
+    // ─── Chart Tab Switching ───
+    document.querySelectorAll('.chart-card__tabs').forEach(tabGroup => {
+      tabGroup.querySelectorAll('.chart-card__tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+          tabGroup.querySelectorAll('.chart-card__tab').forEach(t => t.classList.remove('active'));
+          tab.classList.add('active');
+        });
+      });
+    });
+
+    // ─── TextType Animation (React Bits Vanilla Clone) ───
+    document.addEventListener("DOMContentLoaded", () => {
+      const texts = [
+        "Welcome to Radix!",
+        "Build, analyze, and rank with confidence."
+      ];
+      
+      const contentEl = document.getElementById("textTypeContent");
+      const cursorEl = document.getElementById("textTypeCursor");
+      if (!contentEl || !cursorEl) return;
+
+      let currentTextIndex = 0;
+      let currentCharIndex = 0;
+      let isDeleting = false;
+      const typingSpeed = 75;
+      const deletingSpeed = 30;
+      const pauseDuration = 1500;
+      
+      function type() {
+        const currentText = texts[currentTextIndex];
+        
+        if (isDeleting) {
+          contentEl.textContent = currentText.substring(0, currentCharIndex - 1);
+          currentCharIndex--;
+        } else {
+          contentEl.textContent = currentText.substring(0, currentCharIndex + 1);
+          currentCharIndex++;
+        }
+        
+        let typeSpeed = isDeleting ? deletingSpeed : typingSpeed;
+        
+        // Hide cursor blinking while typing/deleting, show when paused
+        if (isDeleting || currentCharIndex < currentText.length) {
+          cursorEl.style.animation = 'none';
+          cursorEl.style.opacity = '1';
+        } else {
+          cursorEl.style.animation = '';
+        }
+        
+        if (!isDeleting && currentCharIndex === currentText.length) {
+          typeSpeed = pauseDuration;
+          isDeleting = true;
+        } else if (isDeleting && currentCharIndex === 0) {
+          isDeleting = false;
+          currentTextIndex = (currentTextIndex + 1) % texts.length;
+          typeSpeed = 500; // brief pause before typing next
+        }
+        
+        setTimeout(type, typeSpeed);
+      }
+      
+      setTimeout(type, 500); // initial delay
+    });
+
+    // ─── Canvas Chart Utilities ───
+    function setupCanvas(id) {
+      const canvas = document.getElementById(id);
+      if (!canvas) return null;
+      const rect = canvas.parentElement.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = rect.width * dpr;
+      canvas.height = 200 * dpr;
+      canvas.style.width = rect.width + 'px';
+      canvas.style.height = '200px';
+      const ctx = canvas.getContext('2d');
+      ctx.scale(dpr, dpr);
+      return { ctx, w: rect.width, h: 200 };
+    }
+
+    function drawGridLines(ctx, w, h, rows = 4) {
+      ctx.strokeStyle = 'rgba(255,255,255,0.04)';
+      ctx.lineWidth = 1;
+      for (let i = 1; i <= rows; i++) {
+        const y = (h / (rows + 1)) * i;
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(w, y);
+        ctx.stroke();
+      }
+    }
+
+    function drawLabels(ctx, labels, w, h) {
+      ctx.fillStyle = 'rgba(240,240,245,0.2)';
+      ctx.font = '10px Inter, sans-serif';
+      ctx.textAlign = 'center';
+      const pad = 30;
+      const step = (w - pad * 2) / (labels.length - 1);
+      labels.forEach((label, i) => {
+        ctx.fillText(label, pad + i * step, h - 6);
+      });
+    }
+
+    function drawSmoothLine(ctx, points, color, lineWidth = 2) {
+      if (points.length === 0) return;
+      if (points.length === 1) {
+        ctx.beginPath();
+        ctx.arc(points[0].x, points[0].y, 4, 0, Math.PI * 2);
+        ctx.fillStyle = color;
+        ctx.fill();
+        return;
+      }
+      ctx.strokeStyle = color;
+      ctx.lineWidth = lineWidth;
+      ctx.lineJoin = 'round';
+      ctx.lineCap = 'round';
+      ctx.beginPath();
+      ctx.moveTo(points[0].x, points[0].y);
+      for (let i = 1; i < points.length; i++) {
+        const prev = points[i - 1];
+        const curr = points[i];
+        const cpx = (prev.x + curr.x) / 2;
+        ctx.bezierCurveTo(cpx, prev.y, cpx, curr.y, curr.x, curr.y);
+      }
+      ctx.stroke();
+    }
+
+    function drawGradientFill(ctx, points, color, h) {
+      if (points.length < 2) return;
+      const grad = ctx.createLinearGradient(0, 0, 0, h);
+      grad.addColorStop(0, color.replace(')', ',0.15)').replace('rgb', 'rgba'));
+      grad.addColorStop(1, 'transparent');
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.moveTo(points[0].x, points[0].y);
+      for (let i = 1; i < points.length; i++) {
+        const prev = points[i - 1];
+        const curr = points[i];
+        const cpx = (prev.x + curr.x) / 2;
+        ctx.bezierCurveTo(cpx, prev.y, cpx, curr.y, curr.x, curr.y);
+      }
+      ctx.lineTo(points[points.length - 1].x, h - 20);
+      ctx.lineTo(points[0].x, h - 20);
+      ctx.closePath();
+      ctx.fill();
+    }
+
+    function dataToPoints(data, w, h, padX = 30, padTop = 20, padBot = 24) {
+      const max = Math.max(...data) * 1.1;
+      const min = Math.min(...data) * 0.9;
+      const range = max - min || 1;
+      if (data.length === 1) {
+        return [{
+          x: w / 2,
+          y: padTop + (1 - (data[0] - min) / range) * (h - padTop - padBot)
+        }];
+      }
+      const step = (w - padX * 2) / (data.length - 1);
+      return data.map((v, i) => ({
+        x: padX + i * step,
+        y: padTop + (1 - (v - min) / range) * (h - padTop - padBot)
+      }));
+    }
+
+    // ─── Draw Charts ───
+    function drawCharts() {
+      let historyList = [];
+      try {
+        const stored = localStorage.getItem('seo_audit_history');
+        if (stored) {
+          historyList = JSON.parse(stored);
+        }
+      } catch (e) {
+        console.error("Failed to load history for charts", e);
+      }
+
+      // Sort chronological ascending (oldest first)
+      historyList.sort((a, b) => a.id - b.id);
+
+      // X-axis Labels showing domain name initials or domain itself
+      const labels = historyList.map(item => {
+        if (!item.url) return 'Unknown';
+        const clean = item.url.replace(/^(https?:\/\/)?(www\.)?/i, '').split('/')[0];
+        const domainOnly = clean.split('.')[0];
+        return domainOnly.charAt(0).toUpperCase() + domainOnly.slice(1);
+      });
+
+      // 1. SEO Health Trend
+      const health = setupCanvas('chartHealth');
+      if (health) {
+        if (historyList.length === 0) {
+          drawNotEnoughData('chartHealth', 'No historical analysis data available.');
+        } else {
+          const { ctx, w, h } = health;
+          drawGridLines(ctx, w, h);
+          drawLabels(ctx, labels, w, h);
+
+          const seoData = historyList.map(item => item.score);
+          const perfData = historyList.map(item => {
+            return item.performance_score || Math.max(40, item.score - (item.critical * 3));
+          });
+
+          const seoPts = dataToPoints(seoData, w, h);
+          const perfPts = dataToPoints(perfData, w, h);
+          drawGradientFill(ctx, seoPts, 'rgb(108,92,231)', h);
+          drawGradientFill(ctx, perfPts, 'rgb(0,230,118)', h);
+          drawSmoothLine(ctx, perfPts, '#00e676', 2);
+          drawSmoothLine(ctx, seoPts, '#6c5ce7', 2.5);
+
+          seoPts.forEach(p => {
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
+            ctx.fillStyle = '#6c5ce7';
+            ctx.fill();
+            ctx.strokeStyle = '#07080e';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+          });
+        }
+      }
+
+      // 2. Audit Activity (Bar chart)
+      const activity = setupCanvas('chartActivity');
+      if (activity) {
+        if (historyList.length === 0) {
+          drawNotEnoughData('chartActivity', 'No historical analysis data available.');
+        } else {
+          const { ctx, w, h } = activity;
+          drawGridLines(ctx, w, h);
+          drawLabels(ctx, labels, w, h);
+
+          const completed = historyList.map(item => item.critical + item.warnings);
+          const maxVal = Math.max(...completed) * 1.2 || 10;
+          const padX = 30;
+          const barW = ((w - padX * 2) / labels.length) * 0.5;
+          const gap = historyList.length === 1 ? (w - padX * 2) : ((w - padX * 2) / labels.length);
+
+          completed.forEach((val, i) => {
+            const x = historyList.length === 1 ? (w / 2 - barW / 2) : (padX + i * gap + (gap - barW) / 2);
+            const compH = (val / maxVal) * (h - 44);
+
+            const grad = ctx.createLinearGradient(0, h - 24 - compH, 0, h - 24);
+            grad.addColorStop(0, '#00e5ff');
+            grad.addColorStop(1, 'rgba(0,229,255,0.4)');
+            ctx.fillStyle = grad;
+            ctx.beginPath();
+            ctx.roundRect(x, h - 24 - compH, barW, compH, [4, 4, 0, 0]);
+            ctx.fill();
+          });
+        }
+      }
+
+      // 3. Performance Trend
+      const perf = setupCanvas('chartPerformance');
+      if (perf) {
+        if (historyList.length === 0) {
+          drawNotEnoughData('chartPerformance', 'No historical analysis data available.');
+        } else {
+          const { ctx, w, h } = perf;
+          drawGridLines(ctx, w, h);
+          drawLabels(ctx, labels, w, h);
+
+          const lcpData = historyList.map(item => {
+            const parsed = parseFloat(item.lcp);
+            return isNaN(parsed) ? 2.2 : parsed;
+          });
+          const clsData = historyList.map(item => {
+            const parsed = parseFloat(item.cls);
+            return isNaN(parsed) ? 0.08 : parsed;
+          });
+          const inpData = historyList.map(item => {
+            return item.critical > 5 ? 250 : 180;
+          });
+
+          const lcpPts = dataToPoints(lcpData, w, h);
+          const clsPts = dataToPoints(clsData.map(v => v * 100), w, h); // scale to visual range
+          const inpPts = dataToPoints(inpData.map(v => v / 10), w, h); // scale to visual range
+
+          drawGradientFill(ctx, lcpPts, 'rgb(255,145,0)', h);
+          drawSmoothLine(ctx, lcpPts, '#ff9100', 2.5);
+          drawSmoothLine(ctx, clsPts, '#00e676', 2);
+          drawSmoothLine(ctx, inpPts, '#a29bfe', 2);
+
+          lcpPts.forEach(p => {
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
+            ctx.fillStyle = '#ff9100';
+            ctx.fill();
+            ctx.strokeStyle = '#07080e';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+          });
+        }
+      }
+    }
+
+    function drawNotEnoughData(canvasId, text = "No historical analysis data available.") {
+      const canvas = document.getElementById(canvasId);
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const dpr = window.devicePixelRatio || 1;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.save();
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.fillStyle = 'rgba(240, 240, 245, 0.35)';
+      ctx.font = '13px Inter, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(text, canvas.width / 2, canvas.height / 2);
+      ctx.restore();
+    }    // Draw on load and resize
+    window.addEventListener('load', () => {
+      // Resolve domain URL
+      const params = new URLSearchParams(window.location.search);
+      let target = params.get('url');
+      if (target) {
+        localStorage.setItem('current_scanned_domain', target);
+      } else {
+        target = localStorage.getItem('current_scanned_domain') || 'https://www.networkershome.com';
+      }
+      
+      const cleanTarget = target.replace(/^(https?:\/\/)?(www\.)?/i, '').split('/')[0];
+      const displayEl = document.getElementById('currentDomainDisplay');
+      if (displayEl) {
+        displayEl.textContent = cleanTarget;
+      }
+
+
+      document.querySelectorAll('.audit-item__fill').forEach(bar => {
+        const width = bar.style.width;
+        bar.style.width = '0%';
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            bar.style.width = width;
+          });
+        });
+      });
+
+      document.querySelectorAll('.issue-row__bar').forEach(bar => {
+        const width = bar.style.width;
+        bar.style.width = '0%';
+        setTimeout(() => {
+          bar.style.transition = 'width 1.2s cubic-bezier(0.4, 0, 0.2, 1)';
+          bar.style.width = width;
+        }, 400);
+      });
+
+      setTimeout(drawCharts, 500);
+    });
+
+    window.addEventListener('resize', () => {
+      clearTimeout(window._chartResize);
+      window._chartResize = setTimeout(drawCharts, 200);
+    });
+  
+    // Logout Handler
+    const logoutBtn = document.getElementById('logoutBtn');
+    if (logoutBtn) {
+      logoutBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        localStorage.removeItem('logged_in');
+        localStorage.removeItem('user_email');
+        window.location.href = 'login.html';
+      });
+    }
+
+    // Real Data Dashboard Loader
+    (function() {
+      // 1. Logged in user profile customization
+      const userName = localStorage.getItem('user_name') || 'User';
+      const userRole = localStorage.getItem('user_role') || 'Enterprise Plan';
+      const initials = userName.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() || 'U';
+      
+      const profileMenu = document.getElementById('profileMenu');
+      if (profileMenu) {
+        const avatar = profileMenu.querySelector('.topbar__avatar');
+        const nameEl = profileMenu.querySelector('.topbar__user-name');
+        const roleEl = profileMenu.querySelector('.topbar__user-role');
+        if (avatar) avatar.textContent = initials;
+        if (nameEl) nameEl.textContent = userName;
+        if (roleEl) roleEl.textContent = userRole;
+      }
+      
+      const workspaceDot = document.querySelector('.workspace__name');
+      if (workspaceDot) {
+        workspaceDot.textContent = userName.endsWith('s') ? `${userName}' Workspace` : `${userName}'s Workspace`;
+      }
+
+
+      // 2. Fetch real data from history
+      let historyList = [];
+      try {
+        const stored = localStorage.getItem('seo_audit_history');
+        if (stored) {
+          historyList = JSON.parse(stored);
+        }
+      } catch (e) {
+        console.error("Failed to load history list", e);
+      }
+
+      const realDataStr = localStorage.getItem('real_scan_data');
+      let rd = null;
+      if (realDataStr) {
+        try {
+          rd = JSON.parse(realDataStr);
+          if (rd && rd.domain) {
+            const cleanDomain = rd.domain.replace(/^(https?:\/\/)?(www\.)?/i, '').split('/')[0].toLowerCase();
+            const score = rd.score || rd.overall_score || 0;
+            const dateStr = new Date().toISOString().split('T')[0];
+            
+            // Check if this domain + score + date is already in history
+            const alreadyExists = historyList.some(h => 
+              h.url.toLowerCase() === cleanDomain && 
+              h.score === score &&
+              h.date === dateStr
+            );
+            
+            if (!alreadyExists) {
+              const historyItem = {
+                id: Date.now(),
+                url: cleanDomain,
+                date: dateStr,
+                score: score,
+                critical: rd.missing_alt_count ? 1 : 0,
+                warnings: rd.orphan_pages ? 1 : 0,
+                lcp: rd.performance_score ? `${(rd.performance_score / 10).toFixed(1)}s` : '2.0s',
+                cls: '0.08'
+              };
+              if (rd.ssl === false) {
+                historyItem.critical++;
+              }
+              // Add other metrics
+              historyItem.technical_score = rd.technical_score || 0;
+              historyItem.performance_score = rd.performance_score || 0;
+              historyItem.accessibility_score = rd.accessibility_score || 0;
+              historyItem.best_practices_score = rd.security_score || 85;
+              historyItem.total_pages = rd.pages_crawled || rd.total_pages || 1;
+              
+              historyList.push(historyItem);
+              localStorage.setItem('seo_audit_history', JSON.stringify(historyList));
+            }
+          }
+        } catch (e) {
+          console.error("Failed to load real scan data", e);
+        }
+      }
+
+      if (historyList.length === 0) {
+        // Empty State: Reset KPIs to 0 or --
+        document.getElementById('kpiAuditsVal').textContent = '0';
+        document.getElementById('kpiJobsVal').textContent = '0';
+        document.getElementById('kpiTeamVal').textContent = '1';
+        document.getElementById('kpiFilesVal').textContent = '0';
+        document.getElementById('kpiScannedVal').textContent = '0';
+        document.getElementById('kpiPagesVal').textContent = '0';
+        document.getElementById('kpiScoreVal').textContent = '—';
+        document.getElementById('kpiAiVal').textContent = '0';
+
+        // Set empty states for lists/panels
+        const tableBody = document.getElementById('recentCrawlsTableBody');
+        if (tableBody) {
+          tableBody.innerHTML = `
+            <tr>
+              <td colspan="6" style="text-align:center;padding:24px;color:var(--text-3);">No websites have been analyzed yet.</td>
+            </tr>
+          `;
+        }
+        
+        const progressPanel = document.getElementById('progressListPanel');
+        if (progressPanel) {
+          progressPanel.innerHTML = `No crawl history found.`;
+        }
+
+        const activityPanel = document.getElementById('activityFeedPanel');
+        if (activityPanel) {
+          activityPanel.innerHTML = `No audit history available.`;
+        }
+
+        const issuesPanel = document.getElementById('issuesBreakdownPanel');
+        if (issuesPanel) {
+          issuesPanel.innerHTML = `No website analyses available.`;
+        }
+
+        return;
+      }
+
+      // History exists: Calculate KPIs
+      const uniqueDomains = [...new Set(historyList.map(item => item.url.toLowerCase()))];
+      const totalAudits = historyList.length;
+      const avgScore = Math.round(historyList.reduce((acc, item) => acc + item.score, 0) / totalAudits);
+      
+      const totalFiles = rd ? (rd.total_internal_links || rd.links_count || 0) : historyList.reduce((acc, item) => acc + (item.links_count || 12), 0);
+      const totalPages = rd ? (rd.pages_crawled || rd.total_pages || 0) : historyList.reduce((acc, item) => acc + (parseInt(item.lcp) ? 15 : 1), 0);
+      const totalAiRecs = historyList.reduce((acc, item) => acc + (item.critical * 2 + item.warnings), 0);
+
+      document.getElementById('kpiAuditsVal').textContent = totalAudits.toLocaleString();
+      document.getElementById('kpiJobsVal').textContent = '0';
+      document.getElementById('kpiTeamVal').textContent = '1';
+      document.getElementById('kpiFilesVal').textContent = totalFiles.toLocaleString();
+      document.getElementById('kpiScannedVal').textContent = uniqueDomains.length.toLocaleString();
+      document.getElementById('kpiPagesVal').textContent = totalPages.toLocaleString();
+      document.getElementById('kpiScoreVal').textContent = avgScore.toString();
+      document.getElementById('kpiAiVal').textContent = totalAiRecs.toLocaleString();
+
+      // Recent Crawls Table
+      const tableBody = document.getElementById('recentCrawlsTableBody');
+      if (tableBody) {
+        tableBody.innerHTML = '';
+        historyList.slice(-5).reverse().forEach(item => {
+          let scoreClass = 'table__score--bad';
+          if (item.score >= 80) scoreClass = 'table__score--good';
+          else if (item.score >= 60) scoreClass = 'table__score--ok';
+
+          tableBody.innerHTML += `
+            <tr>
+              <td><a href="report.html?url=${encodeURIComponent(item.url)}" class="domain-link">${item.url}</a></td>
+              <td>${totalPages || 15}</td>
+              <td>${item.critical + item.warnings}</td>
+              <td><span class="table__score ${scoreClass}">${item.score}</span></td>
+              <td><span class="table__status table__status--done"><span class="table__status-dot"></span>Complete</span></td>
+              <td>${item.date}</td>
+            </tr>
+          `;
+        });
+      }
+
+      // Issues Breakdown Panel (populate using latest scan data)
+      const issuesPanel = document.getElementById('issuesBreakdownPanel');
+      if (issuesPanel && historyList.length > 0) {
+        const latest = historyList[historyList.length - 1];
+        const critical = latest.critical || 0;
+        const warnings = latest.warnings || 0;
+        const totalIssues = critical + warnings;
+        const critPct = totalIssues > 0 ? Math.round((critical / totalIssues) * 100) : 0;
+        const warnPct = totalIssues > 0 ? Math.round((warnings / totalIssues) * 100) : 0;
+        
+        issuesPanel.innerHTML = `
+          <div class="issue-row">
+            <span class="issue-row__dot issue-row__dot--critical"></span>
+            <span class="issue-row__label">Critical Errors</span>
+            <span class="issue-row__count" style="color:var(--red)">${critical}</span>
+            <div class="issue-row__bar-wrap">
+              <div class="issue-row__bar issue-row__bar--critical" style="width:${critPct}%"></div>
+            </div>
+          </div>
+          <div class="issue-row">
+            <span class="issue-row__dot issue-row__dot--warning"></span>
+            <span class="issue-row__label">Warnings</span>
+            <span class="issue-row__count" style="color:var(--orange)">${warnings}</span>
+            <div class="issue-row__bar-wrap">
+              <div class="issue-row__bar issue-row__bar--warning" style="width:${warnPct}%"></div>
+            </div>
+          </div>
+        `;
+      }
+
+      // Audit Progress Panel
+      const progressPanel = document.getElementById('progressListPanel');
+      if (progressPanel && historyList.length > 0) {
+        progressPanel.innerHTML = '';
+        historyList.slice(-4).reverse().forEach(item => {
+          progressPanel.innerHTML += `
+            <div class="progress-item">
+              <div class="progress-item__header">
+                <span class="progress-item__title">${item.url} — Crawl Audit</span>
+                <span class="progress-item__val">100%</span>
+              </div>
+              <div class="progress-item__bar">
+                <div class="progress-item__fill" style="width: 100%"></div>
+              </div>
+            </div>
+          `;
+        });
+      }
+
+      // Recent Activity Feed
+      const activityPanel = document.getElementById('activityFeedPanel');
+      if (activityPanel) {
+        activityPanel.innerHTML = '';
+        historyList.slice(-3).reverse().forEach((item, idx) => {
+          activityPanel.innerHTML += `
+            <div class="activity-item" style="margin-bottom: 12px;">
+              <div class="activity-item__icon" style="background:var(--bg-card-hover);color:var(--text-1);border:1px solid var(--border);">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+              </div>
+              <div class="activity-item__content">
+                <p class="activity-item__text">Website scan completed for <strong>${item.url}</strong> — SEO Score: ${item.score}</p>
+                <span class="activity-item__time">${item.date}</span>
+              </div>
+            </div>
+            <div class="activity-item" style="margin-bottom: 12px;">
+              <div class="activity-item__icon" style="background:var(--bg-card-hover);color:var(--text-1);border:1px solid var(--border);">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a4 4 0 0 1 4 4c0 1.95-1.4 3.58-3.25 3.93L12 22"/><path d="M12 2a4 4 0 0 0-4 4c0 1.95 1.4 3.58 3.25 3.93"/></svg>
+              </div>
+              <div class="activity-item__content">
+                <p class="activity-item__text">AI SEO report generated for <strong>${item.url}</strong></p>
+                <span class="activity-item__time">${item.date}</span>
+              </div>
+            </div>
+          `;
+        });
+      }
+
+      // Glowing Effect listener for dashboard cards
+      document.addEventListener("mousemove", (e) => {
+        const cards = document.querySelectorAll(".kpi, .chart-card, .card");
+        for (const card of cards) {
+          const rect = card.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+          card.style.setProperty("--mouse-x", `${x}px`);
+          card.style.setProperty("--mouse-y", `${y}px`);
+        }
+      });
+    })();
+</script>
+
+  
+
+  
+
+  <script src="ask-ai.js" defer></script>
+
+  
+\n
+  <script src="sidebar.js?v=2"></script>
+
+  <!-- MAGIC BENTO JS -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const isMobile = window.innerWidth <= 768;
+      if (isMobile || typeof gsap === 'undefined') return;
+
+      const grid = document.querySelector('.kpi-grid');
+      const cards = document.querySelectorAll('.kpi');
+      const glowColor = '16, 185, 129'; // Golden Amber instead of purple
+      const spotlightRadius = 300;
+      
+      // Update variables so they match the brand
+      cards.forEach(card => card.style.setProperty('--glow-color', glowColor));
+
+      // Global Spotlight
+      const spotlight = document.createElement('div');
+      spotlight.className = 'global-spotlight';
+      spotlight.style.cssText = `
+        position: fixed;
+        width: 800px;
+        height: 800px;
+        border-radius: 50%;
+        pointer-events: none;
+        background: radial-gradient(circle,
+          rgba(${glowColor}, 0.15) 0%,
+          rgba(${glowColor}, 0.08) 15%,
+          rgba(${glowColor}, 0.04) 25%,
+          rgba(${glowColor}, 0.02) 40%,
+          rgba(${glowColor}, 0.01) 65%,
+          transparent 70%
+        );
+        z-index: 200;
+        opacity: 0;
+        transform: translate(-50%, -50%);
+        mix-blend-mode: screen;
+      `;
+      document.body.appendChild(spotlight);
+
+      document.addEventListener('mousemove', (e) => {
+        if (!grid) return;
+        const rect = grid.getBoundingClientRect();
+        const isInside = e.clientX >= rect.left && e.clientX <= rect.right && e.clientY >= rect.top && e.clientY <= rect.bottom;
+        
+        if (!isInside) {
+          gsap.to(spotlight, { opacity: 0, duration: 0.3, ease: 'power2.out' });
+          cards.forEach(card => card.style.setProperty('--glow-intensity', '0'));
+          return;
+        }
+
+        const proximity = spotlightRadius * 0.5;
+        const fadeDistance = spotlightRadius * 0.75;
+        let minDistance = Infinity;
+
+        cards.forEach(card => {
+          const cardRect = card.getBoundingClientRect();
+          const centerX = cardRect.left + cardRect.width / 2;
+          const centerY = cardRect.top + cardRect.height / 2;
+          const distance = Math.hypot(e.clientX - centerX, e.clientY - centerY) - Math.max(cardRect.width, cardRect.height) / 2;
+          const effectiveDistance = Math.max(0, distance);
+
+          minDistance = Math.min(minDistance, effectiveDistance);
+          
+          let glowIntensity = 0;
+          if (effectiveDistance <= proximity) glowIntensity = 1;
+          else if (effectiveDistance <= fadeDistance) glowIntensity = (fadeDistance - effectiveDistance) / (fadeDistance - proximity);
+
+          const relativeX = ((e.clientX - cardRect.left) / cardRect.width) * 100;
+          const relativeY = ((e.clientY - cardRect.top) / cardRect.height) * 100;
+          card.style.setProperty('--glow-x', `${relativeX}%`);
+          card.style.setProperty('--glow-y', `${relativeY}%`);
+          card.style.setProperty('--glow-intensity', glowIntensity.toString());
+          card.style.setProperty('--glow-radius', `${spotlightRadius}px`);
+        });
+
+        gsap.to(spotlight, { left: e.clientX, top: e.clientY, duration: 0.1, ease: 'power2.out' });
+
+        const targetOpacity = minDistance <= proximity ? 0.8 : minDistance <= fadeDistance ? ((fadeDistance - minDistance) / (fadeDistance - proximity)) * 0.8 : 0;
+        gsap.to(spotlight, { opacity: targetOpacity, duration: targetOpacity > 0 ? 0.2 : 0.5, ease: 'power2.out' });
+      });
+
+      document.addEventListener('mouseleave', () => {
+        cards.forEach(card => card.style.setProperty('--glow-intensity', '0'));
+        gsap.to(spotlight, { opacity: 0, duration: 0.3, ease: 'power2.out' });
+      });
+
+      // Individual Card Animations (Tilt, Magnetism, Particles, Ripple)
+      cards.forEach(card => {
+        let isHovered = false;
+        let timeouts = [];
+        let particles = [];
+        let magnetismAnimation = null;
+        
+        const createParticle = (x, y) => {
+          const el = document.createElement('div');
+          el.className = 'particle';
+          el.style.background = `rgba(${glowColor}, 1)`;
+          el.style.boxShadow = `0 0 6px rgba(${glowColor}, 0.6)`;
+          el.style.left = `${x}px`;
+          el.style.top = `${y}px`;
+          return el;
+        };
+
+        const clearParticles = () => {
+          timeouts.forEach(clearTimeout);
+          timeouts = [];
+          if(magnetismAnimation) magnetismAnimation.kill();
+          particles.forEach(p => {
+            gsap.to(p, {
+              scale: 0, opacity: 0, duration: 0.3, ease: 'back.in(1.7)',
+              onComplete: () => p.parentNode?.removeChild(p)
+            });
+          });
+          particles = [];
+        };
+
+        const animateParticles = () => {
+          if (!isHovered) return;
+          const rect = card.getBoundingClientRect();
+          const baseParticles = Array.from({length: 12}, () => createParticle(Math.random() * rect.width, Math.random() * rect.height));
+          
+          baseParticles.forEach((p, i) => {
+            const t = setTimeout(() => {
+              if (!isHovered) return;
+              const clone = p.cloneNode(true);
+              card.appendChild(clone);
+              particles.push(clone);
+              
+              gsap.fromTo(clone, { scale: 0, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.3, ease: 'back.out(1.7)' });
+              gsap.to(clone, { x: (Math.random()-0.5)*100, y: (Math.random()-0.5)*100, rotation: Math.random()*360, duration: 2+Math.random()*2, ease: 'none', repeat: -1, yoyo: true });
+              gsap.to(clone, { opacity: 0.3, duration: 1.5, ease: 'power2.inOut', repeat: -1, yoyo: true });
+            }, i * 100);
+            timeouts.push(t);
+          });
+        };
+
+        card.addEventListener('mouseenter', () => {
+          isHovered = true;
+          animateParticles();
+          gsap.to(card, { rotateX: 5, rotateY: 5, duration: 0.3, ease: 'power2.out', transformPerspective: 1000 });
+        });
+
+        card.addEventListener('mouseleave', () => {
+          isHovered = false;
+          clearParticles();
+          gsap.to(card, { rotateX: 0, rotateY: 0, x: 0, y: 0, duration: 0.3, ease: 'power2.out' });
+        });
+
+        card.addEventListener('mousemove', (e) => {
+          const rect = card.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+          const centerX = rect.width / 2;
+          const centerY = rect.height / 2;
+          
+          const rotateX = ((y - centerY) / centerY) * -10;
+          const rotateY = ((x - centerX) / centerX) * 10;
+          gsap.to(card, { rotateX, rotateY, duration: 0.1, ease: 'power2.out', transformPerspective: 1000 });
+          
+          const magnetX = (x - centerX) * 0.05;
+          const magnetY = (y - centerY) * 0.05;
+          magnetismAnimation = gsap.to(card, { x: magnetX, y: magnetY, duration: 0.3, ease: 'power2.out' });
+        });
+
+        card.addEventListener('click', (e) => {
+          const rect = card.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+          const maxDist = Math.max(Math.hypot(x, y), Math.hypot(x-rect.width, y), Math.hypot(x, y-rect.height), Math.hypot(x-rect.width, y-rect.height));
+          
+          const ripple = document.createElement('div');
+          ripple.style.cssText = `
+            position: absolute;
+            width: ${maxDist*2}px; height: ${maxDist*2}px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(${glowColor},0.4) 0%, rgba(${glowColor},0.2) 30%, transparent 70%);
+            left: ${x - maxDist}px; top: ${y - maxDist}px;
+            pointer-events: none; z-index: 1000;
+          `;
+          card.appendChild(ripple);
+          gsap.fromTo(ripple, { scale: 0, opacity: 1 }, { scale: 1, opacity: 0, duration: 0.8, ease: 'power2.out', onComplete: () => ripple.remove() });
+        });
+      });
+    });
+  </script>
+    
+</body>
+</html>

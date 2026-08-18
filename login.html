@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign In — crawlX</title>
+  <meta name="description" content="Sign in to crawlX AI-powered enterprise SEO platform.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Bruno+Ace&family=DynaPuff:wdth,wght@86.3,400..700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    :root {
+      --bg-base: #09090b; --bg: #06060f;
+      --card:   rgba(13,13,26,0.92);
+      --accent: #10b981;
+      --cyan:   #00e5ff;
+      --green:  #00e676;
+      --red:    #ff5252;
+      --t1:     #f0f2ff;
+      --t2:     rgba(240,242,255,.55);
+      --t3:     rgba(240,242,255,.25);
+      --b:      rgba(255,255,255,.07);
+      --ease:   cubic-bezier(.4,0,.2,1);
+    }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background-color: var(--bg-base);
+      color: var(--t1);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Animated background */
+    .bg-mesh {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background:
+        radial-gradient(ellipse 80% 60% at 10% -10%, rgba(124,77,255,.28) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 50% at 90% 110%, rgba(0,229,255,.18) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 40% at 50% 50%, rgba(0,82,255,.1) 0%, transparent 70%);
+      animation: bgShift 12s ease-in-out infinite alternate;
+    }
+    @keyframes bgShift {
+      0%  { opacity: 1; transform: scale(1); }
+      100%{ opacity:.8; transform: scale(1.04); }
+    }
+    .grid-lines {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background-image:
+        linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
+      background-size: 48px 48px;
+    }
+
+    /* Layout */
+    .page { display: flex; width: 100%; max-width: 900px; min-height: 540px; position: relative; z-index: 1; margin: 24px; border-radius: 28px; overflow: hidden; box-shadow: 0 40px 100px rgba(0,0,0,.7), 0 0 0 1px var(--b); }
+
+    /* Left panel — branding */
+    .panel-left {
+      flex: 1; padding: 52px 44px;
+      background: linear-gradient(155deg, rgba(124,77,255,.18) 0%, rgba(0,82,255,.12) 50%, rgba(0,229,255,.08) 100%);
+      border-right: 1px solid var(--b);
+      display: flex; flex-direction: column; justify-content: space-between;
+      backdrop-filter: blur(12px);
+    }
+    .brand { display: flex; align-items: center; gap: 12px; }
+    .brand-icon { width: 52px; height: 52px; }
+    .brand-name { font-family: 'Bruno Ace', sans-serif; font-size: 26px; font-weight: 400; letter-spacing: -1px; }
+    .brand-name span { background: linear-gradient(135deg,#10b981,#34d399); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; }
+
+
+    .panel-tagline { margin-top: 48px; }
+    .panel-tagline h2 { font-size: 28px; font-weight: 800; line-height: 1.25; color: var(--t1); }
+    .panel-tagline p  { font-size: 14px; color: var(--t2); margin-top: 12px; line-height: 1.65; }
+
+    .feature-list { display: flex; flex-direction: column; gap: 12px; margin-top: 36px; }
+    .feature { display: flex; align-items: center; gap: 10px; font-size: 13.5px; color: var(--t2); }
+    .feature-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); flex-shrink: 0; box-shadow: 0 0 8px var(--accent); }
+
+    .panel-footer { font-size: 11.5px; color: var(--t3); }
+
+    /* Right panel — form */
+    .panel-right {
+      width: 400px; flex-shrink: 0; padding: 44px 40px;
+      background: var(--card);
+      backdrop-filter: blur(28px);
+      display: flex; flex-direction: column;
+    }
+
+    /* Tabs */
+    .tabs { display: flex; gap: 3px; background: rgba(255,255,255,.05); border-radius: 10px; padding: 4px; margin-bottom: 28px; }
+    .tab { flex:1; text-align:center; padding:8px; font-size:13px; font-weight:700; border-radius:7px; cursor:pointer; color:var(--t3); border:1px solid transparent; transition:all .2s; }
+    .tab.active { background:rgba(124,77,255,.2); color:#c9aeff; border-color:rgba(124,77,255,.3); }
+
+    /* Form */
+    .form-group { margin-bottom: 16px; }
+    .form-label { display:block; font-size:12px; font-weight:700; color:var(--t2); margin-bottom:7px; text-transform:uppercase; letter-spacing:.06em; }
+    .input-wrap { position:relative; }
+    .form-input {
+      width:100%; padding:12px 14px; background:rgba(255,255,255,.045);
+      border:1px solid var(--b); border-radius:10px; color:var(--t1);
+      font-family:inherit; font-size:14px; outline:none; transition:all .2s;
+    }
+    .form-input:focus { border-color:rgba(124,77,255,.55); background:rgba(255,255,255,.07); box-shadow:0 0 0 3px rgba(124,77,255,.1); }
+    .form-input::placeholder { color:var(--t3); }
+    .input-icon { position:absolute; right:12px; top:50%; transform:translateY(-50%); cursor:pointer; color:var(--t3); background:none; border:none; padding:4px; transition:color .2s; }
+    .input-icon:hover { color:var(--t1); }
+
+    .row-between { display:flex; justify-content:flex-end; margin-bottom:16px; margin-top:-8px; }
+    .text-link { background:none; border:none; color:rgba(179,136,255,.8); font-size:12.5px; cursor:pointer; font-family:inherit; transition:color .2s; }
+    .text-link:hover { color:var(--cyan); }
+
+    /* Primary button */
+    .btn {
+      width:100%; padding:13px; border:none; border-radius:10px;
+      font-family:inherit; font-weight:700; font-size:15px; cursor:pointer;
+      display:flex; align-items:center; justify-content:center; gap:8px;
+      transition:all .25s var(--ease); position:relative; overflow:hidden;
+    }
+    .btn-primary {
+      background: linear-gradient(130deg,#7c4dff 0%,#0052ff 60%,#00b4d8 100%);
+      color: var(--text-1); }
+    .btn-primary::before { content:''; position:absolute; inset:0; background:linear-gradient(130deg,#9b6fff,#0070ff,#00d0f0); opacity:0; transition:opacity .3s; }
+    .btn-primary:hover::before { opacity:1; }
+    .btn-primary:hover { transform:translateY(-1px); box-shadow:0 8px 28px rgba(124,77,255,.4); }
+    .btn-primary:active { transform:none; }
+    .btn-primary:disabled { opacity:.45; cursor:not-allowed; transform:none; box-shadow:none; }
+    .btn-primary span { position:relative; }
+
+    .btn-google {
+      background:rgba(255,255,255,.06);
+      border:1px solid var(--b);
+      color:var(--t1); margin-top:10px;
+    }
+    .btn-google:hover { background:rgba(255,255,255,.1); border-color:rgba(255,255,255,.15); transform:translateY(-1px); }
+    .btn-google:active { transform:none; }
+
+    /* Spinner */
+    .spinner { width:16px; height:16px; border:2px solid rgba(255,255,255,.3); border-top-color: var(--text-1); border-radius:50%; animation:spin .7s linear infinite; display:none; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+    .loading .spinner { display:block; }
+    .loading .btn-label { display:none; }
+
+    /* Divider */
+    .divider { display:flex; align-items:center; gap:10px; margin:18px 0; }
+    .divider::before,.divider::after { content:''; flex:1; height:1px; background:var(--b); }
+    .divider span { font-size:11.5px; color:var(--t3); }
+
+    /* Alert */
+    .alert { padding:11px 14px; border-radius:10px; font-size:13px; display:none; align-items:flex-start; gap:9px; margin-top:12px; animation:fadeUp .3s var(--ease); }
+    .alert.show { display:flex; }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(-6px)} to{opacity:1;transform:none} }
+    .alert-error   { background:rgba(255,82,82,.09);  border:1px solid rgba(255,82,82,.22);  color:#ff8a80; }
+    .alert-success { background:rgba(0,230,118,.08);  border:1px solid rgba(0,230,118,.22); color:#69f0ae; }
+    .alert-info    { background:rgba(124,77,255,.09); border:1px solid rgba(124,77,255,.22); color:#c9aeff; }
+    .alert svg { flex-shrink:0; margin-top:1px; }
+
+    /* Password strength bar */
+    .strength-bar { height:3px; border-radius:2px; background:var(--b); margin-top:7px; overflow:hidden; }
+    .strength-fill { height:100%; border-radius:2px; width:0; transition:width .4s,background .4s; }
+
+    /* View switcher */
+    .view { display:none; }
+    .view.active { display:block; }
+
+    /* Reset password token field */
+    .reset-box { background:rgba(124,77,255,.07); border:1px solid rgba(124,77,255,.2); border-radius:12px; padding:14px 16px; font-size:13px; color:#c9aeff; margin-top:14px; word-break:break-all; }
+    .reset-box strong { display:block; font-size:11px; text-transform:uppercase; letter-spacing:.08em; margin-bottom:4px; color:rgba(201,174,255,.6); }
+
+    @media (max-width: 700px) {
+      .panel-left { display:none; }
+      .panel-right { width:100%; }
+      .page { max-width:440px; }
+    }
+  
+    /* Animated Glowing Search Bar */
+    .animated-glowing-search-wrapper {
+      position: relative;
+      border-radius: var(--radius-md);
+      padding: 1.5px;
+      background: var(--bg-card);
+      overflow: hidden;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      transition: all 0.3s ease;
+      width: 100%;
+    }
+
+    .animated-glowing-search-wrapper::before {
+      content: '';
+      position: absolute;
+      top: -100%; left: -100%;
+      width: 300%; height: 300%;
+      background: conic-gradient(from 0deg, transparent 0%, transparent 40%, var(--accent) 50%, var(--accent) 60%, transparent 100%);
+      animation: searchGlowSpin 4s linear infinite;
+      z-index: -2;
+      opacity: 0.15;
+      transition: opacity 0.3s ease;
+    }
+
+    .animated-glowing-search-wrapper:focus-within::before {
+      opacity: 1;
+      animation: searchGlowSpin 2s linear infinite;
+    }
+
+    .animated-glowing-search-wrapper::after {
+      content: '';
+      position: absolute;
+      inset: 1.5px;
+      background: var(--bg-card);
+      border-radius: calc(var(--radius-md) - 1.5px);
+      z-index: -1;
+    }
+
+    @keyframes searchGlowSpin {
+      100% { transform: rotate(360deg); }
+    }
+
+    .animated-glowing-search-input {
+      width: 100%;
+      padding: 14px 20px;
+      background: transparent;
+      border: none;
+      color: var(--text-1);
+      font-size: 14px;
+      outline: none;
+      z-index: 2;
+    }
+    .animated-glowing-search-input::placeholder {
+      color: var(--text-3);
+    }
+
+  </style>
+</head>
+<body>
+  <div class="bg-mesh"></div>
+  <div class="grid-lines"></div>
+
+  <div class="page">
+    <!-- LEFT: Branding -->
+    <div class="panel-left">
+      <div>
+        <div class="brand">
+          <div class="brand-icon">
+            <img src="logo_tree.png" alt="RADIX Logo" style="width: 100%; height: 100%; object-fit: contain;" />
+          </div>
+          <div class="brand-name">RADI<span>X</span></div>
+
+        </div>
+
+        <div class="panel-tagline">
+          <h2>Enterprise SEO<br>Intelligence Platform</h2>
+          <p>AI-powered audits, competitor analysis, content gap discovery, and automated technical fixes — all in one place.</p>
+        </div>
+
+        <div class="feature-list">
+          <div class="feature"><div class="feature-dot"></div>Deep competitor intelligence engine</div>
+          <div class="feature"><div class="feature-dot"></div>AI SEO Copilot powered by local LLM</div>
+          <div class="feature"><div class="feature-dot"></div>Real-time Core Web Vitals monitoring</div>
+          <div class="feature"><div class="feature-dot"></div>Automated technical SEO fixes</div>
+          <div class="feature"><div class="feature-dot"></div>Schema &amp; structured data auditing</div>
+        </div>
+      </div>
+
+      <div class="panel-footer">
+        &copy; 2024 crawlX Intelligence Platform &mdash; All rights reserved
+      </div>
+    </div>
+
+    <!-- RIGHT: Auth forms -->
+    <div class="panel-right">
+
+      <!-- SIGN IN VIEW -->
+      <div class="view active" id="viewSignIn">
+        <div class="tabs">
+          <div class="tab active" id="tabSignin" onclick="switchTab('signin')">Sign In</div>
+          <div class="tab" id="tabRegister" onclick="switchTab('register')">Create Account</div>
+        </div>
+
+        <form id="signinForm" onsubmit="handleSignIn(event)" novalidate>
+          <div class="form-group">
+            <label class="form-label" for="siEmail">Email</label>
+            <input type="email" id="siEmail" class="form-input" placeholder="admin@crawlx.ai" autocomplete="email" value="admin@crawlx.ai">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="siPass">Password</label>
+            <div class="input-wrap">
+              <input type="password" id="siPass" class="form-input" placeholder="••••••••" autocomplete="current-password" style="padding-right:42px" value="CrawlX2024!">
+              <button type="button" class="input-icon" onclick="togglePwd('siPass',this)" title="Show/hide">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              </button>
+            </div>
+          </div>
+          <div class="row-between">
+            <button type="button" class="text-link" onclick="switchView('viewForgot')">Forgot password?</button>
+          </div>
+          <button type="submit" class="btn btn-primary" id="btnSignin">
+            <div class="spinner"></div>
+            <span class="btn-label">Sign In Securely</span>
+          </button>
+          <div class="alert alert-error" id="siError">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            <span id="siErrorText"></span>
+          </div>
+        </form>
+
+        <div class="divider"><span>or</span></div>
+
+        <button class="btn btn-google" onclick="googleSignIn()">
+          <svg width="18" height="18" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+          <span>Continue with Google</span>
+        </button>
+
+        <div class="alert alert-info" id="googleInfo" style="margin-top:12px;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+          <span id="googleInfoText"></span>
+        </div>
+      </div>
+
+      <!-- REGISTER VIEW -->
+      <div class="view" id="viewRegister">
+        <div class="tabs">
+          <div class="tab" id="tabSignin2" onclick="switchTab('signin')">Sign In</div>
+          <div class="tab active" id="tabRegister2" onclick="switchTab('register')">Create Account</div>
+        </div>
+
+        <form id="registerForm" onsubmit="handleRegister(event)" novalidate>
+          <div class="form-group">
+            <label class="form-label" for="regName">Full Name</label>
+            <input type="text" id="regName" class="form-input" placeholder="John Smith" autocomplete="name">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="regEmail">Email</label>
+            <input type="email" id="regEmail" class="form-input" placeholder="you@company.com" autocomplete="email">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="regPass">Password</label>
+            <div class="input-wrap">
+              <input type="password" id="regPass" class="form-input" placeholder="Min. 8 characters" style="padding-right:42px" oninput="checkStrength(this.value)">
+              <button type="button" class="input-icon" onclick="togglePwd('regPass',this)">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              </button>
+            </div>
+            <div class="strength-bar"><div class="strength-fill" id="strengthFill"></div></div>
+          </div>
+          <button type="submit" class="btn btn-primary" id="btnRegister">
+            <div class="spinner"></div>
+            <span class="btn-label">Create Account &amp; Sign In</span>
+          </button>
+          <div class="alert alert-error" id="regError">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg>
+            <span id="regErrorText"></span>
+          </div>
+          <div class="alert alert-success" id="regSuccess">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+            <span>Account created! Redirecting&hellip;</span>
+          </div>
+        </form>
+
+        <div class="divider"><span>or</span></div>
+        <button class="btn btn-google" onclick="googleSignIn()">
+          <svg width="18" height="18" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+          <span>Sign up with Google</span>
+        </button>
+      </div>
+
+      <!-- FORGOT PASSWORD VIEW -->
+      <div class="view" id="viewForgot">
+        <button type="button" onclick="switchView('viewSignIn')" style="display:flex;align-items:center;gap:7px;background:none;border:none;color:var(--t2);cursor:pointer;font-family:inherit;font-size:13px;margin-bottom:22px;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+          Back to Sign In
+        </button>
+        <h2 style="font-size:22px;font-weight:800;margin-bottom:6px;">Reset Password</h2>
+        <p style="font-size:13.5px;color:var(--t2);margin-bottom:24px;line-height:1.6;">Enter the email linked to your account and we'll generate a reset link.</p>
+
+        <form id="forgotForm" onsubmit="handleForgot(event)" novalidate>
+          <div class="form-group">
+            <label class="form-label" for="fpEmail">Email Address</label>
+            <input type="email" id="fpEmail" class="form-input" placeholder="you@company.com" autocomplete="email">
+          </div>
+          <button type="submit" class="btn btn-primary" id="btnForgot">
+            <div class="spinner"></div>
+            <span class="btn-label">Send Reset Link</span>
+          </button>
+          <div class="alert alert-error" id="fpError">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg>
+            <span id="fpErrorText"></span>
+          </div>
+          <div id="fpSuccessBox" style="display:none">
+            <div class="alert alert-success show">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+              <span>Reset link ready. Click below to proceed.</span>
+            </div>
+            <div class="reset-box">
+              <strong>Your Reset Link</strong>
+              <a id="fpResetLink" href="#" style="color:#b388ff;word-break:break-all;font-size:12.5px;"></a>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <!-- RESET PASSWORD VIEW -->
+      <div class="view" id="viewReset">
+        <h2 style="font-size:22px;font-weight:800;margin-bottom:6px;">New Password</h2>
+        <p style="font-size:13.5px;color:var(--t2);margin-bottom:24px;">Choose a strong new password for your account.</p>
+        <form id="resetForm" onsubmit="handleReset(event)" novalidate>
+          <div class="form-group">
+            <label class="form-label" for="rpPass">New Password</label>
+            <div class="input-wrap">
+              <input type="password" id="rpPass" class="form-input" placeholder="Min. 8 characters" style="padding-right:42px" oninput="checkStrength(this.value)">
+              <button type="button" class="input-icon" onclick="togglePwd('rpPass',this)">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              </button>
+            </div>
+            <div class="strength-bar"><div class="strength-fill" id="strengthFill2"></div></div>
+          </div>
+          <button type="submit" class="btn btn-primary" id="btnReset">
+            <div class="spinner"></div>
+            <span class="btn-label">Update Password</span>
+          </button>
+          <div class="alert alert-error" id="rpError">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg>
+            <span id="rpErrorText"></span>
+          </div>
+          <div class="alert alert-success" id="rpSuccess">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+            <span>Password updated! Signing you in&hellip;</span>
+          </div>
+        </form>
+      </div>
+
+    </div><!-- end panel-right -->
+  </div><!-- end page -->
+
+  <script>
+    // ── CONFIG ──────────────────────────────────────────────────
+    const API = '';
+    let resetToken = null;
+
+    // ── HELPERS ──────────────────────────────────────────────────
+    function el(id) { return document.getElementById(id); }
+
+    function showAlert(id, textId, msg) {
+      if (textId) el(textId).textContent = msg;
+      el(id).classList.add('show');
+    }
+    function hideAlert(id) { el(id).classList.remove('show'); }
+
+    function setLoading(btnId, on) {
+      const b = el(btnId);
+      b.classList.toggle('loading', on);
+      b.disabled = on;
+    }
+
+    function switchView(id) {
+      document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+      el(id).classList.add('active');
+    }
+
+    function switchTab(tab) {
+      switchView(tab === 'signin' ? 'viewSignIn' : 'viewRegister');
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      if (tab === 'signin') {
+        el('tabSignin').classList.add('active');
+        el('tabSignin2') && el('tabSignin2').classList.add('active');
+      } else {
+        el('tabRegister').classList.add('active');
+        el('tabRegister2') && el('tabRegister2').classList.add('active');
+      }
+    }
+
+    function togglePwd(id, btn) {
+      const inp = el(id);
+      const vis = inp.type === 'password';
+      inp.type  = vis ? 'text' : 'password';
+      btn.innerHTML = vis
+        ? `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>`
+        : `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>`;
+    }
+
+    function checkStrength(pw) {
+      let score = 0;
+      if (pw.length >= 8)  score++;
+      if (/[A-Z]/.test(pw)) score++;
+      if (/[0-9]/.test(pw)) score++;
+      if (/[^a-zA-Z0-9]/.test(pw)) score++;
+      const fill = document.querySelector('.strength-fill');
+      if (fill) {
+        const colors = ['#ff5252','#ffab40','#ffd740','#00e676'];
+        fill.style.width   = (score * 25) + '%';
+        fill.style.background = colors[score - 1] || '#b0b0b0';
+      }
+    }
+
+    function storeSession(data) {
+      localStorage.setItem('crawlx_token', data.token);
+      localStorage.setItem('logged_in',    'true');
+      localStorage.setItem('user_email',   data.user?.email || data.email);
+      localStorage.setItem('user_name',    data.user?.name || data.name || data.email);
+      localStorage.setItem('user_role',    data.user?.role || data.role || 'user');
+      if (data.projectId) localStorage.setItem('projectId', data.projectId);
+    }
+
+    // ── CHECK ALREADY LOGGED IN ─────────────────────────────────
+    if (localStorage.getItem('logged_in') === 'true') {
+      window.location.replace('dashboard.html');
+    }
+
+    // ── CHECK FOR RESET TOKEN IN URL ────────────────────────────
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('reset')) {
+      resetToken = urlParams.get('reset');
+      switchView('viewReset');
+    }
+    const urlError = urlParams.get('error');
+    if (urlError) {
+      el('siErrorText').textContent = decodeURIComponent(urlError);
+      el('siError').classList.add('show');
+    }
+
+    // ── SIGN IN ──────────────────────────────────────────────────
+    async function handleSignIn(e) {
+      e.preventDefault();
+      hideAlert('siError');
+      const email = el('siEmail').value.trim();
+      const pw    = el('siPass').value;
+      if (!email || !pw) { showAlert('siError','siErrorText','Please enter your email and password.'); return; }
+
+      setLoading('btnSignin', true);
+      try {
+        const r = await fetch(`${API}/api/auth/login`, {
+          method: 'POST',
+          headers: {'Content-Type':'application/json'},
+          body: JSON.stringify({ email, password: pw })
+        });
+        const contentType = r.headers.get("content-type");
+        if (!contentType || !contentType.includes("application/json")) {
+          throw new Error("API error: Server returned an invalid HTML page. Please force-refresh (Cmd+Shift+R) your browser.");
+        }
+        const d = await r.json();
+        if (!r.ok || !d.success) throw new Error(d.error || 'Sign in failed.');
+        storeSession(d);
+        window.location.replace('dashboard.html');
+      } catch(err) {
+        showAlert('siError','siErrorText', err.message);
+      } finally { setLoading('btnSignin', false); }
+    }
+
+    // ── REGISTER ─────────────────────────────────────────────────
+    async function handleRegister(e) {
+      e.preventDefault();
+      hideAlert('regError'); hideAlert('regSuccess');
+      const name  = el('regName').value.trim();
+      const email = el('regEmail').value.trim();
+      const pw    = el('regPass').value;
+      if (!email || !pw) { showAlert('regError','regErrorText','Please fill in all fields.'); return; }
+
+      setLoading('btnRegister', true);
+      try {
+        const r = await fetch(`${API}/api/auth/register`, {
+          method:'POST', headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({ email, password:pw, name })
+        });
+        const contentType = r.headers.get("content-type");
+        if (!contentType || !contentType.includes("application/json")) {
+          throw new Error("API error: Server returned an invalid HTML page. Please force-refresh (Cmd+Shift+R) your browser.");
+        }
+        const d = await r.json();
+        if (!r.ok || !d.success) throw new Error(d.error || 'Registration failed.');
+        storeSession(d);
+        el('regSuccess').classList.add('show');
+        setTimeout(() => window.location.replace('dashboard.html'), 1000);
+      } catch(err) { showAlert('regError','regErrorText',err.message); }
+      finally { setLoading('btnRegister',false); }
+    }
+
+    // ── FORGOT PASSWORD ───────────────────────────────────────────
+    async function handleForgot(e) {
+      e.preventDefault();
+      hideAlert('fpError');
+      el('fpSuccessBox').style.display = 'none';
+      const email = el('fpEmail').value.trim();
+      if (!email) { showAlert('fpError','fpErrorText','Please enter your email.'); return; }
+
+      setLoading('btnForgot', true);
+      try {
+        const r = await fetch(`${API}/api/auth/forgot-password`, {
+          method:'POST', headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({ email })
+        });
+        const d = await r.json();
+        if (!r.ok) throw new Error(d.error || 'Request failed.');
+        el('fpSuccessBox').style.display = 'block';
+        if (d.reset_url) {
+          el('fpResetLink').href = d.reset_url;
+          el('fpResetLink').textContent = d.reset_url;
+        }
+      } catch(err) { showAlert('fpError','fpErrorText',err.message); }
+      finally { setLoading('btnForgot',false); }
+    }
+
+    // ── RESET PASSWORD ────────────────────────────────────────────
+    async function handleReset(e) {
+      e.preventDefault();
+      hideAlert('rpError'); hideAlert('rpSuccess');
+      const pw = el('rpPass').value;
+      if (!pw || pw.length < 8) { showAlert('rpError','rpErrorText','Password must be at least 8 characters.'); return; }
+      if (!resetToken) { showAlert('rpError','rpErrorText','Invalid reset token. Please request a new link.'); return; }
+
+      setLoading('btnReset',true);
+      try {
+        const r = await fetch(`${API}/api/auth/reset-password`, {
+          method:'POST', headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({ token:resetToken, password:pw })
+        });
+        const d = await r.json();
+        if (!r.ok || !d.success) throw new Error(d.error || 'Reset failed.');
+        el('rpSuccess').classList.add('show');
+        setTimeout(() => switchView('viewSignIn'), 1800);
+      } catch(err) { showAlert('rpError','rpErrorText',err.message); }
+      finally { setLoading('btnReset',false); }
+    }
+
+    // ── GOOGLE SIGN IN ────────────────────────────────────────────
+    async function googleSignIn() {
+      // Check if server supports Google OAuth
+      try {
+        // Redirect to server-side Google OAuth endpoint
+        window.location.href = `${API}/api/auth/google`;
+      } catch(err) {
+        showAlert('googleInfo','googleInfoText','Google Sign-In is not configured on this server.');
+        el('googleInfo').classList.add('show');
+      }
+    }
+  </script>
+</body>
+</html>

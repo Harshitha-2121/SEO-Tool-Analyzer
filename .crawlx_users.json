@@ -1,0 +1,20 @@
+{
+  "admin@crawlx.ai": {
+    "name": "Admin",
+    "role": "admin",
+    "password": "pbkdf2:92d2dd1e2173b8fc31df902d644d14cc:dbd257029e8f0b04fedbdf5f0d3618e625dde6e6f09aa6238448676ca1abc9a1",
+    "created": "2026-07-09T10:18:26.995561"
+  },
+  "test@crawlx.ai": {
+    "name": "Test User",
+    "role": "user",
+    "password": "pbkdf2:40f3255f8e50d2e14766b23f52c3e884:777587eb7e96a1a22701f997f71af9ba7fc2305e04c88bac69038930b66e7ac3",
+    "created": "2026-07-10T11:07:58.747375"
+  },
+  "unique_user_12345@crawlx.ai": {
+    "name": "Unique User",
+    "role": "user",
+    "password": "pbkdf2:accc822f65f7001d74f9d706584a39b8:079411b50e2c8a1b92a8aa07e952fd5de712cf21e7aa35f58f161c262c21be2a",
+    "created": "2026-07-24T11:56:48.590262"
+  }
+}

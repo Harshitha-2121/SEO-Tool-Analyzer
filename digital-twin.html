@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script>
+    if (localStorage.getItem('logged_in') !== 'true') {
+      window.location.href = 'login.html';
+    }
+  </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI SEO Digital Twin Simulator | crawlX</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-base: #09090b; --bg: #1A1A1A;
+      --bg-card: rgba(20, 20, 25, 0.65);
+      --border: rgba(255, 255, 255, 0.08);
+      --border-hover: rgba(255, 255, 255, 0.16);
+      
+      --accent: #10b981;
+      --accent-light: #34d399;
+      --cyan: #00e5ff;
+      --green: #00e676;
+      --green-bg: rgba(0, 230, 118, 0.08);
+      --green-border: rgba(0, 230, 118, 0.2);
+      --yellow: #ffd600;
+      --orange: #ff9100;
+      --orange-bg: rgba(255, 145, 0, 0.08);
+      --orange-border: rgba(255, 145, 0, 0.2);
+      --red: #ff1744;
+      --red-bg: rgba(255, 23, 68, 0.08);
+      --red-border: rgba(255, 23, 68, 0.2);
+      
+      --text-1: #f4f4f5;
+      --text-2: rgba(244, 244, 245, 0.7);
+      --text-3: rgba(244, 244, 245, 0.4);
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 20px;
+      --font-main: 'Inter', sans-serif;
+      --ease: cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: var(--bg-base);
+      color: var(--text-2);
+      font-family: var(--font-main);
+      overflow-x: hidden;
+      min-height: 100vh;
+      display: flex;
+    }
+
+    /* Scrollbars */
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background-color: var(--bg-base); }
+    ::-webkit-scrollbar-thumb { background: var(--bg-card-hover); border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--bg-card-hover); }
+
+    /* Layout: Sidebar */
+    
+    
+    
+    
+    .brand-logo svg { width: 28px; height: 28px; display: block; }
+    
+    
+    /* Layout: Main Container */
+    .main {  flex: 1; padding: 40px; min-width: 0; transition: margin-left 0.3s var(--ease); }
+    
+
+    /* Header */
+    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; flex-wrap: wrap; gap: 20px; }
+    .header__info { flex: 1; min-width: 280px; }
+    .header__title { font-size: 26px; font-weight: 800; letter-spacing: -0.8px; color: var(--text-1); margin-bottom: 6px; }
+    .header__subtitle { font-size: 13.5px; color: var(--text-2); }
+    .header__subtitle strong { color: var(--accent); font-family: 'Fira Code', monospace; font-size: 12.5px; }
+
+    /* Form selector */
+    .selector-form { display: flex; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 4px; width: 380px; transition: all 0.2s; }
+    .selector-form:focus-within { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(124, 77, 255, 0.25); }
+    .selector-input { flex: 1; background: transparent; border: none; outline: none; color: var(--text-1); padding: 6px 12px; font-size: 12.5px; }
+    .selector-btn { background: var(--accent); border: none; border-radius: var(--radius-sm); color: var(--text-1); cursor: pointer; font-size: 11.5px; font-weight: 600; padding: 6px 14px; transition: background 0.2s; }
+    .selector-btn:hover { background: var(--accent-light); }
+
+    /* Glass Cards */
+    .glass-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); backdrop-filter: blur(10px); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); padding: 24px; margin-bottom: 24px; }
+    .glass-card__title { font-size: 15px; font-weight: 750; color: var(--text-1); margin-bottom: 18px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid rgba(255,255,255,0.03); padding-bottom: 12px; }
+    .glass-card__title svg { color: var(--accent); }
+
+    /* Split Simulator columns */
+    .simulator-grid { display: grid; grid-template-columns: 360px 1fr; gap: 24px; margin-bottom: 24px; }
+    @media (max-width: 992px) { .simulator-grid { grid-template-columns: 1fr; } }
+
+    /* Control widgets */
+    .control-panel { display: flex; flex-direction: column; gap: 18px; }
+    .control-row { display: flex; flex-direction: column; gap: 6px; }
+    .control-row-header { display: flex; justify-content: space-between; align-items: center; }
+    .control-label { font-size: 12.5px; font-weight: 700; color: var(--text-1); }
+    .control-val { font-family: 'Fira Code', monospace; font-size: 12px; color: var(--cyan); }
+    .control-slider { -webkit-appearance: none; appearance: none; width: 100%; height: 6px; border-radius: 3px; background: var(--bg-card); outline: none; transition: background 0.2s; }
+    .control-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 16px; height: 16px; border-radius: 50%; background: var(--accent-light); cursor: pointer; transition: transform 0.1s; }
+    .control-slider::-webkit-slider-thumb:hover { transform: scale(1.2); }
+    
+    /* Toggle switch styles */
+    .toggle-container { display: flex; align-items: center; justify-content: space-between; }
+    .toggle-switch { position: relative; display: inline-block; width: 44px; height: 22px; }
+    .toggle-switch input { opacity: 0; width: 0; height: 0; }
+    .toggle-slider { position: absolute; cursor: pointer; inset: 0; background: var(--bg-card); border-radius: 34px; transition: 0.3s; border: 1px solid var(--border); }
+    .toggle-slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 3px; bottom: 3px; background-color: var(--text-2); border-radius: 50%; transition: 0.3s; }
+    .toggle-switch input:checked + .toggle-slider { background-color: var(--accent); }
+    .toggle-switch input:checked + .toggle-slider:before { transform: translateX(22px); background-color: var(--text-1); }
+
+    /* Prediction Metrics Grid */
+    .prediction-metrics-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 20px; }
+    @media (max-width: 600px) { .prediction-metrics-grid { grid-template-columns: 1fr; } }
+    .pred-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 16px; text-align: center; display: flex; flex-direction: column; justify-content: center; }
+    .pred-val { font-family: 'Fira Code', monospace; font-size: 24px; font-weight: 800; color: var(--green); margin-bottom: 4px; }
+    .pred-label { font-size: 11px; text-transform: uppercase; font-weight: 700; color: var(--text-3); letter-spacing: 0.5px; }
+
+    /* Radar Chart Container Mock */
+    .radar-container { display: flex; justify-content: center; align-items: center; padding: 20px; height: 260px; position: relative; }
+    .radar-svg { width: 220px; height: 220px; }
+    .radar-grid-ring { fill: none; stroke: rgba(255,255,255,0.03); stroke-dasharray: 4,4; stroke-width: 1; }
+    .radar-poly-base { fill: rgba(124, 77, 255, 0.05); stroke: rgba(124, 77, 255, 0.3); stroke-width: 1.5; }
+    .radar-poly-sim { fill: rgba(0, 229, 255, 0.15); stroke: var(--cyan); stroke-width: 2; transition: all 0.5s; }
+
+  
+    /* Animated Glowing Search Bar */
+    .animated-glowing-search-wrapper {
+      position: relative;
+      border-radius: var(--radius-md);
+      padding: 1.5px;
+      background: var(--bg-card);
+      overflow: hidden;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      transition: all 0.3s ease;
+      width: 100%;
+    }
+
+    .animated-glowing-search-wrapper::before {
+      content: '';
+      position: absolute;
+      top: -100%; left: -100%;
+      width: 300%; height: 300%;
+      background: conic-gradient(from 0deg, transparent 0%, transparent 40%, var(--accent) 50%, var(--accent) 60%, transparent 100%);
+      animation: searchGlowSpin 4s linear infinite;
+      z-index: -2;
+      opacity: 0.15;
+      transition: opacity 0.3s ease;
+    }
+
+    .animated-glowing-search-wrapper:focus-within::before {
+      opacity: 1;
+      animation: searchGlowSpin 2s linear infinite;
+    }
+
+    .animated-glowing-search-wrapper::after {
+      content: '';
+      position: absolute;
+      inset: 1.5px;
+      background: var(--bg-card);
+      border-radius: calc(var(--radius-md) - 1.5px);
+      z-index: -1;
+    }
+
+    @keyframes searchGlowSpin {
+      100% { transform: rotate(360deg); }
+    }
+
+    .animated-glowing-search-input {
+      width: 100%;
+      padding: 14px 20px;
+      background: transparent;
+      border: none;
+      color: var(--text-1);
+      font-size: 14px;
+      outline: none;
+      z-index: 2;
+    }
+    .animated-glowing-search-input::placeholder {
+      color: var(--text-3);
+    }
+
+  </style>
+
+  
+\n</head>
+<body>
+
+  
+    
+
+  <!-- Main Container -->
+  <main class="main">
+    <header class="header">
+      <div class="header__info">
+        <h1 class="header__title">AI SEO Digital Twin Simulator</h1>
+        <div class="header__subtitle">Establish virtual search engine models and simulate algorithm rank optimizations.</div>
+      </div>
+      <div class="header__actions">
+        <form class="selector-form" id="twinForm">
+          <div class="animated-glowing-search-wrapper"><input  type="text"  class="animated-glowing-search-input"  id="targetUrlInput" placeholder="Enter URL (e.g. site.com)" required></div>
+          <button type="submit" class="selector-btn">Build Model</button>
+        </form>
+      </div>
+    </header>
+
+    <!-- Simulation Dashboard panel -->
+    <div id="resultsWrapper" style="display:none;" class="simulator-grid">
+      
+      <!-- Left side: Parameter controls -->
+      <div>
+        <div class="glass-card" style="margin-bottom:0;">
+          <h3 class="glass-card__title">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18M15 3v18M3 9h18M3 15h18"/></svg>
+            Simulation Parameters
+          </h3>
+          <div class="control-panel">
+            
+            <!-- Content page Count -->
+            <div class="control-row">
+              <div class="control-row-header">
+                <span class="control-label">New Content Creation</span>
+                <span class="control-val" id="valNewContent">0 pages</span>
+              </div>
+              <input type="range" class="control-slider" id="slideNewContent" min="0" max="100" value="0">
+            </div>
+
+            <!-- Technical Auto Fixes toggle -->
+            <div class="control-row toggle-container">
+              <span class="control-label">Technical SEO Improvements</span>
+              <label class="toggle-switch">
+                <input type="checkbox" id="toggleTechFix">
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+
+            <!-- Internal Linking slider -->
+            <div class="control-row">
+              <div class="control-row-header">
+                <span class="control-label">Internal Linking Optimizations</span>
+                <span class="control-val" id="valInternalLinking">65%</span>
+              </div>
+              <input type="range" class="control-slider" id="slideInternalLinking" min="50" max="100" value="65">
+            </div>
+
+            <!-- Schema JSON-LD toggle -->
+            <div class="control-row toggle-container">
+              <span class="control-label">JSON-LD Schema Integration</span>
+              <label class="toggle-switch">
+                <input type="checkbox" id="toggleSchema">
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+
+            <!-- Page Speed delay slider -->
+            <div class="control-row">
+              <div class="control-row-header">
+                <span class="control-label">Page Speed Optimizations</span>
+                <span class="control-val" id="valPageSpeed">60/100</span>
+              </div>
+              <input type="range" class="control-slider" id="slidePageSpeed" min="50" max="100" value="60">
+            </div>
+
+            <!-- Backlink acquisition slider -->
+            <div class="control-row">
+              <div class="control-row-header">
+                <span class="control-label">Backlink Acquisition</span>
+                <span class="control-val" id="valBacklinks">0 backlinks</span>
+              </div>
+              <input type="range" class="control-slider" id="slideBacklinks" min="0" max="50" value="0">
+            </div>
+
+            <!-- Content Clusters slider -->
+            <div class="control-row">
+              <div class="control-row-header">
+                <span class="control-label">Content Cluster Creation</span>
+                <span class="control-val" id="valClusters">0 clusters</span>
+              </div>
+              <input type="range" class="control-slider" id="slideClusters" min="0" max="10" value="0">
+            </div>
+
+            <button type="button" class="form-btn" id="runSimulationBtn" style="width:100%; text-align:center; display:block; margin-top:10px;">Run Forecast Simulator</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right side: Predictions output -->
+      <div style="display:flex; flex-direction:column; gap:24px;">
+        
+        <div class="disclaimer-alert">
+          <strong>Forecast Simulation Alert</strong>: Measured values are derived from actual website crawl parameters. Predicted values are projections modeled using local regression and semantic content vectors. Predictions are not guaranteed ranking facts.
+        </div>
+
+        <!-- Score and Radar layout -->
+        <div class="split-grid" style="margin-bottom:0; display:grid; grid-template-columns: 1fr 1fr; gap:24px;">
+          
+          <!-- Forecast metrics card -->
+          <div class="glass-card" style="margin-bottom:0; display:flex; flex-direction:column; justify-content:space-between;">
+            <h3 class="glass-card__title">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20V10M18 20V4M6 20v-4"/></svg>
+              Projected Rank Outcomes
+            </h3>
+            
+            <div class="prediction-metrics-grid">
+              <div class="pred-card">
+                <span class="pred-val" id="predTraffic" style="color:var(--green)">+0%</span>
+                <span class="pred-label">Traffic Growth</span>
+              </div>
+              <div class="pred-card">
+                <span class="pred-val" id="predKeywords" style="color:var(--cyan)">#15.0</span>
+                <span class="pred-label">Avg Keyword Rank</span>
+              </div>
+              <div class="pred-card">
+                <span class="pred-val" id="predCtr" style="color: var(--accent)">+0%</span>
+                <span class="pred-label">Click CTR Lift</span>
+              </div>
+            </div>
+
+            <div class="prediction-metrics-grid">
+              <div class="pred-card" style="grid-column: span 2;">
+                <span class="pred-val" id="predConversion" style="color:var(--green)">+0.0%</span>
+                <span class="pred-label">Conversion Rate Lift</span>
+              </div>
+              <div class="pred-card">
+                <span class="pred-val" id="predHealth" style="color:var(--cyan)">75</span>
+                <span class="pred-label">SEO Health Score</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Radar Chart Visual -->
+          <div class="glass-card" style="margin-bottom:0;">
+            <h3 class="glass-card__title">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 22 8.5 22 19.5 12 22 2 19.5 2 8.5"/></svg>
+              Digital Twin Vector Map
+            </h3>
+            <div class="radar-container">
+              <svg class="radar-svg" viewBox="0 0 200 200">
+                <!-- Radar grid rings -->
+                <circle class="radar-grid-ring" cx="100" cy="100" r="80"></circle>
+                <circle class="radar-grid-ring" cx="100" cy="100" r="55"></circle>
+                <circle class="radar-grid-ring" cx="100" cy="100" r="30"></circle>
+                <line x1="100" y1="20" x2="100" y2="180" stroke="rgba(255,255,255,0.03)"></line>
+                <line x1="20" y1="100" x2="180" y2="100" stroke="rgba(255,255,255,0.03)"></line>
+                
+                <!-- Radar polygon baseline -->
+                <polygon class="radar-poly-base" points="100,50 145,85 135,140 100,150 65,140 55,85"></polygon>
+                <!-- Radar polygon simulated -->
+                <polygon class="radar-poly-sim" id="radarPolygon" points="100,50 145,85 135,140 100,150 65,140 55,85"></polygon>
+              </svg>
+              <div style="position:absolute; top:8px; font-size:9px; text-transform:uppercase; color:var(--text-3); font-weight:700;">Authority</div>
+              <div style="position:absolute; bottom:8px; font-size:9px; text-transform:uppercase; color:var(--text-3); font-weight:700;">Technical</div>
+              <div style="position:absolute; right:8px; font-size:9px; text-transform:uppercase; color:var(--text-3); font-weight:700;">Speed</div>
+              <div style="position:absolute; left:8px; font-size:9px; text-transform:uppercase; color:var(--text-3); font-weight:700;">Linking</div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- 12-Month Projection Chart -->
+        <div class="glass-card" style="margin-bottom:0;">
+          <h3 class="glass-card__title">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"/></svg>
+            12-Month Traffic Projection Trajectory
+          </h3>
+          <div class="trajectory-container" id="trajectoryChartContainer">
+            <svg id="trajectoryChartSvg" style="width:100%; height:100%;" viewBox="0 0 500 150">
+              <!-- Grid lines -->
+              <line x1="40" y1="20" x2="480" y2="20" stroke="rgba(255,255,255,0.03)"></line>
+              <line x1="40" y1="70" x2="480" y2="70" stroke="rgba(255,255,255,0.03)"></line>
+              <line x1="40" y1="120" x2="480" y2="120" stroke="rgba(255,255,255,0.03)"></line>
+              <!-- Chart elements populated dynamically -->
+            </svg>
+          </div>
+          <div style="display:flex; justify-content:center; gap:20px; margin-top:10px; font-size:11px;">
+            <span style="display:flex; align-items:center; gap:6px;"><span style="display:inline-block; width:12px; height:3px; background: var(--bg-card-hover); border-top:1px dashed rgba(255,255,255,0.5);"></span> Measured Clicks Baseline</span>
+            <span style="display:flex; align-items:center; gap:6px;"><span style="display:inline-block; width:12px; height:3px; background:var(--cyan);"></span> Predicted Click Trajectory</span>
+          </div>
+        </div>
+
+        <!-- Verified vs Predicted Comparison Table -->
+        <div class="glass-card" style="margin-bottom:0;">
+          <h3 class="glass-card__title">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+            Metric Verification & Simulation Matrix
+          </h3>
+          <table class="compare-table">
+            <thead>
+              <tr>
+                <th>Forecast Target Metric</th>
+                <th>Verified Baseline Value</th>
+                <th>Simulated AI Target Value</th>
+                <th>Forecasted Shift Delta</th>
+              </tr>
+            </thead>
+            <tbody id="compareTableBody">
+              <!-- Populated dynamically -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Predict reasoning card -->
+        <div class="glass-card" style="margin-bottom:0;">
+          <h3 class="glass-card__title">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            AI Projection Reasoning
+          </h3>
+          <p style="font-size:13.5px; line-height:1.6;" id="simulationReasoningText">
+            Establish a baseline simulation vector first.
+          </p>
+        </div>
+
+        <!-- Detailed Forecast Cards list -->
+        <div id="detailedForecastCards" class="forecast-card-grid">
+          <!-- Populated dynamically -->
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+
+  <script>
+    
+</script>
+  <script src="digital-twin.js" defer></script>
+  <script src="ask-ai.js" defer></script>
+
+  
+\n
+  <script src="sidebar.js?v=2"></script>
+</body>
+</html>
