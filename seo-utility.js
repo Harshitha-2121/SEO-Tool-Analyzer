@@ -1,5 +1,5 @@
 /**
- * CrawlX Shared SEO Utility Library
+ * RADIX Shared SEO Utility Library
  * Centralizes target URL retrieval, domain extraction, localStorage matching,
  * and page-blocking UI wrappers for dynamic dashboard screens.
  */
@@ -7,7 +7,7 @@
 (function(window) {
   'use strict';
 
-  const CrawlXUtils = {
+  const RADIXUtils = {
     /**
      * Extracts query parameter value from current page URL.
      * @param {string} param Name of parameter.
@@ -98,5 +98,5 @@
     }
   };
 
-  window.CrawlXUtils = CrawlXUtils;
+  window.RADIXUtils = RADIXUtils;
 })(window);

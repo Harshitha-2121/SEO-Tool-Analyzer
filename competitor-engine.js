@@ -1,4 +1,4 @@
-// crawlX AI Competitor Intelligence Engine Controller
+// RADIX AI Competitor Intelligence Engine Controller
 document.addEventListener("DOMContentLoaded", () => {
     let currentData = null;
     // Populate form with stored domain

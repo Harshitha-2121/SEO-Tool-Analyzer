@@ -10,7 +10,7 @@
   
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>On-Page SEO Analyzer | crawlX</title>
+  <title>On-Page SEO Analyzer | RADIX</title>
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -831,10 +831,10 @@
     }
 
     // Read real scan data from localStorage if available
-    let realData = CrawlXUtils.loadScanData(targetUrl);
+    let realData = RADIXUtils.loadScanData(targetUrl);
 
     if (!realData) {
-      CrawlXUtils.renderBlocker(
+      RADIXUtils.renderBlocker(
         "Verified crawl data is currently unavailable",
         "No verified crawl record was found matching this page path. The SEO platform requires verified data from a live scan before performing content analysis.",
         ['section', '.split-grid']

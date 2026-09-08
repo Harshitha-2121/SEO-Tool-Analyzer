@@ -687,7 +687,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const url  = URL.createObjectURL(blob);
       const a    = document.createElement('a');
       a.href     = url;
-      a.download = `crawlX_links_${new Date().toISOString().slice(0,10)}.csv`;
+      a.download = `RADIX_links_${new Date().toISOString().slice(0,10)}.csv`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -1276,7 +1276,7 @@ document.addEventListener('DOMContentLoaded', () => {
       recommendationsList.innerHTML = `<p style="color:var(--text-3); text-align:center; padding:32px 0;">No recommendations generated.</p>`;
     }
 
-    renderTransparencyBlock('resultsSection', 'crawlX Ollagraph Link Graph Engine', 'Verified via recursive anchor and response path scanning', 98, 'Internal link references, duplicate rates, click depths, and authority allocations (PageRank metrics) mapped across crawled assets.');
+    renderTransparencyBlock('resultsSection', 'RADIX Ollagraph Link Graph Engine', 'Verified via recursive anchor and response path scanning', 98, 'Internal link references, duplicate rates, click depths, and authority allocations (PageRank metrics) mapped across crawled assets.');
   }
 
   function renderTransparencyBlock(containerId, source, status, confidence, evidence) {

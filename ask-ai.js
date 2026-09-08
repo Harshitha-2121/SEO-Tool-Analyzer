@@ -1,4 +1,4 @@
-// crawlX SEO Copilot Chat Agent Client - Human-like Response Upgrade
+// RADIX SEO Copilot Chat Agent Client - Human-like Response Upgrade
 function initAskAi() {
   // 1. Ensure floating Ask AI button exists on the page
   let askBtn = document.querySelector(".ask-ai-floating");
@@ -72,7 +72,7 @@ function initAskAi() {
     <!-- Header -->
     <div style="padding: 20px; border-bottom: 1px solid rgba(255, 255, 255, 0.06); display: flex; align-items: center; justify-content: space-between;">
       <div style="display: flex; align-items: center; gap: 8px;">
-        <span style="color: #6c5ce7; font-weight: 800; font-size: 18px;">crawlX</span>
+        <span style="color: #6c5ce7; font-weight: 800; font-size: 18px;">RADIX</span>
         <span style="font-size: 13px; color: rgba(255,255,255,0.5); font-weight:500;">Copilot</span>
         <span style="width: 6px; height: 6px; border-radius: 50%; background: #00e676; display: inline-block;"></span>
       </div>
@@ -83,7 +83,7 @@ function initAskAi() {
     <div id="copilotMessages" style="flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 16px;">
       <!-- Welcome message -->
       <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.04); padding: 16px; border-radius: 12px; font-size: 13px; line-height: 1.5; color: rgba(240,240,245,0.85);">
-        Hi! I'm your <strong>crawlX SEO Copilot</strong>. I have access to your sitemaps audit and webpage crawling results. Ask me anything about your SEO score or optimization recommendations!
+        Hi! I'm your <strong>RADIX SEO Copilot</strong>. I have access to your sitemaps audit and webpage crawling results. Ask me anything about your SEO score or optimization recommendations!
       </div>
     </div>
 
@@ -142,7 +142,7 @@ function initAskAi() {
 
     // 1. Common Greetings
     if (/^(hi|hello|hey|greetings|good morning|good afternoon)/i.test(lower)) {
-      return "Hello! I am your crawlX SEO Copilot. How can I help you audit or optimize your website's search placement today?";
+      return "Hello! I am your RADIX SEO Copilot. How can I help you audit or optimize your website's search placement today?";
     }
 
     // 2. Core Web Vitals definitions
@@ -196,7 +196,7 @@ function initAskAi() {
     // 7. General SEO queries
     if (lower.includes("score") || lower.includes("rating") || lower.includes("status")) {
       if (hasData) {
-        return `Your crawlX SEO Health Score is **79/100**. This is a solid score, but you can easily bring it to Excellent (90+) by fixing the long H1 heading and adding image alt labels.`;
+        return `Your RADIX SEO Health Score is **79/100**. This is a solid score, but you can easily bring it to Excellent (90+) by fixing the long H1 heading and adding image alt labels.`;
       }
       return "The SEO Health Score evaluates your website across 6 key metrics: Technical, Content, Performance, Mobile, Security, and Accessibility. Enter your URL on the homepage to calculate yours!";
     }

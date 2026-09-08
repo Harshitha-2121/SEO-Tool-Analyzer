@@ -1,10 +1,10 @@
 #!/bin/bash
-# crawlX Convex Setup Script
+# RADIX Convex Setup Script
 # Run this from the seo-audit-platform directory
 
 set -e
 
-echo "=== crawlX Convex Backend Setup ==="
+echo "=== RADIX Convex Backend Setup ==="
 echo ""
 
 # 1. Remove auth.config.ts (only needed for @convex-dev/auth which we're not using)

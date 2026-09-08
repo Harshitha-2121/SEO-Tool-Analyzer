@@ -4,7 +4,7 @@ const convexUrl = import.meta.env.VITE_CONVEX_URL;
 
 if (!convexUrl) {
   console.warn(
-    '[crawlX] VITE_CONVEX_URL is not set. Convex integration will not work. ' +
+    '[RADIX] VITE_CONVEX_URL is not set. Convex integration will not work. ' +
     'Create a .env.local file with: VITE_CONVEX_URL=https://your-deployment.convex.cloud'
   );
 }

@@ -326,7 +326,7 @@ document.addEventListener('DOMContentLoaded', () => {
       recommendationsList.innerHTML = `<p style="color:var(--text-3); text-align:center; padding:32px 0;">No recommendations generated.</p>`;
     }
 
-    renderTransparencyBlock('resultsSection', 'crawlX Ollagraph Crawler', 'Verified via HTTP parse and competitor body diffs', 96, 'Extracted keyword matrices, sitemap files, and structured JSON-LD payloads from target and competitor pages.');
+    renderTransparencyBlock('resultsSection', 'RADIX Ollagraph Crawler', 'Verified via HTTP parse and competitor body diffs', 96, 'Extracted keyword matrices, sitemap files, and structured JSON-LD payloads from target and competitor pages.');
   }
 
   function renderTransparencyBlock(containerId, source, status, confidence, evidence) {

@@ -1,5 +1,5 @@
 /**
- * crawlX — Global Persistent Sidebar Component
+ * RADIX — Global Persistent Sidebar Component
  * Single source of truth for all navigation sidebar UI and behaviour.
  *
  * How it works:
@@ -41,7 +41,7 @@
   var SIDEBAR_W_COLLAPSED = 68;
   var SIDEBAR_ID         = 'sidebar';
   var OVERLAY_ID         = 'sidebarOverlay';
-  var STORAGE_KEY        = 'crawlx_sidebar_collapsed';
+  var STORAGE_KEY        = 'radix_sidebar_collapsed';
 
   /* ─── NAVIGATION STRUCTURE ─── */
   var NAV = [
@@ -174,6 +174,35 @@
           href  : 'history.html',
           key   : 'history.html',
           icon  : '<polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.51"/>'
+        }
+      ]
+    },
+    {
+      section: 'Account',
+      items: [
+        {
+          label : 'User Profile',
+          href  : 'profile.html',
+          key   : 'profile.html',
+          icon  : '<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>'
+        },
+        {
+          label : 'Settings',
+          href  : 'settings.html',
+          key   : 'settings.html',
+          icon  : '<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>'
+        },
+        {
+          label : 'About Platform',
+          href  : 'about.html',
+          key   : 'about.html',
+          icon  : '<circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>'
+        },
+        {
+          label : 'Sign In / Register',
+          href  : 'login.html',
+          key   : 'login.html',
+          icon  : '<path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/>'
         }
       ]
     }
@@ -814,7 +843,35 @@
     html += '        <span class="sm-icon-line sm-icon-line-v"></span>';
     html += '      </span>';
     html += '    </button>';
+    var curName = 'Guest User';
+    var curEmail = 'Not signed in';
+    var curRole = 'Guest';
+    var curAvatar = '';
+    try {
+      if (localStorage.getItem('logged_in') === 'true') {
+        curName = localStorage.getItem('user_name') || 'User';
+        curEmail = localStorage.getItem('user_email') || '';
+        curRole = localStorage.getItem('user_role') || 'User';
+        curAvatar = localStorage.getItem('user_avatar') || '';
+      }
+    } catch(e) {}
+
     html += '    <div class="sm-dropdown-menu" id="smDropdownMenu" role="menu" aria-label="User menu" aria-hidden="true">';
+    html += '      <div class="sm-user-header" style="padding:12px 14px; border-bottom:1px solid rgba(255,255,255,0.08); margin-bottom:6px; display:flex; gap:12px; align-items:center;">';
+    if (curAvatar) {
+      html += '        <img src="' + curAvatar + '" style="width:38px; height:38px; border-radius:50%; object-fit:cover; border:1px solid rgba(16,185,129,0.4);" alt="Avatar" />';
+    } else {
+      var initials = curName.trim().split(' ').map(function(n){return n[0];}).join('').substring(0, 2).toUpperCase() || 'U';
+      html += '        <div style="width:38px; height:38px; border-radius:50%; background:linear-gradient(135deg,#10b981,#3b82f6); color:#fff; font-weight:800; font-size:14px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">' + initials + '</div>';
+    }
+    html += '        <div style="overflow:hidden;">';
+    html += '          <div style="font-weight:700; font-size:13.5px; color:#ffffff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">' + curName + '</div>';
+    if (curEmail) {
+      html += '          <div style="font-size:11px; color:rgba(255,255,255,0.55); margin-top:1px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">' + curEmail + '</div>';
+    }
+    html += '          <span style="display:inline-block; margin-top:4px; padding:2px 7px; background:rgba(16,185,129,0.18); color:#34d399; font-size:9.5px; font-weight:700; border-radius:4px; text-transform:uppercase;">' + curRole + '</span>';
+    html += '        </div>';
+    html += '      </div>';
     html += '      <a class="sm-dropdown-item" href="profile.html" role="menuitem" tabindex="-1">';
     html += '        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="sm-dropdown-icon"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>';
     html += '        <span>Profile</span>';
@@ -1055,8 +1112,8 @@
         if (smSignOut) {
           smSignOut.addEventListener('click', function(e) {
             e.preventDefault();
-            try { localStorage.removeItem('logged_in'); localStorage.removeItem('user_email'); } catch (ex) {}
-            window.location.href = 'login.html';
+            try { localStorage.clear(); } catch (ex) {}
+            window.location.href = 'login.html?logout=true';
           });
         }
       }

@@ -114,7 +114,7 @@ COMPLETED DELIVERABLES & CORE WORKSPACE ARCHITECTURE
     - Integrates with the official Ollagraph scrapers via API endpoint (`https://api.ollagraph.com/v1/scrape/llm-ready`).
     - Gathers live webpage metrics, returning exact document titles, descriptions, page sizes, heading lists (H1-H3), images count, link profiles, and transport security info, replacing simulation metrics with real-time audit data.
 
-19. CRAWLX SEO COPILOT CHAT CLIENT [NEW]
+19. RADIX SEO COPILOT CHAT CLIENT [NEW]
     File: [ask-ai.js](file:///home/ubuntu/seo-audit-platform/ask-ai.js)
     - Implemented a floating "Ask AI" dashboard chat client.
     - Leverages dynamic localStorage parameters (`real_scan_data`) from active scraper outcomes.

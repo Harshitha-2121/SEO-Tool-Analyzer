@@ -1,9 +1,9 @@
 ================================================================================
-                    PROJECT SYNOPSIS: crawlX SEO PLATFORM
+                    PROJECT SYNOPSIS: RADIX SEO PLATFORM
 ================================================================================
 
 TITLE:
-crawlX: Enterprise AI-Powered SEO Digital Twin & Audit Simulator
+RADIX: Enterprise AI-Powered SEO Digital Twin & Audit Simulator
 
 --------------------------------------------------------------------------------
 1. INTRODUCTION
@@ -14,9 +14,9 @@ traditional search optimization remains highly reactive: businesses deploy
 website changes, wait weeks for search engine bots to index their pages, and 
 only then analyze whether their rankings improved or declined. 
 
-crawlX was developed to transform this paradigm by creating an "SEO Digital Twin 
+RADIX was developed to transform this paradigm by creating an "SEO Digital Twin 
 Simulator." By simulating search engine bots (like Googlebot) using advanced 
-Large Language Model (LLM) agents, crawlX lets digital marketers, developers, and 
+Large Language Model (LLM) agents, RADIX lets digital marketers, developers, and 
 content strategists preview how crawlers view and process their websites. This 
 allows organizations to identify indexation blockers, analyze search intent, and 
 verify technical optimization changes in a sandboxed simulator before deploying 
@@ -90,7 +90,7 @@ search engines are shifting from simple keyword string matching to complex
 vector-based semantic understanding (e.g., Google's RankBrain and MUM). This 
 shift makes traditional keyword-density methods obsolete. By integrating local LLMs 
 (such as Llama3 via Ollama) to analyze intent clusters and simulate search bots, 
-crawlX represents the next evolution of SEO tools, moving search optimization 
+RADIX represents the next evolution of SEO tools, moving search optimization 
 from historical diagnostics to real-time predictive simulations.
 
 --------------------------------------------------------------------------------
@@ -117,7 +117,7 @@ Limitations:
 7. PROPOSED SYSTEM
 --------------------------------------------------------------------------------
 Overview of the Proposed Project:
-* crawlX is an enterprise-grade, all-in-one AI SEO Digital Twin & Audit Platform. 
+* RADIX is an enterprise-grade, all-in-one AI SEO Digital Twin & Audit Platform. 
   It integrates an intelligent crawler, a local LLM inference pipeline, and 
   automated remediation modules. It provides a real-time sandboxed environment 
   that mimics search crawler behavior, analyzes keyword semantics, compares competitor 
@@ -215,11 +215,11 @@ BACKEND PROPERTIES:
 11. CONCLUSION
 --------------------------------------------------------------------------------
 Summary of the Project:
-* crawlX successfully bridges the gap between traditional diagnostics and modern, 
+* RADIX successfully bridges the gap between traditional diagnostics and modern, 
   AI-driven optimization. By incorporating an AI Digital Twin simulator, a semantic 
   intent classification engine, automated code generation, and competitive gap 
   analysis, the platform provides an all-in-one suite for modern webmasters. 
   Operating on a lightweight, zero-dependency Python backend coupled with a premium 
-  glassmorphism web interface, crawlX provides teams with the tools needed to 
+  glassmorphism web interface, RADIX provides teams with the tools needed to 
   forecast, debug, and execute their search engine optimization strategies efficiently.
 ================================================================================

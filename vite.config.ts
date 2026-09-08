@@ -11,7 +11,7 @@ const input = Object.fromEntries(
 
 export default defineConfig({
   root: '.',
-  publicDir: './',
+  publicDir: false,
   build: {
     rollupOptions: {
       input,
@@ -20,6 +20,9 @@ export default defineConfig({
   server: {
     port: 5173,
     allowedHosts: true,
+    watch: {
+      ignored: ['**/*.timestamp-*.mjs'],
+    },
     proxy: {
       '/api': {
         target: 'http://localhost:8081',

@@ -152,7 +152,7 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById('detCodeSnippet').textContent = issue.code_snippet;
         document.getElementById('detRevenueText').textContent = `Estimated revenue impact: ${issue.revenue_impact}`;
 
-        renderTransparencyBlock('issueDetailPanel', 'crawlX 11-Point Technical Diagnostics', 'Verified via HTTP headers, status code mapping, and robots.txt analysis', issue.confidence_score.replace('%',''), 'Crawl responses, core Web Vitals, canonical links validation, redirect loops, and schema structures.');
+        renderTransparencyBlock('issueDetailPanel', 'RADIX 11-Point Technical Diagnostics', 'Verified via HTTP headers, status code mapping, and robots.txt analysis', issue.confidence_score.replace('%',''), 'Crawl responses, core Web Vitals, canonical links validation, redirect loops, and schema structures.');
     }
 
     function renderTransparencyBlock(containerId, source, status, confidence, evidence) {

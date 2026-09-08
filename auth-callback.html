@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Signing you in — crawlX</title>
+  <title>Signing you in — RADIX</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@600;700&display=swap" rel="stylesheet">
   <style>
     * { margin:0; padding:0; box-sizing:border-box; }
@@ -92,7 +92,7 @@
         `<div class="error"><strong>Sign-in failed</strong><br>${error}</div>
          <p style="margin-top:16px"><a href="/login.html" style="color:#b388ff">Back to Sign In</a></p>`;
     } else if (token) {
-      localStorage.setItem('crawlx_token', token);
+      localStorage.setItem('radix_token', token);
       localStorage.setItem('logged_in',    'true');
       localStorage.setItem('user_name',    decodeURIComponent(name));
       localStorage.setItem('user_email',   decodeURIComponent(email));

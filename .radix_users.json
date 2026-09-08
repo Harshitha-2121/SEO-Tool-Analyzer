@@ -1,0 +1,99 @@
+{
+  "admin@radix.ai": {
+    "name": "Admin",
+    "role": "admin",
+    "password": "pbkdf2:92d2dd1e2173b8fc31df902d644d14cc:dbd257029e8f0b04fedbdf5f0d3618e625dde6e6f09aa6238448676ca1abc9a1",
+    "created": "2026-07-09T10:18:26.995561"
+  },
+  "test@radix.ai": {
+    "name": "Test User",
+    "role": "user",
+    "password": "pbkdf2:40f3255f8e50d2e14766b23f52c3e884:777587eb7e96a1a22701f997f71af9ba7fc2305e04c88bac69038930b66e7ac3",
+    "created": "2026-07-10T11:07:58.747375"
+  },
+  "unique_user_12345@radix.ai": {
+    "name": "Unique User",
+    "role": "user",
+    "password": "pbkdf2:accc822f65f7001d74f9d706584a39b8:079411b50e2c8a1b92a8aa07e952fd5de712cf21e7aa35f58f161c262c21be2a",
+    "created": "2026-07-24T11:56:48.590262"
+  },
+  "harshitha.j2121@gmail.com": {
+    "name": "Belowin Blow",
+    "role": "user",
+    "password": "pbkdf2:06c12b8335e671f4cb56f2e449fa1914:aaf1614b254fb863f21e6628217f451b7c4f0b3da605373f9c83fb469fc291c9",
+    "created": "2026-08-30T07:22:06.846968",
+    "provider": "google",
+    "email_verified": true,
+    "google_id": "105388535761109357198",
+    "api_key": "cx_live_666145d5cb82af9e7eff0f23f970f438",
+    "scans_count": 0,
+    "domains_count": 0,
+    "verification_code": null,
+    "verification_expires": "2026-09-09T06:05:13.919637"
+  },
+  "harshitha@example.com": {
+    "name": "Harshitha",
+    "role": "user",
+    "password": "pbkdf2:0a45cfdabc922efae362590d6ec8e814:e7eaf555cee8c1987d481ae7ab13bb844922abea048d35ffd851d02a41d0cf1c",
+    "created": "2026-08-30T07:28:49.058937"
+  },
+  "harshitha.j21@gmail.com": {
+    "name": "Harshitha J",
+    "role": "user",
+    "password": "pbkdf2:8628d67fb8e7a80e06dd8d07ad01108d:e6955e44c1d66379933646c9c4c59ad3b3f9fe5d1a152952a4ece94cc71f73af",
+    "created": "2026-08-30T07:41:56.284024",
+    "verification_code": null,
+    "email_verified": true
+  },
+  "google.user@radix.ai": {
+    "name": "Google User",
+    "role": "user",
+    "provider": "google",
+    "created": "2026-08-30T08:19:31.163648"
+  },
+  "me@gmail.com": {
+    "name": "me",
+    "role": "user",
+    "password": "pbkdf2:ab247ec8a9a44195e3f14bf2d5d65334:29cc5704d89743f53c7b36445ff91ea767635a0f608c083f23230fb9d559a84a",
+    "created": "2026-09-07T06:45:07.838705"
+  },
+  "testflow@example.com": {
+    "name": "Test Flow",
+    "role": "user",
+    "password": "pbkdf2:0b327079587f1c0a8718d9bd8d037a04:0f6c462ac52896d8871ce2cc9934b994c1946f5d8067cf69baba840b4589f682",
+    "created": "2026-09-07T07:42:08.996116",
+    "email_verified": true,
+    "verification_code": null,
+    "verification_expires": "2026-09-08T07:42:08.996116"
+  },
+  "unverified2@example.com": {
+    "name": "Unverified",
+    "role": "user",
+    "password": "pbkdf2:c9c0227b2124e287bd89e25fd9c195e8:ded8eb6e595ffefa84bad63afbdfdedd384589445d3f55db9e742c14f4a90d2f",
+    "created": "2026-09-07T07:43:14.944184",
+    "email_verified": false,
+    "verification_code": "811137",
+    "verification_expires": "2026-09-08T07:43:14.944184"
+  },
+  "harshitha.j938070@gmail.com": {
+    "name": "Harshitha J",
+    "role": "user",
+    "password": "pbkdf2:5fa6164e5168f872cc1693705af6b6f5:6f3b1e71d1c548a81826e5e751229760597eb952de3addb69c54f5f33d0d2dd9",
+    "created": "2026-09-07T11:26:46.861098",
+    "email_verified": false,
+    "verification_code": "662820",
+    "verification_expires": "2026-09-08T11:26:46.861098"
+  },
+  "test_user_1788847453160@gmail.com": {
+    "name": "Test User",
+    "role": "user",
+    "password": "pbkdf2:d861fb79c35bbb2e188bd8acc7622e7b:6ea5b86f38887fb200b50e5b76f3f4ad509eba243e280a0200c9e31ac7e5756a",
+    "created": "2026-09-08T06:04:13.900099",
+    "email_verified": false,
+    "verification_code": "178765",
+    "verification_expires": "2026-09-09T06:04:13.900099",
+    "api_key": "cx_live_9964d103ccfc078a2516a1c08aa18f1e",
+    "scans_count": 0,
+    "domains_count": 0
+  }
+}

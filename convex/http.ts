@@ -826,12 +826,12 @@ http.route({
     try {
       let res;
       try {
-        res = await ctx.runMutation(api.auth.login as any, { email: "google@crawlx.ai", password: "Google123!Password" });
+        res = await ctx.runMutation(api.auth.login as any, { email: "google@radix.ai", password: "Google123!Password" });
       } catch (err) {
-        res = await ctx.runMutation(api.auth.register as any, { email: "google@crawlx.ai", password: "Google123!Password", name: "Google User" });
+        res = await ctx.runMutation(api.auth.register as any, { email: "google@radix.ai", password: "Google123!Password", name: "Google User" });
       }
       const token = res.token;
-      const email = encodeURIComponent("google@crawlx.ai");
+      const email = encodeURIComponent("google@radix.ai");
       const name = encodeURIComponent("Google User");
       // Redirect to frontend callback
       return new Response(null, {

@@ -1,4 +1,4 @@
-// Strategy Engine Controller for crawlX AI Strategy Dashboard
+// Strategy Engine Controller for RADIX AI Strategy Dashboard
 document.addEventListener("DOMContentLoaded", () => {
     function formatSummary(text) {
         if (!text) return '';
@@ -70,7 +70,7 @@ document.addEventListener("DOMContentLoaded", () => {
     loaderOverlay.innerHTML = `
         <div style="text-align: center; width: 90%; max-width: 500px; padding: 32px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); border-radius: 24px; box-shadow: 0 20px 50px rgba(0,0,0,0.5);">
             <div class="loader-spinner" style="width: 56px; height: 56px; border: 4px solid rgba(124, 77, 255, 0.1); border-top-color: #7c4dff; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 24px;"></div>
-            <h2 style="font-size: 22px; font-weight: 800; margin-bottom: 12px; letter-spacing: -0.5px;"> crawlX AI Deep Site Audit </h2>
+            <h2 style="font-size: 22px; font-weight: 800; margin-bottom: 12px; letter-spacing: -0.5px;"> RADIX AI Deep Site Audit </h2>
             <p style="color: #a0aec0; font-size: 14px; margin-bottom: 32px;">Analyzing <span style="color: #b47cff; font-weight: 600;">${cleanUrl}</span>. Please wait a moment.</p>
             
             <!-- Step Progress Checklist -->
@@ -498,7 +498,7 @@ document.addEventListener("DOMContentLoaded", () => {
             health_score: 82,
             crawled_pages_count: 148,
             orphan_pages: [],
-            executive_summary: `Analyzed <strong>${cleanUrl}</strong> using crawlX fallback intelligence engine. Your website has a good score of 82/100, but search visibility is currently bottlenecked by duplicate head configurations, missing image descriptors (alt tags), and a lacks of unified canonical paths. Fixing these critical pathways will optimize crawler discovery.`,
+            executive_summary: `Analyzed <strong>${cleanUrl}</strong> using RADIX fallback intelligence engine. Your website has a good score of 82/100, but search visibility is currently bottlenecked by duplicate head configurations, missing image descriptors (alt tags), and a lacks of unified canonical paths. Fixing these critical pathways will optimize crawler discovery.`,
             strategy_report: {
                 immediate_fixes_24h: [
                     "Fix image alt tags on header banner sections to support accessibility.",

@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sign In — crawlX</title>
-  <meta name="description" content="Sign in to crawlX AI-powered enterprise SEO platform.">
+  <title>Sign In — RADIX</title>
+  <meta name="description" content="Sign in to RADIX AI-powered enterprise SEO platform.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Bruno+Ace&family=DynaPuff:wdth,wght@86.3,400..700&display=swap" rel="stylesheet">
@@ -232,9 +232,6 @@
       outline: none;
       z-index: 2;
     }
-    .animated-glowing-search-input::placeholder {
-      color: var(--text-3);
-    }
 
   </style>
 </head>
@@ -269,7 +266,7 @@
       </div>
 
       <div class="panel-footer">
-        &copy; 2024 crawlX Intelligence Platform &mdash; All rights reserved
+        &copy; 2024 RADIX Intelligence Platform &mdash; All rights reserved
       </div>
     </div>
 
@@ -286,12 +283,12 @@
         <form id="signinForm" onsubmit="handleSignIn(event)" novalidate>
           <div class="form-group">
             <label class="form-label" for="siEmail">Email</label>
-            <input type="email" id="siEmail" class="form-input" placeholder="admin@crawlx.ai" autocomplete="email" value="admin@crawlx.ai">
+            <input type="email" id="siEmail" class="form-input" placeholder="you@company.com" autocomplete="email" value="">
           </div>
           <div class="form-group">
             <label class="form-label" for="siPass">Password</label>
             <div class="input-wrap">
-              <input type="password" id="siPass" class="form-input" placeholder="••••••••" autocomplete="current-password" style="padding-right:42px" value="CrawlX2024!">
+              <input type="password" id="siPass" class="form-input" placeholder="••••••••" autocomplete="current-password" style="padding-right:42px" value="">
               <button type="button" class="input-icon" onclick="togglePwd('siPass',this)" title="Show/hide">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
               </button>
@@ -312,7 +309,7 @@
 
         <div class="divider"><span>or</span></div>
 
-        <button class="btn btn-google" onclick="googleSignIn()">
+        <button type="button" class="btn btn-google" onclick="googleSignIn(event)">
           <svg width="18" height="18" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
           <span>Continue with Google</span>
         </button>
@@ -364,7 +361,7 @@
         </form>
 
         <div class="divider"><span>or</span></div>
-        <button class="btn btn-google" onclick="googleSignIn()">
+        <button type="button" class="btn btn-google" onclick="googleSignIn(event)">
           <svg width="18" height="18" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
           <span>Sign up with Google</span>
         </button>
@@ -395,11 +392,7 @@
           <div id="fpSuccessBox" style="display:none">
             <div class="alert alert-success show">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-              <span>Reset link ready. Click below to proceed.</span>
-            </div>
-            <div class="reset-box">
-              <strong>Your Reset Link</strong>
-              <a id="fpResetLink" href="#" style="color:#b388ff;word-break:break-all;font-size:12.5px;"></a>
+              <span id="fpSuccessMsg">Reset link sent. Check your inbox.</span>
             </div>
           </div>
         </form>
@@ -431,6 +424,43 @@
           <div class="alert alert-success" id="rpSuccess">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
             <span>Password updated! Signing you in&hellip;</span>
+          </div>
+        </form>
+      </div>
+
+      <!-- VERIFY EMAIL VIEW -->
+      <div class="view" id="viewVerify">
+        <button type="button" onclick="switchView('viewSignIn')" style="display:flex;align-items:center;gap:7px;background:none;border:none;color:var(--t2);cursor:pointer;font-family:inherit;font-size:13px;margin-bottom:22px;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+          Back to Sign In
+        </button>
+        <h2 style="font-size:22px;font-weight:800;margin-bottom:6px;">Verify Your Email</h2>
+        <p style="font-size:13.5px;color:var(--t2);margin-bottom:24px;line-height:1.6;">Enter the 6-digit verification code we emailed to <strong id="verifyEmailTarget">you@example.com</strong> to activate your account.</p>
+
+        <form id="verifyForm" onsubmit="handleVerifyEmail(event)" novalidate>
+          <div class="form-group" style="display:none;">
+            <label class="form-label" for="verifyEmailInput">Email</label>
+            <input type="email" id="verifyEmailInput" class="form-input" value="">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="verifyCodeInput">6-Digit Verification Code</label>
+            <input type="text" id="verifyCodeInput" class="form-input" placeholder="••••••" maxlength="6" inputmode="numeric" autocomplete="one-time-code" style="letter-spacing:8px;font-weight:700;text-align:center;font-size:20px;">
+          </div>
+          <button type="submit" class="btn btn-primary" id="btnVerifyEmail">
+            <div class="spinner"></div>
+            <span class="btn-label">Verify &amp; Activate Account</span>
+          </button>
+          <p style="font-size:12.5px;color:var(--t2);text-align:center;margin-top:14px;">
+            Didn't receive the code?
+            <button type="button" onclick="resendVerifyEmail()" style="background:none;border:none;color:var(--accent);font-weight:700;font-size:12.5px;cursor:pointer;padding:0;">Resend email</button>
+          </p>
+          <div class="alert alert-error" id="veError">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg>
+            <span id="veErrorText"></span>
+          </div>
+          <div class="alert alert-success" id="veSuccess">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+            <span id="veSuccessText"></span>
           </div>
         </form>
       </div>
@@ -499,24 +529,37 @@
     }
 
     function storeSession(data) {
-      localStorage.setItem('crawlx_token', data.token);
+      localStorage.clear();
+      localStorage.setItem('radix_token', data.token);
       localStorage.setItem('logged_in',    'true');
-      localStorage.setItem('user_email',   data.user?.email || data.email);
-      localStorage.setItem('user_name',    data.user?.name || data.name || data.email);
+      localStorage.setItem('user_email',   data.user?.email || data.email || '');
+      localStorage.setItem('user_name',    data.user?.name || data.name || data.user?.email || data.email || 'User');
       localStorage.setItem('user_role',    data.user?.role || data.role || 'user');
       if (data.projectId) localStorage.setItem('projectId', data.projectId);
     }
 
-    // ── CHECK ALREADY LOGGED IN ─────────────────────────────────
-    if (localStorage.getItem('logged_in') === 'true') {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('logout') === 'true') {
+      localStorage.clear();
+    } else if (urlParams.get('tab') === 'register') {
+      switchTab('register');
+    } else if (localStorage.getItem('logged_in') === 'true' && !urlParams.get('switch')) {
       window.location.replace('dashboard.html');
     }
 
-    // ── CHECK FOR RESET TOKEN IN URL ────────────────────────────
-    const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get('reset')) {
       resetToken = urlParams.get('reset');
       switchView('viewReset');
+    }
+    // Email verification links from registration / verification emails
+    const verifyEmailParam = urlParams.get('verify_email');
+    if (verifyEmailParam) {
+      openVerifyPrompt(verifyEmailParam);
+      const codeParam = urlParams.get('code');
+      if (codeParam) {
+        el('verifyCodeInput').value = codeParam;
+        handleVerifyEmail({ preventDefault: () => {} });
+      }
     }
     const urlError = urlParams.get('error');
     if (urlError) {
@@ -544,12 +587,59 @@
           throw new Error("API error: Server returned an invalid HTML page. Please force-refresh (Cmd+Shift+R) your browser.");
         }
         const d = await r.json();
+        if (r.status === 403 && d.needs_verification) {
+          openVerifyPrompt(d.email);
+          return;
+        }
         if (!r.ok || !d.success) throw new Error(d.error || 'Sign in failed.');
         storeSession(d);
         window.location.replace('dashboard.html');
       } catch(err) {
         showAlert('siError','siErrorText', err.message);
       } finally { setLoading('btnSignin', false); }
+    }
+
+    // ── EMAIL VERIFICATION (when login is blocked) ────────────────
+    function openVerifyPrompt(email) {
+      el('verifyEmailTarget').textContent = email;
+      el('verifyEmailInput').value = email;
+      el('verifyCodeInput').value = '';
+      switchView('viewVerify');
+      setLoading('btnSignin', false);
+    }
+
+    async function handleVerifyEmail(e) {
+      e.preventDefault();
+      hideAlert('veError');
+      const email = el('verifyEmailInput').value.trim();
+      const code  = el('verifyCodeInput').value.trim();
+      if (!email || !code) { showAlert('veError','veErrorText','Please enter your email and the 6-digit code.'); return; }
+      setLoading('btnVerifyEmail', true);
+      try {
+        const r = await fetch(`${API}/api/auth/verify-email`, {
+          method:'POST', headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({ email, code })
+        });
+        const d = await r.json();
+        if (!r.ok || !d.success) throw new Error(d.error || 'Verification failed.');
+        showAlert('veSuccess','veSuccessText','Email verified successfully! You can now sign in.');
+        setTimeout(() => switchView('viewSignIn'), 1500);
+      } catch(err) { showAlert('veError','veErrorText',err.message); }
+      finally { setLoading('btnVerifyEmail', false); }
+    }
+
+    async function resendVerifyEmail() {
+      const email = el('verifyEmailInput').value.trim();
+      if (!email) { showAlert('veError','veErrorText','Please enter your email address.'); return; }
+      try {
+        const r = await fetch(`${API}/api/auth/send-verification-email`, {
+          method:'POST', headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({ email })
+        });
+        const d = await r.json();
+        if (!r.ok || !d.success) throw new Error(d.error || 'Failed to resend code.');
+        showAlert('veSuccess','veSuccessText','A new verification code has been sent to your email.');
+      } catch(err) { showAlert('veError','veErrorText',err.message); }
     }
 
     // ── REGISTER ─────────────────────────────────────────────────
@@ -596,11 +686,8 @@
         });
         const d = await r.json();
         if (!r.ok) throw new Error(d.error || 'Request failed.');
+        el('fpSuccessMsg').textContent = d.message || 'If that email exists, a password reset link has been sent. Check your inbox (including spam).';
         el('fpSuccessBox').style.display = 'block';
-        if (d.reset_url) {
-          el('fpResetLink').href = d.reset_url;
-          el('fpResetLink').textContent = d.reset_url;
-        }
       } catch(err) { showAlert('fpError','fpErrorText',err.message); }
       finally { setLoading('btnForgot',false); }
     }
@@ -626,17 +713,18 @@
       } catch(err) { showAlert('rpError','rpErrorText',err.message); }
       finally { setLoading('btnReset',false); }
     }
+  </script>
 
-    // ── GOOGLE SIGN IN ────────────────────────────────────────────
-    async function googleSignIn() {
-      // Check if server supports Google OAuth
-      try {
-        // Redirect to server-side Google OAuth endpoint
-        window.location.href = `${API}/api/auth/google`;
-      } catch(err) {
-        showAlert('googleInfo','googleInfoText','Google Sign-In is not configured on this server.');
-        el('googleInfo').classList.add('show');
+  <script>
+    // ── GOOGLE SIGN IN LOGIC ──────────────────────────────────────
+    function googleSignIn(e) {
+      if (e) {
+        e.preventDefault();
+        e.stopPropagation();
       }
+      setLoading('btnSignin', true);
+      // Redirect to server-side Google OAuth — server handles real OAuth or shows setup instructions
+      window.location.href = `${API}/api/auth/google`;
     }
   </script>
 </body>

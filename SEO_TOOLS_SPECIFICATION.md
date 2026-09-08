@@ -1,6 +1,6 @@
-# crawlX Enterprise SEO Platform: Complete 14-Tool Technical & Business Specification
+# RADIX Enterprise SEO Platform: Complete 14-Tool Technical & Business Specification
 
-This document provides a comprehensive technical and business specification for all **14 core tools** integrated into the crawlX Enterprise SEO Platform. The tools are organized logically, beginning with the core crawl and scanning engines.
+This document provides a comprehensive technical and business specification for all **14 core tools** integrated into the RADIX Enterprise SEO Platform. The tools are organized logically, beginning with the core crawl and scanning engines.
 
 ---
 

@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>crawlX — Enterprise SEO Audit Platform</title>
-  <meta name="description" content="crawlX: Everything You Need for Technical SEO and 15 Powerful Tools. One Platform. crawlX is the leading enterprise SEO audit platform. Analyze websites, crawl pages, find SEO issues, and generate AI-powered reports instantly.">
+  <title>RADIX — Enterprise SEO Audit Platform</title>
+  <meta name="description" content="RADIX: Everything You Need for Technical SEO and 15 Powerful Tools. One Platform. RADIX is the leading enterprise SEO audit platform. Analyze websites, crawl pages, find SEO issues, and generate AI-powered reports instantly.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Bruno+Ace&family=DynaPuff:wdth,wght@86.3,400..700&display=swap" rel="stylesheet">
@@ -1144,24 +1144,24 @@
       user-select: none;
     }
   
-    /* ─── crawlX Customized Styles ─── */
-    .crawlx-logo {
+    /* ─── RADIX Customized Styles ─── */
+    .radix-logo {
       display: flex;
       align-items: center;
       gap: 10px;
       text-decoration: none;
     }
-    .crawlx-logo-icon {
+    .radix-logo-icon {
       width: 44px;
       height: 44px;
     }
-    .crawlx-logo-text {
+    .radix-logo-text {
       font-weight: 400;
       font-size: 24px;
       color: var(--text-1); letter-spacing: -0.5px;
       font-family: 'Bruno Ace', sans-serif;
     }
-    .crawlx-logo-text span {
+    .radix-logo-text span {
       color: #10b981;
     }
 
@@ -1185,7 +1185,7 @@
       box-shadow: 0 8px 24px rgba(0, 229, 255, 0.35);
     }
 
-    .hero-crawlx {
+    .hero-radix {
       display: grid;
       grid-template-columns: 1.15fr 0.85fr;
       gap: 50px;
@@ -1197,7 +1197,7 @@
     }
 
     @media (max-width: 991px) {
-      .hero-crawlx {
+      .hero-radix {
         grid-template-columns: 1fr;
         text-align: center;
         padding-top: 100px;
@@ -1913,10 +1913,10 @@
     .light-mode .nav__links a:hover {
       color: #000 !important;
     }
-    .light-mode .crawlx-logo-text {
+    .light-mode .radix-logo-text {
       color: #0b0d17 !important;
     }
-    .light-mode .crawlx-logo-icon img {
+    .light-mode .radix-logo-icon img {
       filter: invert(1) brightness(0.2);
     }
     .light-mode .hero__title {
@@ -2155,11 +2155,11 @@
 
   <nav class="nav" id="nav">
     <div class="nav__inner">
-      <a href="#" class="crawlx-logo">
-        <div class="crawlx-logo-icon">
+      <a href="#" class="radix-logo">
+        <div class="radix-logo-icon">
           <img src="logo_tree.png" alt="RADIX Logo" style="width: 100%; height: 100%; object-fit: contain;" />
         </div>
-        <div class="crawlx-logo-text">RADI<span>X</span></div>
+        <div class="radix-logo-text">RADI<span>X</span></div>
       </a>
 
 
@@ -2191,6 +2191,7 @@
             </div>
           </label>
         </li>
+        <li><a href="login.html" style="color:var(--text-secondary); font-weight:600; text-decoration:none; margin-right:12px; transition:color 0.2s;" onmouseover="this.style.color='var(--text-primary)'" onmouseout="this.style.color='var(--text-secondary)'">Sign In</a></li>
         <li><a href="login.html" class="nav__cta-purple" id="navCtaBtn">Get Started</a></li>
       </ul>
     </div>
@@ -2219,7 +2220,7 @@
       </p>
       
       <div style="margin: 0 auto; display: flex; justify-content: center; gap: 16px;">
-        <a href="scanner.html" class="nav__cta-purple" style="padding: 16px 40px; font-size: 16px; font-weight: 700; text-decoration: none; border-radius: 12px; box-shadow: 0 10px 30px var(--accent-glow);">Find the Root</a>
+        <a href="scanner.html" onclick="if(localStorage.getItem('logged_in')!=='true'){event.preventDefault();window.location.href='login.html';}" class="nav__cta-purple" style="padding: 16px 40px; font-size: 16px; font-weight: 700; text-decoration: none; border-radius: 12px; box-shadow: 0 10px 30px var(--accent-glow);">Find the Root</a>
       </div>
     </div>
   </section>
@@ -2666,7 +2667,7 @@
     <div class="container">
       <div class="cta-card">
         <h2 class="cta-card__title">Ready to Audit Your Website?</h2>
-        <p class="cta-card__desc">Join 50,000+ SEO professionals using crawlX to find and fix critical issues. Start your free audit today.</p>
+        <p class="cta-card__desc">Join 50,000+ SEO professionals using RADIX to find and fix critical issues. Start your free audit today.</p>
         <button class="cta-card__btn" onclick="window.location.href='scanner.html';">
           Start Free SEO Audit
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
@@ -2679,7 +2680,7 @@
   <footer class="footer">
     <div class="container">
       <div class="footer__inner">
-        <p class="footer__copy">&copy; 2026 crawlX. All rights reserved.</p>
+        <p class="footer__copy">&copy; 2026 RADIX. All rights reserved.</p>
         <ul class="footer__links">
           <li><a href="#">Privacy</a></li>
           <li><a href="#">Terms</a></li>

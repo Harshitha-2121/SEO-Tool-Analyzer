@@ -10,7 +10,7 @@
   
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Performance Analyzer | crawlX</title>
+  <title>Performance Analyzer | RADIX</title>
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -909,10 +909,10 @@
     let wTotal = 0;
 
     let hasRealData = false;
-    let rd = CrawlXUtils.loadScanData(targetUrl);
+    let rd = RADIXUtils.loadScanData(targetUrl);
     
     if (!rd) {
-      CrawlXUtils.renderBlocker(
+      RADIXUtils.renderBlocker(
         "Verified performance metrics are currently unavailable",
         "No verified crawl record was found matching this domain. Performance diagnostics require a completed live crawl database record.",
         ['section', '.split-grid', '.perf-grid', '.glass-card', '#speedOptimizationsList']

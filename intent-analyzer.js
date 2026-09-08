@@ -272,7 +272,7 @@ document.addEventListener('DOMContentLoaded', () => {
       recommendationsList.innerHTML = `<p style="color:var(--text-3); text-align:center;">No EEAT diagnostics cards compiled.</p>`;
     }
 
-    renderTransparencyBlock('resultsWrapper', 'crawlX E-E-A-T and Search Intent Engine', 'Verified via narrative keywords, ssl configurations, and meta description values', 94, 'First-person keywords count, credentials keywords density, outbound citation links ratio, and security CSP/HSTS header fields.');
+    renderTransparencyBlock('resultsWrapper', 'RADIX E-E-A-T and Search Intent Engine', 'Verified via narrative keywords, ssl configurations, and meta description values', 94, 'First-person keywords count, credentials keywords density, outbound citation links ratio, and security CSP/HSTS header fields.');
   }
 
   function renderTransparencyBlock(containerId, source, status, confidence, evidence) {

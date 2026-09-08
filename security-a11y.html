@@ -10,7 +10,7 @@
   
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Security & Accessibility Audit | crawlX</title>
+  <title>Security & Accessibility Audit | RADIX</title>
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -606,7 +606,7 @@
       localStorage.setItem('current_scanned_domain', val);
       targetUrl = val.replace(/^(https?:\/\/)?(www\.)?/i, '').split('/')[0];
       
-      let rdCheck = CrawlXUtils.loadScanData(val);
+      let rdCheck = RADIXUtils.loadScanData(val);
       if (!rdCheck) {
          startCrawl(targetUrl);
       } else {
@@ -619,7 +619,7 @@
 
     // Load real crawl data from localStorage if available
     let hasRealData = false;
-    let rd = CrawlXUtils.loadScanData(targetUrl);
+    let rd = RADIXUtils.loadScanData(targetUrl);
     if (rd) {
       sSecurity = rd.security_score || 0;
       sA11y = rd.accessibility_score || 0;

@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Profile — RADIX Enterprise SEO</title>
+  <meta name="description" content="Manage your RADIX user profile, security settings, API tokens, and workspace preferences.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Bruno+Ace&family=DynaPuff:wdth,wght@86.3,400..700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg-primary: #06060f;
+      --bg-secondary: #0c0c1d;
+      --bg-card: rgba(20, 20, 28, 0.7);
+      --glass-bg: rgba(255, 255, 255, 0.04);
+      --glass-border: rgba(255, 255, 255, 0.08);
+      --glass-hover: rgba(255, 255, 255, 0.07);
+      --accent-primary: #10b981;
+      --accent-secondary: #059669;
+      --accent-glow: rgba(16, 185, 129, 0.25);
+      --text-primary: #f4f4f5;
+      --text-secondary: rgba(244, 244, 245, 0.7);
+      --text-tertiary: rgba(244, 244, 245, 0.4);
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    .main {
+      padding: 40px 36px 80px;
+      max-width: 1240px;
+      margin: 0 auto;
+    }
+
+    /* Page Header */
+    .page-header {
+      margin-bottom: 32px;
+    }
+    .page-title {
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .page-subtitle {
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin-top: 6px;
+    }
+
+    /* Layout Grid */
+    .profile-grid {
+      display: grid;
+      grid-template-columns: 340px 1fr;
+      gap: 28px;
+    }
+
+    @media (max-width: 960px) {
+      .profile-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Cards */
+    .profile-card {
+      background: var(--bg-card);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+    }
+
+    /* User Profile Hero Side */
+    .profile-avatar-wrap {
+      position: relative;
+      width: 96px;
+      height: 96px;
+      margin: 0 auto 16px;
+      cursor: pointer;
+    }
+    .profile-avatar {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 36px;
+      font-weight: 800;
+      color: #ffffff;
+      box-shadow: 0 8px 24px rgba(16, 185, 129, 0.3);
+      border: 3px solid rgba(255, 255, 255, 0.1);
+      overflow: hidden;
+    }
+    .avatar-upload-overlay {
+      position: absolute; inset: 0; border-radius: 50%;
+      background: rgba(0, 0, 0, 0.65); display: flex;
+      flex-direction: column; align-items: center; justify-content: center;
+      color: #ffffff; font-size: 11px; font-weight: 700; opacity: 0; transition: opacity 0.2s ease;
+    }
+    .profile-avatar-wrap:hover .avatar-upload-overlay {
+      opacity: 1;
+    }
+    .profile-status-badge {
+      position: absolute;
+      bottom: 2px;
+      right: 2px;
+      width: 18px;
+      height: 18px;
+      background: #10b981;
+      border: 3px solid var(--bg-primary);
+      border-radius: 50%;
+      box-shadow: 0 0 10px #10b981;
+    }
+
+    .user-name-display {
+      font-size: 20px;
+      font-weight: 800;
+      text-align: center;
+      color: var(--text-primary);
+    }
+    .user-email-display {
+      font-size: 13px;
+      color: var(--text-secondary);
+      text-align: center;
+      margin-top: 4px;
+      word-break: break-all;
+    }
+    .user-role-badge {
+      display: inline-block;
+      padding: 4px 12px;
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: #34d399;
+      font-size: 11px;
+      font-weight: 700;
+      border-radius: 20px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin: 12px auto 0;
+      text-align: center;
+    }
+
+    .stat-list {
+      margin-top: 24px;
+      padding-top: 20px;
+      border-top: 1px solid var(--glass-border);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .stat-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 13px;
+    }
+    .stat-label {
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .stat-val {
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    /* Form Section */
+    .section-title {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--glass-border);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--text-primary);
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+    @media (max-width: 600px) {
+      .form-row { grid-template-columns: 1fr; }
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .form-label {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-secondary);
+    }
+    .form-input {
+      width: 100%;
+      padding: 12px 16px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-md);
+      color: var(--text-primary);
+      font-family: inherit;
+      font-size: 14px;
+      outline: none;
+      transition: all 0.2s ease;
+    }
+    .form-input:focus {
+      border-color: var(--accent-primary);
+      background: rgba(255, 255, 255, 0.07);
+      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+    }
+
+    .btn-save {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: #ffffff;
+      border: none;
+      padding: 12px 28px;
+      border-radius: var(--radius-md);
+      font-weight: 700;
+      font-size: 14px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.25s ease;
+      box-shadow: 0 8px 24px rgba(16, 185, 129, 0.25);
+    }
+    .btn-save:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 32px rgba(16, 185, 129, 0.4);
+    }
+
+    /* API Token Box */
+    .api-token-box {
+      background: rgba(16, 185, 129, 0.06);
+      border: 1px dashed rgba(16, 185, 129, 0.3);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 12px;
+    }
+    .token-code {
+      font-family: monospace;
+      font-size: 13px;
+      color: #34d399;
+      letter-spacing: 0.05em;
+    }
+    .btn-copy {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--glass-border);
+      color: var(--text-primary);
+      padding: 6px 14px;
+      border-radius: var(--radius-sm);
+      font-weight: 600;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-copy:hover {
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    /* Alert Toast */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: #10b981;
+      color: #ffffff;
+      padding: 14px 24px;
+      border-radius: var(--radius-md);
+      font-weight: 700;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 9999;
+    }
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    /* Modal Overlay Styles */
+    .g-modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 99999 !important;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity 0.25s ease, visibility 0.25s ease;
+    }
+    .g-modal-overlay.open {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto !important;
+    }
+    .g-modal-box {
+      position: relative;
+      z-index: 100000 !important;
+      pointer-events: auto !important;
+    }
+  </style>
+</head>
+<body>
+
+  <main class="main">
+    <div class="page-header">
+      <h1 class="page-title">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        Account Profile
+      </h1>
+      <p class="page-subtitle">Manage your RADIX credentials, personal information, API key, and security configurations.</p>
+    </div>
+
+    <div class="profile-grid">
+      <!-- LEFT CARD: User Overview -->
+      <div class="profile-card" style="text-align: center;">
+        <div class="profile-avatar-wrap" onclick="document.getElementById('avatarFileInput').click()" title="Click to upload profile photo">
+          <div class="profile-avatar" id="avatarBox">
+            <span id="avatarInitials">U</span>
+            <img id="avatarImage" src="" alt="Profile Photo" style="display:none; width:100%; height:100%; object-fit:cover;" />
+          </div>
+          <div class="avatar-upload-overlay">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            <span style="margin-top:2px;">Upload</span>
+          </div>
+          <div class="profile-status-badge" title="Active Session"></div>
+        </div>
+        <input type="file" id="avatarFileInput" accept="image/*" style="display:none;" onchange="handleAvatarUpload(event)">
+        
+        <div style="margin-bottom: 12px;">
+          <button type="button" id="btnRemovePhoto" onclick="removeAvatarPhoto()" style="display:none; background:none; border:none; color:#f87171; font-size:11.5px; font-weight:700; cursor:pointer; text-decoration:underline;">Remove Photo</button>
+        </div>
+
+        <h2 class="user-name-display" id="dispName">User</h2>
+        <p class="user-email-display" id="dispEmail">user@radix.ai</p>
+        <span class="user-role-badge" id="dispRole">Active User</span>
+
+        <div class="stat-list">
+          <div class="stat-item">
+            <span class="stat-label">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+              Audits Executed
+            </span>
+            <span class="stat-val" id="statScans">0 Scans</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+              Connected Domains
+            </span>
+            <span class="stat-val" id="statDomains">0 Domains</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              Account Status
+            </span>
+            <span class="stat-val" id="accountStatusBadge" style="color: #34d399; cursor: pointer;" onclick="openOtpModal()">✓ Verified</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT CARD: Form & Settings -->
+      <div style="display: flex; flex-direction: column; gap: 24px;">
+        <!-- General Details Form -->
+        <div class="profile-card">
+          <h3 class="section-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            Personal Information
+          </h3>
+          <form id="profileForm" onsubmit="saveProfile(event)">
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label" for="profName">Full Name</label>
+                <input type="text" id="profName" class="form-input" placeholder="Your Name" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="profEmail">Email Address</label>
+                <input type="email" id="profEmail" class="form-input" placeholder="you@company.com" required>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label" for="profRole">Account Role</label>
+                <input type="text" id="profRole" class="form-input" value="User" readonly style="opacity:0.7; cursor:not-allowed;">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="profOrg">Organization</label>
+                <input type="text" id="profOrg" class="form-input" value="RADIX Intelligence Labs">
+              </div>
+            </div>
+
+            <div style="margin-top: 10px;">
+              <button type="submit" class="btn-save">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                Save Changes
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Security & API Credentials -->
+        <!-- Security & API Credentials -->
+        <div class="profile-card">
+          <h3 class="section-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
+            Developer API Credentials
+          </h3>
+          <p style="font-size: 13px; color: var(--text-secondary);">Use your secret API key to trigger background audits, site crawls, and LLM roadmaps via REST API.</p>
+
+          <div class="api-token-box">
+            <div>
+              <div style="font-size: 11px; font-weight: 700; color: var(--text-tertiary); text-transform: uppercase; margin-bottom: 4px;">Live API Key</div>
+              <div class="token-code" id="apiKeyDisplay" style="font-size: 16px; letter-spacing: 2px;">••••••••••••••••••••••••</div>
+            </div>
+            <div style="display: flex; gap: 8px;">
+              <button type="button" class="btn-copy" id="btnToggleKey" onclick="toggleApiKeyVisibility()">Show Key</button>
+              <button type="button" class="btn-copy" onclick="copyApiKey()">Copy Key</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Email Notifications Inbox Card -->
+        <div class="profile-card">
+          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
+            <h3 class="section-title" style="margin-bottom:0;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+              Account Email Notifications Log
+            </h3>
+            <button type="button" class="btn-copy" onclick="triggerTestEmailDispatch()" style="font-size:12px; padding:6px 14px;">Dispatch Test Email</button>
+          </div>
+          <p style="font-size: 13px; color: var(--text-secondary);">Security audit of welcome emails and sign-in notification messages dispatched to your email.</p>
+
+          <div id="emailLogContainer" style="margin-top: 16px;">
+            <div style="font-size: 13px; color: var(--text-tertiary); text-align: center; padding: 20px;">Loading email notifications log...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Email HTML Preview Modal -->
+  <div class="g-modal-overlay" id="emailPreviewModal">
+    <div class="g-modal-box" style="max-width: 640px; padding: 24px; max-height: 85vh; overflow-y: auto; background: #06060f; color: #fff; border: 1px solid rgba(255,255,255,0.15);">
+      <div style="display:flex; align-items:center; justify-space-between; margin-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 12px;">
+        <h3 style="font-size:16px; font-weight:700; color:#10b981;" id="emailModalTitle">Dispatched Email Preview</h3>
+        <button type="button" onclick="closeEmailPreviewModal()" style="background:none; border:none; color:#a1a1aa; cursor:pointer; font-weight:700; font-size:18px;">&times;</button>
+      </div>
+      <div id="emailModalBody" style="background:#0c0c1d; border-radius:12px; padding:16px;"></div>
+    </div>
+  </div>
+
+  <!-- OTP Email Verification Modal -->
+  <div class="g-modal-overlay" id="otpModal">
+    <div class="g-modal-box" style="max-width: 440px; padding: 28px; background: #0c0c1d; color: #fff; border: 1px solid rgba(16,185,129,0.3); border-radius: 18px; text-align: center;">
+      <div style="font-size: 32px; margin-bottom: 8px;">🔐</div>
+      <h3 style="font-size: 18px; font-weight: 800; color: #ffffff; margin-bottom: 6px;">Verify Email Address</h3>
+      <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 20px;" id="otpModalSub">
+        Enter the 6-digit verification code dispatched to <strong id="otpEmailTarget" style="color:#10b981;">harshitha.j21@gmail.com</strong>.
+      </p>
+
+      <form onsubmit="event.preventDefault(); submitOtpVerification();">
+        <div style="margin-bottom: 20px;">
+          <input type="text" id="otpCodeInput" maxlength="6" placeholder="123456" style="width: 100%; text-align: center; font-size: 24px; font-weight: 800; letter-spacing: 8px; font-family: monospace; padding: 12px; background: rgba(255,255,255,0.04); border: 1px solid rgba(16,185,129,0.4); border-radius: 10px; color: #34d399; outline: none;">
+        </div>
+
+        <div style="display: flex; gap: 10px;">
+          <button type="submit" class="btn-save" style="flex: 1; padding: 12px; font-size: 14px;">Verify Email</button>
+          <button type="button" class="btn-copy" onclick="closeOtpModal()" style="padding: 12px 16px; font-size: 13px;">Cancel</button>
+        </div>
+        
+        <div style="margin-top: 14px;">
+          <button type="button" id="btnResendOtp" onclick="sendVerificationEmail(document.getElementById('otpEmailTarget').textContent)" style="background: none; border: none; color: #10b981; font-size: 12px; font-weight: 700; cursor: pointer; text-decoration: underline;">Resend Verification Code</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="toast" id="toastMsg">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+    <span id="toastText">Profile updated successfully!</span>
+  </div>
+
+  <script src="sidebar.js"></script>
+  <script>
+    let fullApiKey = "";
+    const maskedApiKey = "••••••••••••••••••••••••";
+    let isKeyVisible = false;
+
+    // Load session data into profile
+    async function loadProfileData() {
+      const name = localStorage.getItem('user_name') || 'Guest User';
+      const email = localStorage.getItem('user_email') || 'user@radix.ai';
+      const role = localStorage.getItem('user_role') || 'User';
+      const avatar = localStorage.getItem('user_avatar');
+
+      document.getElementById('profName').value = name;
+      document.getElementById('profEmail').value = email;
+      document.getElementById('profRole').value = role;
+
+      document.getElementById('dispName').textContent = name;
+      document.getElementById('dispEmail').textContent = email;
+      document.getElementById('dispRole').textContent = role;
+
+      // Avatar Photo vs Initials
+      const img = document.getElementById('avatarImage');
+      const initials = document.getElementById('avatarInitials');
+      const btnRemove = document.getElementById('btnRemovePhoto');
+
+      if (avatar) {
+        img.src = avatar;
+        img.style.display = 'block';
+        initials.style.display = 'none';
+        if (btnRemove) btnRemove.style.display = 'inline-block';
+      } else {
+        img.style.display = 'none';
+        initials.style.display = 'inline';
+        if (btnRemove) btnRemove.style.display = 'none';
+        const initText = name.trim().split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() || 'U';
+        initials.textContent = initText;
+      }
+
+      // Fetch live per-user profile metrics & unique API key from backend
+      const token = localStorage.getItem('radix_token');
+      if (token) {
+        try {
+          const res = await fetch('/api/user/profile', {
+            headers: { 'Authorization': `Bearer ${token}` }
+          });
+          const data = await res.json();
+          if (data.success && data.user) {
+            const u = data.user;
+            fullApiKey = u.api_key || "";
+            document.getElementById('statScans').textContent = `${u.scans_count || 0} Scans`;
+            document.getElementById('statDomains').textContent = `${u.domains_count || 0} Domains`;
+            
+            const badge = document.getElementById('accountStatusBadge');
+            if (badge) {
+              if (u.email_verified) {
+                badge.innerHTML = '✓ Email Verified';
+                badge.style.color = '#34d399';
+              } else {
+                badge.innerHTML = '⚠️ Unverified (Click to Verify)';
+                badge.style.color = '#fbbf24';
+              }
+            }
+          }
+        } catch (err) {
+          console.error("Failed to load user profile stats:", err);
+        }
+      }
+
+      // Force Key Hidden on Load
+      isKeyVisible = false;
+      document.getElementById('apiKeyDisplay').textContent = maskedApiKey;
+      document.getElementById('apiKeyDisplay').style.letterSpacing = "2px";
+      document.getElementById('btnToggleKey').textContent = "Show Key";
+    }
+
+    function handleAvatarUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const dataUrl = e.target.result;
+        localStorage.setItem('user_avatar', dataUrl);
+        loadProfileData();
+        showToast('Profile photo updated successfully!');
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function removeAvatarPhoto() {
+      localStorage.removeItem('user_avatar');
+      loadProfileData();
+      showToast('Profile photo removed.');
+    }
+
+    function saveProfile(e) {
+      e.preventDefault();
+      const newName = document.getElementById('profName').value.trim();
+      const newEmail = document.getElementById('profEmail').value.trim();
+
+      if (!newName || !newEmail) return;
+
+      localStorage.setItem('user_name', newName);
+      localStorage.setItem('user_email', newEmail);
+
+      loadProfileData();
+      showToast('Profile settings saved cleanly!');
+
+      // Re-trigger sidebar reload if sidebar functions exist
+      if (typeof window.location.reload === 'function') {
+        setTimeout(() => window.location.reload(), 1200);
+      }
+    }
+
+    function toggleApiKeyVisibility() {
+      isKeyVisible = !isKeyVisible;
+      const display = document.getElementById('apiKeyDisplay');
+      const btn = document.getElementById('btnToggleKey');
+      if (isKeyVisible) {
+        display.textContent = fullApiKey;
+        display.style.letterSpacing = "0.05em";
+        btn.textContent = "Hide Key";
+      } else {
+        display.textContent = maskedApiKey;
+        display.style.letterSpacing = "2px";
+        btn.textContent = "Show Key";
+      }
+    }
+
+    function copyApiKey() {
+      navigator.clipboard.writeText(fullApiKey);
+      showToast('Full API Key copied to clipboard!');
+    }
+
+    let emailLogsCache = [];
+
+    async function fetchEmailLogs() {
+      const container = document.getElementById('emailLogContainer');
+      const userEmail = (localStorage.getItem('user_email') || '').toLowerCase().trim();
+      const token = localStorage.getItem('radix_token');
+
+      try {
+        const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
+        const r = await fetch('/api/auth/emails', { headers });
+        const d = await r.json();
+        if (d.success && Array.isArray(d.emails)) {
+          emailLogsCache = d.emails;
+          if (window.lastDispatchedEmail && !emailLogsCache.some(m => m.id === window.lastDispatchedEmail.id)) {
+            emailLogsCache.unshift(window.lastDispatchedEmail);
+          }
+          const userMails = emailLogsCache.filter(m => (m.to || '').toLowerCase().trim() === userEmail);
+
+          if (userMails.length === 0) {
+            container.innerHTML = `
+              <div style="padding:16px; background:rgba(255,255,255,0.03); border-radius:12px; font-size:13px; color:var(--text-secondary); text-align:center;">
+                No email notifications recorded for <strong>${userEmail || 'your account'}</strong> yet.
+              </div>`;
+            return;
+          }
+
+          let html = '<div style="display:flex; flex-direction:column; gap:10px;">';
+          userMails.forEach(mail => {
+            const timeStr = new Date(mail.timestamp).toLocaleString();
+            const isVerifyType = mail.type === 'verification' || mail.subject.includes('Verify');
+            const btnText = isVerifyType ? '🔐 Verify Email' : '✉️ Resend / Verify';
+            const btnAction = isVerifyType ? `openOtpModal('${mail.to}')` : `sendVerificationEmail()`;
+
+            const statusColor = mail.status === 'delivered_smtp' ? '#34d399' : '#fbbf24';
+            let statusLabel;
+            if (mail.status === 'delivered_smtp') {
+              statusLabel = 'Delivered via SMTP';
+            } else if (mail.error_details) {
+              statusLabel = 'SMTP Failed';
+            } else {
+              statusLabel = 'Logged (SMTP not configured)';
+            }
+
+            html += `
+              <div style="display:flex; align-items:center; justify-content:space-between; padding:12px 16px; background:rgba(255,255,255,0.03); border:1px solid var(--glass-border); border-radius:12px; font-size:13px;">
+                <div>
+                  <div style="font-weight:700; color:var(--text-primary); display:flex; align-items:center; gap:8px;">
+                    <span style="color:#10b981;">✉️</span> ${mail.subject}
+                  </div>
+                  <div style="font-size:11.5px; color:var(--text-secondary); margin-top:2px;">
+                    To: <strong>${mail.to}</strong> &bull; ${timeStr} &bull; Delivery: <span style="color:${statusColor}; font-weight:700;">${statusLabel}</span>
+                  </div>
+                </div>
+                <div style="display:flex; gap:8px;">
+                  <button type="button" class="btn-save" onclick="${btnAction}" style="font-size:12px; padding:6px 14px;">${btnText}</button>
+                  <button type="button" class="btn-copy" onclick="previewEmailModal('${mail.id}')" style="font-size:12px; padding:6px 12px;">View HTML</button>
+                </div>
+              </div>`;
+          });
+          html += '</div>';
+          container.innerHTML = html;
+        }
+      } catch(err) {
+        container.innerHTML = `<div style="font-size:13px; color:#f87171; text-align:center;">Failed to load email logs.</div>`;
+      }
+    }
+
+    function previewEmailModal(id) {
+      const mail = emailLogsCache.find(m => m.id === id);
+      if (!mail) return;
+      document.getElementById('emailModalTitle').textContent = mail.subject;
+      document.getElementById('emailModalBody').innerHTML = mail.content_html;
+      document.getElementById('emailPreviewModal').classList.add('open');
+    }
+
+    function openOtpModal(targetEmail) {
+      const email = targetEmail || localStorage.getItem('user_email') || 'harshitha.j2121@gmail.com';
+      document.getElementById('otpEmailTarget').textContent = email;
+      document.getElementById('otpModal').classList.add('open');
+      document.getElementById('otpCodeInput').focus();
+    }
+
+    function closeOtpModal() {
+      document.getElementById('otpModal').classList.remove('open');
+    }
+
+    async function sendVerificationEmail(overrideEmail) {
+      const userEmail = (overrideEmail && overrideEmail.includes('@')) ? overrideEmail.trim() : (localStorage.getItem('user_email') || 'harshitha.j2121@gmail.com');
+      const userName = localStorage.getItem('user_name') || 'Harshitha J';
+      showToast('Dispatching verification code...');
+
+      try {
+        const r = await fetch('/api/auth/send-verification-email', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: userEmail, name: userName })
+        });
+        const d = await r.json();
+        if (d.success) {
+          showToast(`Verification code sent to ${userEmail}!`);
+          if (d.email) window.lastDispatchedEmail = d.email;
+          openOtpModal(userEmail);
+          setTimeout(fetchEmailLogs, 400);
+        } else {
+          showToast(d.error || 'Failed to dispatch verification email.');
+        }
+      } catch(err) {
+        showToast('Error dispatching verification email.');
+      }
+    }
+
+    async function submitOtpVerification() {
+      const code = document.getElementById('otpCodeInput').value.trim();
+      const targetEl = document.getElementById('otpEmailTarget');
+      const email = (targetEl && targetEl.textContent && targetEl.textContent.includes('@')) ? targetEl.textContent.trim() : (localStorage.getItem('user_email') || 'harshitha.j2121@gmail.com');
+
+      if (!code || code.length < 4) {
+        showToast('Please enter the 6-digit verification code.');
+        return;
+      }
+
+      try {
+        const r = await fetch('/api/auth/verify-email', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, code })
+        });
+        const d = await r.json();
+        if (d.success) {
+          localStorage.setItem('email_verified', 'true');
+          closeOtpModal();
+          showToast('🎉 Email address verified successfully!');
+          const badge = document.getElementById('accountStatusBadge');
+          if (badge) {
+            badge.innerHTML = '✓ Email Verified';
+            badge.style.color = '#34d399';
+          }
+        } else {
+          showToast(d.error || 'Invalid 6-digit code.');
+        }
+      } catch(err) {
+        showToast('Verification failed. Try again.');
+      }
+    }
+
+    async function triggerTestEmailDispatch() {
+      await sendVerificationEmail();
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      loadProfileData();
+      fetchEmailLogs();
+
+      // Check query params for auto-verification link
+      const params = new URLSearchParams(window.location.search);
+      const code = params.get('verify_code');
+      if (code) {
+        document.getElementById('otpCodeInput').value = code;
+        openOtpModal();
+        submitOtpVerification();
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,8 +1,8 @@
 #!/bin/bash
-# CrawlX Platform - Full Startup Script
+# RADIX Platform - Full Startup Script
 # Run this whenever the server restarts: bash /home/ubuntu/seo-audit-platform/start_all.sh
 
-echo "🔄 Starting CrawlX Platform..."
+echo "🔄 Starting RADIX Platform..."
 
 # Kill any old processes
 pkill -f "server.py" 2>/dev/null
@@ -37,7 +37,7 @@ sleep 12
 TUNNEL_URL=$(grep -o 'https://[a-zA-Z0-9-]*\.trycloudflare\.com' cloudflare_tunnel.log | tail -1)
 echo ""
 echo "=============================================="
-echo "✅ CrawlX Platform is LIVE!"
+echo "✅ RADIX Platform is LIVE!"
 echo ""
 echo "🌐 Public URL: $TUNNEL_URL"
 echo ""

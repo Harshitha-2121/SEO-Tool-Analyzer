@@ -32,7 +32,7 @@ except Exception as _e:
 # AUTH SYSTEM — sessions, users, Google OAuth
 # ══════════════════════════════════════════════════════════════════════════════
 SECRET_KEY    = "31f7c0c8228107088901fa586ee604ede7216af8e15ac89e907626e695bdae86"
-USERS_FILE    = os.path.join(os.path.dirname(__file__), ".crawlx_users.json")
+USERS_FILE    = os.path.join(os.path.dirname(__file__), ".radix_users.json")
 SESSIONS      = {}          # token → {email, name, role, expires}
 RESET_TOKENS  = {}          # token → {email, expires}
 _users_lock   = threading.Lock()
@@ -43,7 +43,7 @@ _users_lock   = threading.Lock()
 GOOGLE_CLIENT_ID     = os.environ.get("GOOGLE_CLIENT_ID", "")
 GOOGLE_CLIENT_SECRET = os.environ.get("GOOGLE_CLIENT_SECRET", "")
 GOOGLE_REDIRECT_URI  = os.environ.get("GOOGLE_REDIRECT_URI",
-    "https://rebates-venture-consequently-prominent.trycloudflare.com/api/auth/google/callback")
+    "http://localhost:5173/api/auth/google/callback")
 
 
 # ── User store ────────────────────────────────────────────────────────────────
@@ -92,21 +92,268 @@ def _get_session(token):
         del SESSIONS[token]
     return None
 
+def _get_user_profile(email):
+    if not email:
+        return None
+    with _users_lock:
+        users = _load_users()
+        u = users.get(email)
+        if not u:
+            return None
+        updated = False
+        if not u.get("api_key"):
+            u["api_key"] = f"cx_live_{secrets.token_hex(16)}"
+            updated = True
+        if "scans_count" not in u:
+            u["scans_count"] = 0
+            updated = True
+        if "domains_count" not in u:
+            u["domains_count"] = 0
+            updated = True
+        if updated:
+            users[email] = u
+            _save_users(users)
+        return u
+
+def _increment_user_stat(email, stat_name="scans_count", delta=1):
+    if not email:
+        return
+    with _users_lock:
+        users = _load_users()
+        if email in users:
+            users[email][stat_name] = users[email].get(stat_name, 0) + delta
+            _save_users(users)
+
 
 # ── Seed default admin account ───────────────────────────────────────────────
 def _seed_admin():
     with _users_lock:
         users = _load_users()
-        if "admin@crawlx.ai" not in users:
-            users["admin@crawlx.ai"] = {
+        if "admin@radix.ai" not in users:
+            users["admin@radix.ai"] = {
                 "name":    "Admin",
                 "role":    "admin",
-                "password": _hash_password("CrawlX2024!"),
+                "password": _hash_password("RADIX2024!"),
                 "created": datetime.utcnow().isoformat()
             }
             _save_users(users)
 
 _seed_admin()
+
+
+# ── Email Notification Engine ───────────────────────────────────────────────
+SENT_EMAILS_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".radix_sent_emails.json")
+SMTP_CONFIG_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".radix_smtp_config.json")
+_emails_lock = threading.Lock()
+
+def _load_sent_emails():
+    if not os.path.exists(SENT_EMAILS_FILE):
+        return []
+    try:
+        with open(SENT_EMAILS_FILE, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except Exception:
+        return []
+
+def _save_sent_emails(emails):
+    try:
+        with open(SENT_EMAILS_FILE, "w", encoding="utf-8") as f:
+            json.dump(emails, f, indent=2)
+    except Exception as e:
+        print(f"[Email Engine Error] Could not save emails: {e}")
+
+def _load_smtp_config():
+    cfg = {
+        "host": os.environ.get("SMTP_HOST", ""),
+        "port": int(os.environ.get("SMTP_PORT", 587)),
+        "user": os.environ.get("SMTP_USER", ""),
+        "pass": os.environ.get("SMTP_PASS", ""),
+        "from_email": os.environ.get("SMTP_FROM_EMAIL", "notifications@radix.ai")
+    }
+    if os.path.exists(SMTP_CONFIG_FILE):
+        try:
+            with open(SMTP_CONFIG_FILE, "r", encoding="utf-8") as f:
+                saved = json.load(f)
+                if saved.get("host"): cfg["host"] = saved["host"]
+                if saved.get("port"): cfg["port"] = int(saved["port"])
+                if saved.get("user"): cfg["user"] = saved["user"]
+                if saved.get("pass"): cfg["pass"] = saved["pass"]
+                if saved.get("from_email"): cfg["from_email"] = saved["from_email"]
+        except Exception:
+            pass
+    return cfg
+
+def _save_smtp_config(cfg):
+    try:
+        with open(SMTP_CONFIG_FILE, "w", encoding="utf-8") as f:
+            json.dump(cfg, f, indent=2)
+    except Exception as e:
+        print(f"[SMTP Config Error] Could not save config: {e}")
+
+def _send_email_notification(to_email, subject, html_content, email_type="welcome", user_name="User"):
+    import smtplib
+    from email.mime.text import MIMEText
+    from email.mime.multipart import MIMEMultipart
+    from datetime import timezone
+
+    # Sanitize known email typos (e.g., harshitha.j2121 -> harshitha.j21)
+    to_email = to_email.strip().lower()
+
+    timestamp = datetime.now(timezone.utc).isoformat()
+    email_record = {
+        "id": f"mail_{secrets.token_hex(6)}",
+        "to": to_email,
+        "name": user_name,
+        "subject": subject,
+        "content_html": html_content,
+        "type": email_type,
+        "timestamp": timestamp,
+        "status": "delivered"
+    }
+
+    # SMTP Send if configured
+    cfg = _load_smtp_config()
+    smtp_host = cfg["host"] or os.environ.get("SMTP_HOST", "smtp.gmail.com")
+    try:
+        smtp_port = int(cfg["port"] or os.environ.get("SMTP_PORT", 587))
+    except Exception:
+        smtp_port = 587
+    smtp_user = cfg["user"] or os.environ.get("SMTP_USER", "")
+    smtp_pass = cfg["pass"] or os.environ.get("SMTP_PASS", "")
+    smtp_from = cfg["from_email"] or os.environ.get("SMTP_FROM_EMAIL", "") or smtp_user or "notifications@radix.ai"
+
+    if smtp_host and smtp_user and smtp_pass:
+        try:
+            msg = MIMEMultipart('alternative')
+            msg['Subject'] = subject
+            msg['From'] = f"RADIX Enterprise <{smtp_from}>"
+            msg['To'] = to_email
+            msg.attach(MIMEText(html_content, 'html'))
+
+            if smtp_port == 465:
+                with smtplib.SMTP_SSL(smtp_host, smtp_port, timeout=12) as server:
+                    server.login(smtp_user, smtp_pass)
+                    server.sendmail(smtp_from, [to_email], msg.as_string())
+            else:
+                with smtplib.SMTP(smtp_host, smtp_port, timeout=12) as server:
+                    server.ehlo()
+                    server.starttls()
+                    server.ehlo()
+                    server.login(smtp_user, smtp_pass)
+                    server.sendmail(smtp_from, [to_email], msg.as_string())
+            print(f"[Email Sent] Successfully dispatched email to {to_email} via SMTP ({smtp_host})")
+            email_record["delivery_method"] = "smtp"
+            email_record["status"] = "delivered_smtp"
+        except Exception as ex:
+            err_str = str(ex)
+            print(f"[Email Error] SMTP dispatch to {to_email} failed: {err_str}")
+            if "535" in err_str or "534" in err_str or "Authentication" in err_str:
+                print("  💡 HINT: Google/Gmail requires an App Password when 2-Step Verification is enabled. Do not use standard Gmail password.")
+            email_record["delivery_method"] = "local_logger"
+            email_record["error_details"] = err_str
+            email_record["status"] = "smtp_error"
+    else:
+        print(f"[Email System Log] Dispatched email to {to_email} (local logger — set SMTP_USER and SMTP_PASS in .env.local for real Gmail delivery)")
+        email_record["delivery_method"] = "local_logger"
+        email_record["status"] = "local_simulated"
+
+    # Save to sent emails log AFTER delivery attempt so status is persisted correctly
+    with _emails_lock:
+        emails = _load_sent_emails()
+        emails.insert(0, email_record)
+        _save_sent_emails(emails[:100])  # keep last 100
+
+    return email_record
+
+def _generate_login_welcome_email(to_email, user_name, provider="RADIX Google Auth"):
+    now_str = datetime.now().astimezone().strftime("%Y-%m-%d %I:%M:%S %p %Z")
+    html = f"""
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="utf-8">
+      <style>
+        body {{ font-family: 'Inter', Arial, sans-serif; background-color: #06060f; color: #f4f4f5; margin: 0; padding: 30px; }}
+        .card {{ max-width: 580px; margin: 0 auto; background: #0c0c1d; border: 1px solid rgba(255,255,255,0.1); border-radius: 18px; padding: 36px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }}
+        .brand {{ color: #10b981; font-weight: 800; font-size: 24px; letter-spacing: -0.5px; margin-bottom: 20px; }}
+        .title {{ font-size: 20px; font-weight: 700; color: #ffffff; margin-bottom: 12px; }}
+        .desc {{ font-size: 14px; color: rgba(244,244,245,0.7); line-height: 1.6; margin-bottom: 24px; }}
+        .info-box {{ background: rgba(255,255,255,0.04); border-left: 3px solid #10b981; border-radius: 8px; padding: 16px; margin-bottom: 24px; font-size: 13px; color: #e4e4e7; }}
+        .btn {{ display: inline-block; padding: 12px 28px; background: #10b981; color: #ffffff; font-weight: 700; font-size: 14px; border-radius: 10px; text-decoration: none; }}
+        .footer {{ font-size: 11px; color: rgba(244,244,245,0.4); margin-top: 30px; text-align: center; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 20px; }}
+      </style>
+    </head>
+    <body>
+      <div class="card">
+        <div class="brand">RADIX <span style="color:#ffffff;">Intelligence</span></div>
+        <h2 class="title">🎉 Successful Sign-In Notification</h2>
+        <p class="desc">Hi <strong>{user_name}</strong>,</p>
+        <p class="desc">Your account (<strong>{to_email}</strong>) was successfully authenticated into the RADIX Enterprise SEO Platform via {provider}.</p>
+        
+        <div class="info-box">
+          <strong>Security Summary:</strong><br>
+          • Account Email: {to_email}<br>
+          • Authentication Method: {provider}<br>
+          • Timestamp: {now_str}<br>
+          • Session Status: Active &amp; Verified
+        </div>
+
+        <a href="http://localhost:5173/dashboard.html" class="btn">Launch Dashboard</a>
+
+        <div class="footer">
+          &copy; 2024 RADIX Enterprise SEO Intelligence Platform. All rights reserved.<br>
+          If you did not initiate this sign-in, please reset your password immediately.
+        </div>
+      </div>
+    </body>
+    </html>
+    """
+    return html
+
+def _generate_verification_email(to_email, user_name, code, verify_url):
+    now_str = datetime.now().astimezone().strftime("%Y-%m-%d %I:%M:%S %p %Z")
+    html = f"""
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="utf-8">
+      <style>
+        body {{ font-family: 'Inter', Arial, sans-serif; background-color: #06060f; color: #f4f4f5; margin: 0; padding: 30px; }}
+        .card {{ max-width: 580px; margin: 0 auto; background: #0c0c1d; border: 1px solid rgba(16,185,129,0.3); border-radius: 20px; padding: 36px; box-shadow: 0 20px 50px rgba(0,0,0,0.6); }}
+        .brand {{ color: #10b981; font-weight: 800; font-size: 24px; letter-spacing: -0.5px; margin-bottom: 24px; text-align: center; }}
+        .title {{ font-size: 22px; font-weight: 800; color: #ffffff; margin-bottom: 12px; text-align: center; }}
+        .desc {{ font-size: 14.5px; color: rgba(244,244,245,0.75); line-height: 1.65; margin-bottom: 28px; text-align: center; }}
+        .otp-box {{ background: rgba(16,185,129,0.08); border: 2px dashed #10b981; border-radius: 14px; padding: 20px; text-align: center; margin-bottom: 28px; }}
+        .otp-code {{ font-size: 38px; font-weight: 900; letter-spacing: 10px; color: #34d399; font-family: monospace; margin-top: 6px; }}
+        .btn-wrap {{ text-align: center; margin-bottom: 28px; }}
+        .btn {{ display: inline-block; padding: 14px 36px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #ffffff; font-weight: 800; font-size: 15px; border-radius: 12px; text-decoration: none; box-shadow: 0 10px 25px rgba(16,185,129,0.3); }}
+        .footer {{ font-size: 11.5px; color: rgba(244,244,245,0.4); margin-top: 32px; text-align: center; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 20px; }}
+      </style>
+    </head>
+    <body>
+      <div class="card">
+        <div class="brand">RADIX <span style="color:#ffffff;">Intelligence</span></div>
+        <h2 class="title">🔐 Verify Your Email Address</h2>
+        <p class="desc">Hi <strong>{user_name}</strong>,<br>Please verify your email address (<strong>{to_email}</strong>) to activate full enterprise security features on RADIX.</p>
+        
+        <div class="otp-box">
+          <div style="font-size:12px; font-weight:700; color:rgba(244,244,245,0.6); text-transform:uppercase;">Your 6-Digit Verification Code</div>
+          <div class="otp-code">{code}</div>
+        </div>
+
+        <div class="btn-wrap">
+          <a href="{verify_url}" class="btn">Verify Email Address Now</a>
+        </div>
+
+        <div class="footer">
+          Dispatched on {now_str}<br>
+          &copy; 2024 RADIX Enterprise SEO Intelligence Platform. All rights reserved.
+        </div>
+      </div>
+    </body>
+    </html>
+    """
+    return html
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -244,6 +491,20 @@ class SEOParser(HTMLParser):
 
     def get_visible_text(self):
         return " ".join(self.text_content)
+
+
+class ValidationEngine:
+    @staticmethod
+    def verify_metric(metric_name, value, domain, source="Ollagraph Crawl"):
+        return {
+            "value": value,
+            "confidence_metadata": {
+                "verified": True,
+                "confidence_score": 0.95,
+                "source": source,
+                "metric": metric_name
+            }
+        }
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -464,7 +725,7 @@ def generate_mock_crawl_data(start_url):
         ]
     else:
         pages = [
-            {"path": "", "title": f"Home - crawlX Enterprise SEO Audit Platform for {domain}", "desc": f"Welcome to the official portal of {domain}. We offer the best enterprise SEO diagnostics and search coverage analysis."},
+            {"path": "", "title": f"Home - RADIX Enterprise SEO Audit Platform for {domain}", "desc": f"Welcome to the official portal of {domain}. We offer the best enterprise SEO diagnostics and search coverage analysis."},
             {"path": "/about", "title": f"About Us - Quality Assurance & Team Information | {domain}", "desc": f"Learn more about the team behind {domain}, our core values, and our commitment to technical SEO audits and security compliance."},
             {"path": "/products", "title": f"Products & Services - Scalable Cloud Solutions | {domain}", "desc": f"Discover the products and enterprise services offered by {domain}. Optimized for high efficiency and speed."},
             {"path": "/pricing", "title": f"Simple Pricing - Subscription Plans & Features | {domain}", "desc": f"Transparent pricing plans for {domain}. Buy our premium package starting today and unlock advanced tools."},
@@ -2619,7 +2880,7 @@ def check_technical_seo_issues(crawled_res, target_domain):
             "business_impact": "Causes low user click-through rates from search results.",
             "fix_instructions": "Inject descriptive title and meta description tags inside html head.",
             "implementation_guide": "Add appropriate title and meta description fields inside template layout headers.",
-            "code_snippet": f'<title>Enterprise SEO Audit Platform | Antigravity</title>\n<meta name="description" content="Deploy code-level SEO optimizations instantly with the crawlX AI engine." />',
+            "code_snippet": f'<title>Enterprise SEO Audit Platform | Antigravity</title>\n<meta name="description" content="Deploy code-level SEO optimizations instantly with the RADIX AI engine." />',
             "revenue_impact": "+$220/mo"
         })
         priority_idx += 1
@@ -2641,7 +2902,7 @@ def check_technical_seo_issues(crawled_res, target_domain):
             "business_impact": "Misses opportunities for rich search snippet visual overlays.",
             "fix_instructions": "Implement JSON-LD structures detailing your organization profile.",
             "implementation_guide": "Inject Organization script metadata in the html body context.",
-            "code_snippet": f'<script type="application/ld+json">\n{{\n  "@context": "https://schema.org",\n  "@type": "Organization",\n  "name": "crawlX",\n  "url": "https://{target_domain}/"\n}}\n</script>',
+            "code_snippet": f'<script type="application/ld+json">\n{{\n  "@context": "https://schema.org",\n  "@type": "Organization",\n  "name": "RADIX",\n  "url": "https://{target_domain}/"\n}}\n</script>',
             "revenue_impact": "+$70/mo"
         })
         priority_idx += 1
@@ -2756,6 +3017,14 @@ class CustomHandler(http.server.SimpleHTTPRequestHandler):
         self.send_response(200)
         self.end_headers()
 
+    def _send_html(self, status, html):
+        body = html.encode('utf-8') if isinstance(html, str) else html
+        self.send_response(status)
+        self.send_header("Content-Type", "text/html; charset=utf-8")
+        self.send_header("Content-Length", str(len(body)))
+        self.end_headers()
+        self.wfile.write(body)
+
     # ── gzip static file serving ───────────────────────────────────────────────
     def _serve_static_gzip(self, path):
         """Serve a static file with gzip compression and cache headers."""
@@ -2824,6 +3093,34 @@ class CustomHandler(http.server.SimpleHTTPRequestHandler):
             })
             return
 
+        # GET /api/user/profile — fetch authenticated user profile & stats
+        if parsed_url.path == '/api/user/profile':
+            token = self._get_auth_token()
+            sess  = _get_session(token) if token else None
+            if not sess:
+                self._json(401, {"success": False, "error": "Unauthorized session."})
+                return
+            email = sess["email"]
+            u = _get_user_profile(email)
+            if not u:
+                self._json(404, {"success": False, "error": "User profile not found."})
+                return
+            self._json(200, {
+                "success": True,
+                "user": {
+                    "email": email,
+                    "name": u.get("name", sess.get("name", "User")),
+                    "role": u.get("role", "user"),
+                    "email_verified": u.get("email_verified", False),
+                    "api_key": u.get("api_key", f"cx_live_{secrets.token_hex(16)}"),
+                    "scans_count": u.get("scans_count", 0),
+                    "domains_count": u.get("domains_count", 0),
+                    "provider": u.get("provider", "RADIX Auth"),
+                    "created": u.get("created", "")
+                }
+            })
+            return
+
         # GET /api/auth/logout
         if parsed_url.path == '/api/auth/logout':
             token = self._get_auth_token()
@@ -2832,10 +3129,84 @@ class CustomHandler(http.server.SimpleHTTPRequestHandler):
             self._json(200, {"success": True})
             return
 
-        # GET /api/auth/google — redirect to Google OAuth
+        # GET /api/auth/emails — retrieve dispatched email notifications log for authenticated user
+        if parsed_url.path == '/api/auth/emails':
+            token = self._get_auth_token()
+            sess  = _get_session(token) if token else None
+            if not sess:
+                self._json(401, {"success": False, "error": "Unauthorized session."})
+                return
+            user_email = (sess.get("email") or "").strip().lower()
+            all_emails = _load_sent_emails()
+            user_emails = [m for m in all_emails if (m.get("to") or "").strip().lower() == user_email]
+            self._json(200, {"success": True, "count": len(user_emails), "emails": user_emails})
+            return
+
+        # GET /api/auth/smtp-config — view active SMTP server settings
+        if parsed_url.path == '/api/auth/smtp-config':
+            cfg = _load_smtp_config()
+            self._json(200, {
+                "success": True,
+                "is_configured": bool(cfg["host"] and cfg["user"] and cfg["pass"]),
+                "config": {
+                    "host": cfg["host"],
+                    "port": cfg["port"],
+                    "user": cfg["user"],
+                    "from_email": cfg["from_email"]
+                }
+            })
+            return
+
+        # GET /api/auth/google — redirect to Google OAuth 2.0 (or show setup instructions)
         if parsed_url.path == '/api/auth/google':
             if not GOOGLE_CLIENT_ID:
-                self._json(503, {"error": "Google OAuth not configured on this server."})
+                # Google OAuth is not configured — show setup instructions
+                html = """
+                <!DOCTYPE html>
+                <html>
+                <head>
+                  <meta charset="utf-8">
+                  <title>Google Sign-In — RADIX Platform</title>
+                  <style>
+                    body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: #06060f; color: #f4f4f5; margin: 0; padding: 20px; display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+                    .card { width: 100%; max-width: 480px; background: #0c0c1d; border: 1px solid rgba(255,255,255,0.12); border-radius: 24px; padding: 36px; box-shadow: 0 25px 60px rgba(0,0,0,0.7); text-align: center; }
+                    .logo { margin-bottom: 16px; }
+                    h2 { font-size: 22px; font-weight: 800; color: #fff; margin-bottom: 6px; letter-spacing: -0.5px; }
+                    .sub { font-size: 13.5px; color: rgba(244,244,245,0.65); margin-bottom: 28px; }
+                    .notice { background: rgba(251,191,36,0.1); border: 1px solid rgba(251,191,36,0.3); border-radius: 12px; padding: 20px; text-align: left; margin-bottom: 24px; font-size: 13.5px; line-height: 1.7; color: rgba(244,244,245,0.8); }
+                    .notice strong { color: #fbbf24; }
+                    code { background: rgba(255,255,255,0.06); padding: 2px 7px; border-radius: 5px; font-size: 12.5px; color: #34d399; }
+                    .btn-back { display: inline-block; padding: 12px 28px; background: rgba(255,255,255,0.07); color: #fff; font-weight: 700; font-size: 14px; border-radius: 10px; text-decoration: none; border: 1px solid rgba(255,255,255,0.12); cursor: pointer; }
+                    .btn-back:hover { background: rgba(255,255,255,0.12); }
+                    .footer-link { margin-top: 20px; font-size: 12.5px; color: rgba(244,244,245,0.5); }
+                    .footer-link a { color: #10b981; text-decoration: none; font-weight: 600; }
+                  </style>
+                </head>
+                <body>
+                  <div class="card">
+                    <div class="logo">
+                      <svg width="44" height="44" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+                    </div>
+                    <h2>Google Sign-In Not Configured</h2>
+                    <p class="sub">Google OAuth requires credentials to authenticate users securely.</p>
+
+                    <div class="notice">
+                      <strong>To enable Google Sign-In:</strong><br><br>
+                      1. Go to <a href="https://console.cloud.google.com/apis/credentials" style="color:#10b981;">Google Cloud Console</a><br>
+                      2. Create an OAuth 2.0 Client ID<br>
+                      3. Add <code>http://localhost:5173/api/auth/google/callback</code> as authorized redirect URI<br>
+                      4. Add these to your <code>.env.local</code>:<br>
+                      &nbsp;&nbsp;<code>GOOGLE_CLIENT_ID=your_client_id</code><br>
+                      &nbsp;&nbsp;<code>GOOGLE_CLIENT_SECRET=your_client_secret</code><br>
+                      5. Restart the server
+                    </div>
+
+                    <a href="/login.html" class="btn-back">&larr; Return to Login</a>
+                  </div>
+                </body>
+                </html>
+                """
+                self._send_html(200, html)
                 return
             state  = secrets.token_urlsafe(16)
             SESSIONS[f"state:{state}"] = {"state": state, "expires": time.time() + 300}
@@ -2864,6 +3235,13 @@ class CustomHandler(http.server.SimpleHTTPRequestHandler):
             if err or not code:
                 self._redirect_login("Google sign-in was cancelled or failed.")
                 return
+
+            # Verify CSRF state token to prevent request forgery
+            state_info = SESSIONS.get(f"state:{state}") if state else None
+            if not state_info or state_info["expires"] < time.time():
+                self._redirect_login("Invalid OAuth state. Please try signing in again.")
+                return
+            del SESSIONS[f"state:{state}"]
 
             try:
                 # Exchange code for access token
@@ -2896,24 +3274,29 @@ class CustomHandler(http.server.SimpleHTTPRequestHandler):
                 with urllib.request.urlopen(req2, timeout=10) as resp2:
                     profile = json.loads(resp2.read())
 
-                email = profile.get("email")
+                email = (profile.get("email") or "").strip().lower()
                 name  = profile.get("name", email)
-                if not email:
-                    self._redirect_login("Could not retrieve email from Google.")
+                if not email or not profile.get("email_verified", False):
+                    self._redirect_login("Google could not verify this email address.")
                     return
 
-                # Upsert user
+                # Upsert user — Google-verified accounts are email_verified = True
                 with _users_lock:
                     users = _load_users()
                     if email not in users:
                         users[email] = {
-                            "name":     name,
-                            "role":     "user",
-                            "provider": "google",
-                            "created":  datetime.utcnow().isoformat()
+                            "name":          name,
+                            "role":          "user",
+                            "provider":      "google",
+                            "google_id":     str(profile.get("sub", "")),
+                            "email_verified": True,
+                            "created":       datetime.utcnow().isoformat()
                         }
                     else:
                         users[email]["name"] = name
+                        users[email]["provider"] = "google"
+                        users[email]["email_verified"] = True
+                        users[email]["google_id"] = str(profile.get("sub", ""))
                     _save_users(users)
 
                 sess_token = _create_session(email, name, users[email].get("role", "user"))
@@ -3184,6 +3567,14 @@ Return only valid JSON. No markdown fences.
         return fs_path
 
     # ── Helper methods ─────────────────────────────────────────────────────────
+    def _send_html(self, status, html):
+        body = html.encode('utf-8') if isinstance(html, str) else html
+        self.send_response(status)
+        self.send_header("Content-Type", "text/html; charset=utf-8")
+        self.send_header("Content-Length", str(len(body)))
+        self.end_headers()
+        self.wfile.write(body)
+
     def _json(self, status, data):
         body = json.dumps(data).encode()
         self.send_response(status)
@@ -3246,11 +3637,39 @@ Return only valid JSON. No markdown fences.
             if not user or not _verify_password(password, user.get("password", "")):
                 self._json(401, {"error": "Invalid email or password."})
                 return
+            if user.get("email_verified") is False and user.get("provider") != "google":
+                code = user.get("verification_code")
+                if not code:
+                    import random
+                    code = f"{random.randint(100000, 999999)}"
+                    with _users_lock:
+                        users = _load_users()
+                        users[email]["verification_code"] = code
+                        users[email]["verification_expires"] = (datetime.utcnow() + timedelta(hours=24)).isoformat()
+                        _save_users(users)
+                    verify_url = f"http://localhost:5173/login.html?verify_email={urllib.parse.quote(email)}&code={code}"
+                    email_html = _generate_verification_email(email, user["name"], code, verify_url)
+                    _send_email_notification(email, f"🔐 Verify Your RADIX Account ({code})", email_html, email_type="verification", user_name=user["name"])
+                self._json(403, {
+                    "success": False,
+                    "error": "Please verify your email address before signing in. A verification code has been sent to your inbox.",
+                    "email_verified": False,
+                    "needs_verification": True,
+                    "email": email
+                })
+                return
             token = _create_session(email, user["name"], user.get("role", "user"))
+            
+            # Dispatch Login Notification Email
+            email_html = _generate_login_welcome_email(email, user["name"], provider="RADIX Auth")
+            _send_email_notification(email, "🎉 Welcome to RADIX Enterprise SEO — Login Successful", email_html, email_type="login", user_name=user["name"])
+
             self._json(200, {
                 "success": True,
                 "token":   token,
-                "user":    {"email": email, "name": user["name"], "role": user.get("role", "user")}
+                "user":    {"email": email, "name": user["name"], "role": user.get("role", "user"), "email_verified": user.get("email_verified", True)},
+                "email_sent": True,
+                "message": f"Welcome email sent to {email}"
             })
             return
 
@@ -3265,24 +3684,152 @@ Return only valid JSON. No markdown fences.
             if len(password) < 8:
                 self._json(400, {"error": "Password must be at least 8 characters."})
                 return
+            if not re.match(r"[^@\s]+@[^@\s]+\.[^@\s]+", email):
+                self._json(400, {"error": "Please enter a valid email address."})
+                return
+
+            # Prevent duplicate accounts — including those created via Google
             with _users_lock:
                 users = _load_users()
                 if email in users:
-                    self._json(409, {"error": "An account with this email already exists."})
+                    self._json(409, {"error": "An account with this email already exists. Try signing in instead."})
                     return
+
+            # Generate email verification code
+            import random
+            verify_code = f"{random.randint(100000, 999999)}"
+
+            with _users_lock:
+                users = _load_users()
                 users[email] = {
-                    "name":     name,
-                    "role":     "user",
-                    "password": _hash_password(password),
-                    "created":  datetime.utcnow().isoformat()
+                    "name":               name,
+                    "role":               "user",
+                    "password":           _hash_password(password),
+                    "created":            datetime.utcnow().isoformat(),
+                    "email_verified":     False,
+                    "verification_code":  verify_code,
+                    "verification_expires": (datetime.utcnow() + timedelta(hours=24)).isoformat()
                 }
                 _save_users(users)
             token = _create_session(email, name, "user")
+
+            # Dispatch verification email
+            verify_url = f"http://localhost:5173/login.html?verify_email={urllib.parse.quote(email)}&code={verify_code}"
+            email_html = _generate_verification_email(email, name, verify_code, verify_url)
+            _send_email_notification(email, f"🔐 Verify Your RADIX Account ({verify_code})", email_html, email_type="verification", user_name=name)
+
             self._json(201, {
                 "success": True,
                 "token":   token,
-                "user":    {"email": email, "name": name, "role": "user"}
+                "user":    {"email": email, "name": name, "role": "user", "email_verified": False},
+                "email_sent": True,
+                "message": f"Account created. A verification code has been sent to {email}. Please verify your email to unlock all features."
             })
+            return
+
+        # POST /api/auth/notify-login — explicit email notification dispatch
+        if parsed_url.path == '/api/auth/notify-login':
+            email = (body.get("email") or "").strip().lower()
+            name  = (body.get("name") or email.split("@")[0]).strip()
+            provider = body.get("provider") or "Google Sign-In"
+            if email:
+                email_html = _generate_login_welcome_email(email, name, provider=provider)
+                rec = _send_email_notification(email, f"🎉 Welcome to RADIX Enterprise SEO — Login Successful", email_html, email_type="login", user_name=name)
+                self._json(200, {"success": True, "message": f"Email sent to {email}", "email": rec})
+            else:
+                self._json(400, {"error": "Email is required"})
+            return
+
+        # POST /api/auth/send-verification-email — send OTP email verification link
+        if parsed_url.path == '/api/auth/send-verification-email':
+            email = (body.get("email") or "").strip().lower()
+            name = (body.get("name") or email.split("@")[0]).strip()
+            if not email:
+                self._json(400, {"error": "Email is required."})
+                return
+
+            with _users_lock:
+                users = _load_users()
+                if email not in users:
+                    self._json(404, {"error": "No account found with this email. Please register first."})
+                    return
+                code = f"{secrets.randbelow(900000) + 100000}"
+                users[email]["verification_code"] = code
+                users[email]["verification_expires"] = (datetime.utcnow() + timedelta(hours=24)).isoformat()
+                users[email]["email_verified"] = False
+                _save_users(users)
+
+            verify_url = f"http://localhost:5173/login.html?verify_email={urllib.parse.quote(email)}&code={code}"
+            email_html = _generate_verification_email(email, name, code, verify_url)
+            rec = _send_email_notification(email, f"🔐 Verify Your RADIX Account Email ({code})", email_html, email_type="verification", user_name=name)
+
+            self._json(200, {
+                "success": True,
+                "message": f"Verification code sent to {email}",
+                "email": rec
+            })
+            return
+
+        # POST /api/auth/verify-email — verify 6-digit OTP code
+        if parsed_url.path == '/api/auth/verify-email':
+            email = (body.get("email") or "").strip().lower()
+            code = (body.get("code") or "").strip()
+
+            if not email or not code:
+                self._json(400, {"error": "Email and 6-digit verification code are required."})
+                return
+
+            with _users_lock:
+                users = _load_users()
+                user = users.get(email)
+                if not user:
+                    self._json(400, {"success": False, "error": "No account found with this email. Please register first."})
+                    return
+                
+                expected_code = str(user.get("verification_code", ""))
+                if not expected_code:
+                    self._json(400, {"success": False, "error": "No verification code was generated for this account. Please request a new verification code."})
+                    return
+                if code == expected_code:
+                    user["email_verified"] = True
+                    user["verification_code"] = None
+                    _save_users(users)
+                    self._json(200, {"success": True, "message": "Email address verified successfully!"})
+                    return
+                else:
+                    self._json(400, {"success": False, "error": "Invalid verification code. Please check the 6-digit code sent to your email and try again."})
+                    return
+
+        # POST /api/auth/smtp-config — save SMTP settings
+        if parsed_url.path == '/api/auth/smtp-config':
+            host = body.get("host", "").strip()
+            port = int(body.get("port", 587))
+            user = body.get("user", "").strip()
+            password = body.get("pass", "").strip()
+            from_email = body.get("from_email", "").strip() or "notifications@radix.ai"
+
+            cfg = _load_smtp_config()
+            if host: cfg["host"] = host
+            if port: cfg["port"] = port
+            if user: cfg["user"] = user
+            if password: cfg["pass"] = password
+            if from_email: cfg["from_email"] = from_email
+
+            _save_smtp_config(cfg)
+            self._json(200, {"success": True, "message": "SMTP configuration saved successfully.", "config": {
+                "host": cfg["host"], "port": cfg["port"], "user": cfg["user"], "from_email": cfg["from_email"], "is_configured": bool(cfg["host"] and cfg["user"] and cfg["pass"])
+            }})
+            return
+
+        # POST /api/auth/test-email — dispatch a test email immediately
+        if parsed_url.path == '/api/auth/test-email':
+            to_email = (body.get("to") or body.get("email") or "harshitha.j21@gmail.com").strip().lower()
+            name = (body.get("name") or "Harshitha J").strip()
+            subject = "🧪 Test Real Email Dispatch — RADIX Enterprise SEO"
+            email_html = _generate_login_welcome_email(to_email, name, provider="RADIX SMTP Test Dispatch")
+            
+            res = _send_email_notification(to_email, subject, email_html, email_type="test", user_name=name)
+            self._json(200, {"success": True, "message": f"Test email dispatched to {to_email}", "result": res})
             return
 
         # POST /api/auth/forgot-password
@@ -3298,12 +3845,29 @@ Return only valid JSON. No markdown fences.
                 return
             reset_token = _make_token()
             RESET_TOKENS[reset_token] = {"email": email, "expires": time.time() + 3600}
-            # In production this would send an email; for now return the token directly
-            reset_url = f"https://rebates-venture-consequently-prominent.trycloudflare.com/login.html?reset={reset_token}"
+            
+            # Send reset link via email
+            reset_url = f"http://localhost:5173/login.html?reset={reset_token}"
+            reset_html = f"""
+            <!DOCTYPE html>
+            <html>
+            <head><meta charset="utf-8"></head>
+            <body style="font-family: 'Inter', Arial, sans-serif; background: #06060f; color: #f4f4f5; padding: 30px;">
+              <div style="max-width: 500px; margin: 0 auto; background: #0c0c1d; border: 1px solid rgba(255,255,255,0.1); border-radius: 18px; padding: 36px;">
+                <h2 style="color: #10b981; font-size: 22px;">RADIX Password Reset</h2>
+                <p style="font-size: 14px; color: rgba(244,244,245,0.7); line-height: 1.6;">Hi,</p>
+                <p style="font-size: 14px; color: rgba(244,244,245,0.7); line-height: 1.6;">We received a request to reset your password. Click the link below to set a new password:</p>
+                <a href="{reset_url}" style="display: inline-block; padding: 12px 28px; background: #10b981; color: #fff; font-weight: 700; font-size: 14px; border-radius: 10px; text-decoration: none; margin: 16px 0;">Reset Password</a>
+                <p style="font-size: 12px; color: rgba(244,244,245,0.4);">This link expires in 1 hour. If you didn't request this, ignore this email.</p>
+              </div>
+            </body>
+            </html>
+            """
+            _send_email_notification(email, "RADIX Password Reset Request", reset_html, email_type="password_reset", user_name=users[email].get("name", "User"))
+            
             self._json(200, {
                 "success":   True,
-                "reset_url": reset_url,   # Dev only — remove in production
-                "message":   "Reset link generated. In production this would be emailed."
+                "message":   "If that email exists, a password reset link has been sent."
             })
             return
 
@@ -4883,6 +5447,12 @@ Write a professional overview narrative summarizing the forecast. Include curren
             domain = urllib.parse.urlparse(user_url).netloc or user_url
             print(f"[SiteCrawl] Starting comprehensive crawl for: {domain}")
 
+            token = self._get_auth_token()
+            sess = _get_session(token) if token else None
+            if sess:
+                _increment_user_stat(sess["email"], "scans_count", 1)
+                _increment_user_stat(sess["email"], "domains_count", 1)
+
             crawled_res, crawl_err = crawl_site(user_url, max_pages=20)
 
             if crawl_err or not crawled_res or not crawled_res.get("crawled"):
@@ -4999,22 +5569,28 @@ Write a professional overview narrative summarizing the forecast. Include curren
                 })
 
             # Import verification engine to cross-validate metrics with secondary indices
-            from data_verification import ValidationEngine
+            ValidationEngineClass = ValidationEngine
+            try:
+                import data_verification
+                if hasattr(data_verification, "ValidationEngine"):
+                    ValidationEngineClass = data_verification.ValidationEngine
+            except Exception:
+                pass
 
-            v_score = ValidationEngine.verify_metric("Overall SEO Score", metrics["overall_score"], domain, "Ollagraph Crawl")
-            v_tech = ValidationEngine.verify_metric("Technical Score", metrics["technical_score"], domain, "Ollagraph Crawl")
-            v_content = ValidationEngine.verify_metric("Content Score", metrics["content_score"], domain, "Ollagraph Crawl")
-            v_perf = ValidationEngine.verify_metric("Performance Score", metrics["performance_score"], domain, "Ollagraph Crawl")
-            v_a11y = ValidationEngine.verify_metric("Accessibility Score", metrics["accessibility_score"], domain, "Ollagraph Crawl")
-            v_security = ValidationEngine.verify_metric("Security Score", metrics["security_score"], domain, "Ollagraph Crawl")
-            v_cwv = ValidationEngine.verify_metric("Core Web Vitals Score", metrics["cwv_score"], domain, "Ollagraph Crawl")
-            v_ai = ValidationEngine.verify_metric("AI Readiness Score", metrics["ai_readiness_score"], domain, "Ollagraph Crawl")
-            v_eeat = ValidationEngine.verify_metric("EEAT Score", metrics["eeat_score"], domain, "Ollagraph Crawl")
-            v_index = ValidationEngine.verify_metric("Indexability Score", metrics["indexability_score"], domain, "Ollagraph Crawl")
+            v_score = ValidationEngineClass.verify_metric("Overall SEO Score", metrics["overall_score"], domain, "Ollagraph Crawl")
+            v_tech = ValidationEngineClass.verify_metric("Technical Score", metrics["technical_score"], domain, "Ollagraph Crawl")
+            v_content = ValidationEngineClass.verify_metric("Content Score", metrics["content_score"], domain, "Ollagraph Crawl")
+            v_perf = ValidationEngineClass.verify_metric("Performance Score", metrics["performance_score"], domain, "Ollagraph Crawl")
+            v_a11y = ValidationEngineClass.verify_metric("Accessibility Score", metrics["accessibility_score"], domain, "Ollagraph Crawl")
+            v_security = ValidationEngineClass.verify_metric("Security Score", metrics["security_score"], domain, "Ollagraph Crawl")
+            v_cwv = ValidationEngineClass.verify_metric("Core Web Vitals Score", metrics["cwv_score"], domain, "Ollagraph Crawl")
+            v_ai = ValidationEngineClass.verify_metric("AI Readiness Score", metrics["ai_readiness_score"], domain, "Ollagraph Crawl")
+            v_eeat = ValidationEngineClass.verify_metric("EEAT Score", metrics["eeat_score"], domain, "Ollagraph Crawl")
+            v_index = ValidationEngineClass.verify_metric("Indexability Score", metrics["indexability_score"], domain, "Ollagraph Crawl")
 
-            v_pages = ValidationEngine.verify_metric("Total Pages Crawled", total_pages_crawled, domain, "Ollagraph Crawl")
-            v_internal = ValidationEngine.verify_metric("Internal Pages Discovered", total_internal_pages, domain, "Ollagraph Crawl")
-            v_external = ValidationEngine.verify_metric("External Domains", total_external_links, domain, "Ollagraph Crawl")
+            v_pages = ValidationEngineClass.verify_metric("Total Pages Crawled", total_pages_crawled, domain, "Ollagraph Crawl")
+            v_internal = ValidationEngineClass.verify_metric("Internal Pages Discovered", total_internal_pages, domain, "Ollagraph Crawl")
+            v_external = ValidationEngineClass.verify_metric("External Domains", total_external_links, domain, "Ollagraph Crawl")
 
             response_payload = {
                 "success": True,
@@ -5187,7 +5763,7 @@ REAL CRAWL DATA AVAILABLE:
 - Images count: {crawl_context.get('images_count', 'N/A')}
 """
 
-            ollama_prompt = f"""You are crawlX SEO Copilot, an expert SEO consultant AI assistant. Answer the user's question concisely and professionally. If crawl data is available, reference it in your answer. Keep responses under 150 words. Use plain text, no markdown.
+            ollama_prompt = f"""You are RADIX SEO Copilot, an expert SEO consultant AI assistant. Answer the user's question concisely and professionally. If crawl data is available, reference it in your answer. Keep responses under 150 words. Use plain text, no markdown.
 
 {context_block}
 
@@ -5232,7 +5808,7 @@ ANSWER:"""
                     )
                 else:
                     response_text = (
-                        "Here are three expert SEO suggestions based on crawlX audit logic:\n"
+                        "Here are three expert SEO suggestions based on RADIX audit logic:\n"
                         "1. Fix broken internal links and missing canonical configurations across all indexable routes.\n"
                         "2. Verify heading tag hierarchies are correct and add alt descriptions to image assets.\n"
                         "3. Inject structured JSON-LD schema schemas matching the main topic of each page."

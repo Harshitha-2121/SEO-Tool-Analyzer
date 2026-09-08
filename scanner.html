@@ -10,8 +10,8 @@
   
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Website Scanner — crawlX</title>
-  <meta name="description" content="crawlX website crawler and intelligence scanner. Real-time sitemap detection, robots.txt check, internal & external link crawling.">
+  <title>Website Scanner — RADIX</title>
+  <meta name="description" content="RADIX website crawler and intelligence scanner. Real-time sitemap detection, robots.txt check, internal & external link crawling.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
@@ -1357,7 +1357,7 @@
         <div class="page-header">
           <div class="page-header__left">
             <h1 class="page-header__title">SEO Audit Scanner</h1>
-             <p class="page-header__subtitle" id="headerSubtitle">Configure and deploy crawlX's deep crawler engine.</p>
+             <p class="page-header__subtitle" id="headerSubtitle">Configure and deploy RADIX's deep crawler engine.</p>
           </div>
         </div>
 
@@ -1368,7 +1368,7 @@
               <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 17.25v1.007a3 3 0 01-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0115 18.257V17.25m6-12V15a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 15V5.25m18 0A2.25 2.25 0 0018.75 3H5.25A2.25 2.25 0 003 5.25m18 0V12a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 12V5.25"></path></svg>
             </div>
             <h2 class="scanner-input-title">Start a New SEO Audit Scan</h2>
-             <p class="scanner-input-desc">crawlX will discover all public URLs from your sitemap, analyze Robots.txt rules, and crawl all internal and external outbound connections.</p>
+             <p class="scanner-input-desc">RADIX will discover all public URLs from your sitemap, analyze Robots.txt rules, and crawl all internal and external outbound connections.</p>
             
             <div class="scanner-form">
               <div class="scanner-input-group">
@@ -1377,7 +1377,7 @@
                 <button class="btn btn--primary scanner-submit-btn" id="startBtn">Scan Website</button>
               </div>
             </div>
-             <p class="scanner-input-tips">Supported protocols: HTTP/HTTPS. Default crawler agent: crawlXBot/v1.0.</p>
+             <p class="scanner-input-tips">Supported protocols: HTTP/HTTPS. Default crawler agent: RADIXBot/v1.0.</p>
           </div>
         </div>
 
@@ -2009,7 +2009,7 @@
       inputCard.style.display = 'none';
       resultsCard.style.display = 'none';
       activeCard.style.display = 'block';
-      headerSubtitle.innerHTML = `crawlX Crawler is analyzing outbound connections for <strong>${targetDomain}</strong>`;
+      headerSubtitle.innerHTML = `RADIX Crawler is analyzing outbound connections for <strong>${targetDomain}</strong>`;
 
       runCrawlSimulation();
     }
@@ -2020,7 +2020,7 @@
       resultsCard.style.display = 'none';
       activeCard.style.display = 'none';
       websiteUrlInput.value = '';
-      headerSubtitle.textContent = 'Configure and deploy crawlX\'s deep crawler engine.';
+      headerSubtitle.textContent = 'Configure and deploy RADIX\'s deep crawler engine.';
       
       // Reset checklist styles
       const steps = [stepSitemap, stepRobots, stepDiscover, stepInternal, stepExternal, stepCalculate];
@@ -2105,7 +2105,16 @@
         body: JSON.stringify({ url: targetDomain, projectId: localStorage.getItem('projectId') || 'mock-project-id' }),
         signal: controller.signal
       })
-      .then(res => res.json())
+      .then(async res => {
+        const text = await res.text();
+        let data;
+        try {
+          data = JSON.parse(text);
+        } catch (e) {
+          throw new Error(text || `HTTP ${res.status} Server Error`);
+        }
+        return data;
+      })
       .then(data => {
         clearTimeout(timeoutId);
         clearInterval(progressInterval);
@@ -2540,7 +2549,7 @@
       if (!targetDomain) return;
 
       const date = new Date().toISOString().split('T')[0];
-      const filename = `crawlx_crawl_${targetDomain.replace(/^https?:\/\//i, '').replace(/[^a-z0-9]/gi, '_')}_${date}.csv`;
+      const filename = `radix_crawl_${targetDomain.replace(/^https?:\/\//i, '').replace(/[^a-z0-9]/gi, '_')}_${date}.csv`;
 
       // Use real crawled pages data if available
       const csvRows = [
