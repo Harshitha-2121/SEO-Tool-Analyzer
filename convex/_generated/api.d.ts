@@ -27,6 +27,7 @@ import type * as crawlerNode from "../crawlerNode.js";
 import type * as eventBus from "../eventBus.js";
 import type * as gapOpportunity from "../gapOpportunity.js";
 import type * as gapOpportunityAction from "../gapOpportunityAction.js";
+import type * as googleAuth from "../googleAuth.js";
 import type * as http from "../http.js";
 import type * as knowledgeGraph from "../knowledgeGraph.js";
 import type * as orchestrator from "../orchestrator.js";
@@ -64,6 +65,7 @@ declare const fullApi: ApiFromModules<{
   eventBus: typeof eventBus;
   gapOpportunity: typeof gapOpportunity;
   gapOpportunityAction: typeof gapOpportunityAction;
+  googleAuth: typeof googleAuth;
   http: typeof http;
   knowledgeGraph: typeof knowledgeGraph;
   orchestrator: typeof orchestrator;

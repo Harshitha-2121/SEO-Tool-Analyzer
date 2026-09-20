@@ -2142,7 +2142,7 @@
       transform: translateY(-50%);
     }
   </style>
-\n</head>
+</head>
 <body>
 
   <!-- Ambient Background -->
@@ -2191,8 +2191,8 @@
             </div>
           </label>
         </li>
-        <li><a href="login.html" style="color:var(--text-secondary); font-weight:600; text-decoration:none; margin-right:12px; transition:color 0.2s;" onmouseover="this.style.color='var(--text-primary)'" onmouseout="this.style.color='var(--text-secondary)'">Sign In</a></li>
-        <li><a href="login.html" class="nav__cta-purple" id="navCtaBtn">Get Started</a></li>
+        <li id="nav-signin-item"><a href="login.html" id="navSignInLink" style="color:var(--text-secondary); font-weight:600; text-decoration:none; margin-right:12px; transition:color 0.2s;" onmouseover="this.style.color='var(--text-primary)'" onmouseout="this.style.color='var(--text-secondary)'">Sign In</a></li>
+        <li id="nav-cta-item"><a href="login.html" class="nav__cta-purple" id="navCtaBtn">Get Started</a></li>
       </ul>
     </div>
   </nav>
@@ -2927,6 +2927,51 @@
         card.style.setProperty('--mouse-y', `${y}px`);
       });
     });
+  </script>
+
+  <script id="nav-auth-check-script">
+    (function() {
+      function checkAuthStatus() {
+        const isLoggedIn = localStorage.getItem('logged_in') === 'true' || !!localStorage.getItem('radix_token');
+        const navSignIn = document.getElementById('nav-signin-item');
+        const navCta = document.getElementById('navCtaBtn');
+        const navDash = document.getElementById('nav-dashboard-link');
+        const navLogout = document.getElementById('nav-logout-link');
+
+        if (isLoggedIn) {
+          if (navSignIn) navSignIn.style.display = 'none';
+          if (navDash) navDash.style.display = 'block';
+          if (navLogout) navLogout.style.display = 'block';
+          if (navCta) {
+            navCta.textContent = 'Go to Dashboard';
+            navCta.href = 'dashboard.html';
+          }
+        } else {
+          if (navSignIn) navSignIn.style.display = 'block';
+          if (navDash) navDash.style.display = 'none';
+          if (navLogout) navLogout.style.display = 'none';
+          if (navCta) {
+            navCta.textContent = 'Get Started';
+            navCta.href = 'login.html';
+          }
+        }
+      }
+
+      // Check immediately on script run
+      checkAuthStatus();
+
+      document.addEventListener("DOMContentLoaded", () => {
+        checkAuthStatus();
+        const logoutBtn = document.getElementById('navLogoutBtn');
+        if (logoutBtn) {
+          logoutBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            localStorage.clear();
+            window.location.reload();
+          });
+        }
+      });
+    })();
   </script>
 </body>
 </html>

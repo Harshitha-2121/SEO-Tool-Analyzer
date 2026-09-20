@@ -95,5 +95,41 @@
     "api_key": "cx_live_9964d103ccfc078a2516a1c08aa18f1e",
     "scans_count": 0,
     "domains_count": 0
+  },
+  "yifik91799@hebase.com": {
+    "name": "john",
+    "role": "user",
+    "password": "pbkdf2:19259446af43fb16b128d3f0ff4eb3a1:75a884d992b48de6cd1bda73ccbc0bb0185e3fc9227d2ceb07bacee643d521d7",
+    "created": "2026-09-09T06:04:36.123631",
+    "email_verified": true,
+    "verification_code": null,
+    "verification_expires": "2026-09-10T06:17:21.331242",
+    "api_key": "cx_live_3ea5318145557b1535f3ab6dfd327256",
+    "scans_count": 0,
+    "domains_count": 0
+  },
+  "repec38798@liondapt.com": {
+    "name": "John",
+    "role": "user",
+    "password": "pbkdf2:7509a8d92f3a117f1765e764c6936382:35be74a9b3585d7ce947e2992f10a6fc771617dac2263d07b9cfe0de06ee9ee1",
+    "created": "2026-09-12T04:04:47.785646",
+    "email_verified": true,
+    "verification_code": null,
+    "verification_expires": "2026-09-13T04:04:47.785646",
+    "api_key": "cx_live_3a5c1a43565b53a167080b3ef17e5609",
+    "scans_count": 0,
+    "domains_count": 0
+  },
+  "beday81099@hebase.com": {
+    "name": "Priya",
+    "role": "user",
+    "password": "pbkdf2:533e9b2e0183896b34038d675d9552c2:74e414e32a7b2d0f77996d1d8cd9f793d1d7173466693d33f359173ec7fae13d",
+    "created": "2026-09-12T04:44:45.161105",
+    "email_verified": true,
+    "verification_code": null,
+    "verification_expires": "2026-09-13T04:44:45.161105",
+    "api_key": "cx_live_06a1133a242f26725e563d95063d420f",
+    "scans_count": 0,
+    "domains_count": 0
   }
 }

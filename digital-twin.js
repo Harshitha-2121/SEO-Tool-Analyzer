@@ -299,9 +299,10 @@ document.addEventListener("DOMContentLoaded", () => {
           <span class="badge-lbl badge-priority">Priority #${c.priority}</span>
           <span class="badge-lbl badge-impact">SEO Impact: ${c.expected_impact}</span>
         </div>
+      </div>
     `).join('');
 
-    renderTransparencyBlock('resultsWrapper', 'RADIX SEO Digital Twin Simulator', 'Simulated projections based on crawl health baseline models', 92, '12-month traffic trajectory estimations calculated using deterministic regression curves and local parameter adjustments.');
+    renderTransparencyBlock('rightColumnContainer', 'RADIX SEO Digital Twin Simulator', 'Simulated projections based on crawl health baseline models', 92, '12-month traffic trajectory estimations calculated using deterministic regression curves and local parameter adjustments.');
   }
 
   function renderTransparencyBlock(containerId, source, status, confidence, evidence) {

@@ -470,7 +470,9 @@
 
   <script>
     // ── CONFIG ──────────────────────────────────────────────────
-    const API = '';
+    const API = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+      ? ''
+      : (window.RADIX_API_URL || 'https://kindhearted-gull-94.convex.site');
     let resetToken = null;
 
     // ── HELPERS ──────────────────────────────────────────────────
@@ -584,14 +586,14 @@
         });
         const contentType = r.headers.get("content-type");
         if (!contentType || !contentType.includes("application/json")) {
-          throw new Error("API error: Server returned an invalid HTML page. Please force-refresh (Cmd+Shift+R) your browser.");
+          throw new Error("Authentication backend server is unreachable. Please ensure the backend is running.");
         }
         const d = await r.json();
         if (r.status === 403 && d.needs_verification) {
           openVerifyPrompt(d.email);
           return;
         }
-        if (!r.ok || !d.success) throw new Error(d.error || 'Sign in failed.');
+        if (!r.ok || !d.success) throw new Error(d.error || 'Sign in failed. Check your email and password.');
         storeSession(d);
         window.location.replace('dashboard.html');
       } catch(err) {
@@ -659,7 +661,7 @@
         });
         const contentType = r.headers.get("content-type");
         if (!contentType || !contentType.includes("application/json")) {
-          throw new Error("API error: Server returned an invalid HTML page. Please force-refresh (Cmd+Shift+R) your browser.");
+          throw new Error("Authentication server is unreachable. Please try again later.");
         }
         const d = await r.json();
         if (!r.ok || !d.success) throw new Error(d.error || 'Registration failed.');

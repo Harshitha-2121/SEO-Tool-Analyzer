@@ -185,14 +185,172 @@
       outline: none;
       z-index: 2;
     }
-    .animated-glowing-search-input::placeholder {
-      color: var(--text-3);
+    /* Form Button */
+    .form-btn {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: #ffffff;
+      border: none;
+      padding: 12px 24px;
+      border-radius: var(--radius-md);
+      font-weight: 700;
+      font-size: 13.5px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 14px rgba(16, 185, 129, 0.25);
+    }
+    .form-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
     }
 
-  </style>
+    /* Disclaimer Alert Box */
+    .disclaimer-alert {
+      background: rgba(255, 214, 0, 0.06);
+      border: 1px solid rgba(255, 214, 0, 0.2);
+      border-radius: var(--radius-md);
+      padding: 14px 18px;
+      font-size: 12.5px;
+      color: var(--text-2);
+      line-height: 1.55;
+    }
+    .disclaimer-alert strong {
+      color: var(--yellow);
+    }
 
-  
-\n</head>
+    /* Trajectory Chart Container */
+    .trajectory-container {
+      height: 160px;
+      margin-top: 10px;
+      position: relative;
+    }
+
+    /* Comparison Table Styles */
+    .compare-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 12px;
+      font-size: 13px;
+    }
+    .compare-table th {
+      text-align: left;
+      padding: 10px 14px;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-3);
+      border-bottom: 1px solid var(--border);
+    }
+    .compare-table td {
+      padding: 12px 14px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+      color: var(--text-2);
+    }
+
+    /* Detailed Forecast Cards Grid */
+    .forecast-card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 20px;
+    }
+    .forecast-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 22px;
+      backdrop-filter: blur(10px);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      transition: all 0.2s ease;
+    }
+    .forecast-card:hover {
+      border-color: var(--border-hover);
+      transform: translateY(-2px);
+    }
+    .forecast-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      width: 100%;
+    }
+    .forecast-card-title {
+      font-size: 15px;
+      font-weight: 750;
+      color: var(--text-1);
+      flex: 1;
+      min-width: 160px;
+      word-break: break-word;
+    }
+    .forecast-comparison-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      border-radius: var(--radius-sm);
+      padding: 12px 16px;
+    }
+    .comparison-col-label {
+      font-size: 10.5px;
+      text-transform: uppercase;
+      color: var(--text-3);
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .comparison-col-val {
+      font-family: 'Fira Code', monospace;
+      font-size: 15px;
+      font-weight: 700;
+    }
+    .forecast-details {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      font-size: 12.5px;
+    }
+    .forecast-details h4 {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-1);
+      margin-bottom: 4px;
+    }
+    .forecast-details p {
+      color: var(--text-2);
+      line-height: 1.55;
+    }
+    .forecast-badges {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 4px;
+    }
+    .badge-lbl {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 20px;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+    .badge-confidence {
+      background: rgba(0, 229, 255, 0.1);
+      border: 1px solid rgba(0, 229, 255, 0.25);
+      color: var(--cyan);
+    }
+    .badge-priority {
+      background: rgba(255, 214, 0, 0.1);
+      border: 1px solid rgba(255, 214, 0, 0.25);
+      color: var(--yellow);
+    }
+    .badge-impact {
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      color: #34d399;
+    }
+  </style>
+</head>
 <body>
 
   
@@ -294,7 +452,7 @@
       </div>
 
       <!-- Right side: Predictions output -->
-      <div style="display:flex; flex-direction:column; gap:24px;">
+      <div id="rightColumnContainer" style="display:flex; flex-direction:column; gap:24px;">
         
         <div class="disclaimer-alert">
           <strong>Forecast Simulation Alert</strong>: Measured values are derived from actual website crawl parameters. Predicted values are projections modeled using local regression and semantic content vectors. Predictions are not guaranteed ranking facts.

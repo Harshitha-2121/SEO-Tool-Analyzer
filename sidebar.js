@@ -908,10 +908,17 @@
     html += '        </label>';
     html += '      </div>';
     html += '      <div class="sm-dropdown-divider"></div>';
-    html += '      <a class="sm-dropdown-item sm-dropdown-signout" href="#" id="smSignOutBtn" role="menuitem" tabindex="-1">';
-    html += '        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="sm-dropdown-icon"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>';
-    html += '        <span>Sign Out</span>';
-    html += '      </a>';
+    if (localStorage.getItem('logged_in') === 'true') {
+      html += '      <a class="sm-dropdown-item sm-dropdown-signout" href="#" id="smSignOutBtn" role="menuitem" tabindex="-1">';
+      html += '        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="sm-dropdown-icon"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>';
+      html += '        <span>Sign Out</span>';
+      html += '      </a>';
+    } else {
+      html += '      <a class="sm-dropdown-item" href="login.html" role="menuitem" tabindex="-1" style="color:#10b981; font-weight:700;">';
+      html += '        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="sm-dropdown-icon"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>';
+      html += '        <span>Sign In / Register</span>';
+      html += '      </a>';
+    }
     html += '    </div>';
     html += '  </div>';
     html += '</div>';
