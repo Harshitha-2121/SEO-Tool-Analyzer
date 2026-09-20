@@ -27,7 +27,7 @@ Built to help businesses understand **what is wrong, why it matters, what compet
 
 ## AI SEO Digital Twin Simulator Setup
 
-This simulator uses real crawl data from the Ollagraph API and real inference from the local Ollama model to forecast search engine visibility changes.
+This simulator uses real crawl data from the Ollagraph API and real inference from the local Ollima model to forecast search engine visibility changes.
 
 ### Prerequisites
 
@@ -39,10 +39,10 @@ export OLLAGRAPH_API_KEY="your_ollagraph_api_key"
 ```
 
 #### 2. Pull local Ollima model
-The simulator automatically queries your local Ollama instance for the available models and prefers `llama3`. Ensure you pull the model:
+The simulator automatically queries your local Ollima instance for the available models and prefers `llama3`. Ensure you pull the model:
 
 ```bash
-ollama pull llama3
+ollima pull llama3
 ```
 
 ### Running the Platform

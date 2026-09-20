@@ -22,7 +22,7 @@ The primary goals and objectives of the RADIX project are:
 1. **Automated Site Crawling & Diagnostics:** Build a high-performance web crawler capable of parsing domain structures, HTML headers, heading hierarchies (H1–H3), image alt metadata, SSL certificates, canonical tags, and link graphs.
 2. **Cross-Platform Verification:** Implement a multi-source validation engine that cross-checks site crawl metrics against standard search metrics (e.g., Ahrefs, Semrush, Moz, and Google Search Console) to assign trust assurance scores (`✓ high`).
 3. **Competitor & Content Gap Intelligence:** Enable side-by-side technical and market comparison between target domains and competitors, uncovering keyword overlaps and topic cluster gaps.
-4. **Search Intent & Semantic Classification:** Utilize Large Language Model (LLM) processing (via Ollama Cloud/Local APIs) to categorize crawled content queries into four core intent buckets: Informational, Navigational, Commercial, and Transactional.
+4. **Search Intent & Semantic Classification:** Utilize Large Language Model (LLM) processing (via Ollima Cloud/Local APIs) to categorize crawled content queries into four core intent buckets: Informational, Navigational, Commercial, and Transactional.
 5. **Technical Remediation & AutoFix:** Automatically generate drop-in HTML header snippets, canonical tags, and JSON-LD schema metadata to eliminate developer implementation latency.
 6. **AI-Driven Strategic Planning:** Generate dynamic 24-hour, 30-day, and 90-day prioritized SEO roadmaps and offer an interactive AI Copilot for conversational diagnostic queries.
 
@@ -53,7 +53,7 @@ A comprehensive feasibility analysis was conducted to evaluate the technical, ec
 * **Conclusion:** The required technologies (Python 3.x, HTML5, JavaScript ES6+, Vite, SQLite/Convex, LLM APIs) are mature, well-documented, and readily available. Thus, the project is technically feasible.
 
 ### 3.2 Economic Feasibility
-* **Cost Efficiency:** The platform utilizes open-source technology stacks, free local runtime environments (Python, Node.js), and local LLM execution capabilities (Ollama), eliminating high initial capital expenditure.
+* **Cost Efficiency:** The platform utilizes open-source technology stacks, free local runtime environments (Python, Node.js), and local LLM execution capabilities (Ollima), eliminating high initial capital expenditure.
 * **Operational Savings:** Automating code snippet generation (`technical-autofix.js`) and strategic roadmap creation reduces engineer hour requirements from weeks to minutes.
 * **Conclusion:** The cost of system design, development, and testing is minimal compared to the potential cost savings for digital agencies and enterprise marketing teams, making it economically highly viable.
 
@@ -137,7 +137,7 @@ The platform is organized into 4 functional tool clusters:
 * **Frontend Technologies:** HTML5, Vanilla CSS3 (Custom Design System with Glassmorphism), Modern JavaScript (ES6+ Modules)
 * **Build Tooling & Server:** Node.js 18+ & Vite 5.x
 * **Database & Persistence:** Convex DB / Browser LocalStorage API
-* **AI Engine & LLM Interfaces:** Ollama Local LLM / Cloud LLM API Gateway
+* **AI Engine & LLM Interfaces:** Ollima Local LLM / Cloud LLM API Gateway
 
 ### 5.2 Hardware Requirements
 * **Processor (CPU):** Intel Core i5 / AMD Ryzen 5 or higher (Multi-core recommended for recursive crawling)
